@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('usuarios', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->string('email', 100)->unique();
-            $table->string('password');
-            $table->enum('rol', ['admin', 'user'])->default('user');
+            $table->string('user_name', 100);
+            $table->string('user_email', 100)->unique();
+            $table->string('user_password');
+            $table->enum('user_rol', ['admin', 'user'])->default('user');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('usuarios');
+        Schema::dropIfExists('users');
     }
 };

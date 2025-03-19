@@ -12,39 +12,47 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use Notifiable;
 
-    protected $table = 'usuarios';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'nombre',
-        'email',
-        'password',
-        'rol'
+        'user_name',
+        'user_email',
+        'user_password',
+        'user_rol',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
-        'password'
+        'user_password',
+        'remember_token',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPassword()
     {
-        return [
-            'password' => 'hashed',
-            'rol' => UserRole::class,
-        ];
+        return $this->user_password;
+    }
+
+    /**
+     * Relación con los papers (documentos) creados por el usuario.
+     */
+    public function papers()
+    {
+        return $this->hasMany(Paper::class, 'user_id');
     }
 }

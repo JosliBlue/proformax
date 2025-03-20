@@ -21,6 +21,12 @@
             Pasa el cursor sobre mí
         </button>
     </div>
+    <form action="{{ route('logout') }}" method="GET" onsubmit="return confirm('¿Estás seguro de que deseas cerrar sesión?');">
+        @csrf
+        <button type="submit" class="text-gray-600 hover:text-gray-800">
+            Cerrar sesión
+        </button>
+    </form>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

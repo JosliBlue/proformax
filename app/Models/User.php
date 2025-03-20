@@ -16,7 +16,7 @@ class User extends Authenticatable
         'user_name',
         'user_email',
         'user_password',
-        'user_rol',
+        'user_rol'
     ];
 
     /**
@@ -25,8 +25,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'user_password',
-        'remember_token',
+        'user_password'
     ];
 
     /**
@@ -35,7 +34,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'user_rol'=> UserRole::class
     ];
 
     /**

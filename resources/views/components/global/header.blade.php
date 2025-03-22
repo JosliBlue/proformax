@@ -21,7 +21,7 @@
                 <!-- Menú flotante -->
                 <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                     <!-- Nombre del usuario (solo visible en móviles) -->
-                    <div class="block md:hidden px-4 py-2 text-sm text-gray-700 border-b">
+                    <div class="block md:hidden px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
                         {{ Auth::user()->user_name }}
                     </div>
 

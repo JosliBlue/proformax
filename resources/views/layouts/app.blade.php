@@ -6,15 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <link href="{{ asset('css/tailwind.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/tailwind-josliblue.js') }}"></script>
     <script src="{{ asset('js/iconify.min.js') }}"></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/default.css') }}">
+    <style>
+        * {
+            font-family: "Inter", sans-serif !important;
+            font-optical-sizing: auto;
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .btn-sito {
+            border-radius: 50px;
+        }
+    </style>
 
     @livewireStyles
 </head>
@@ -24,27 +34,23 @@
     @hasSection('content')
         <x-global.header />
         <div class="flex flex-col p-4 gap-4 mx-0 md:mx-16" id="cuerpecito">
-            <!-- Primer elemento con altura mínima -->
             <div>
                 Home / Inicio / loginsito xdddd
             </div>
 
-            <!-- Contenedor flexible para los elementos 2 y 3 -->
             <div class="grid flex-1">
-                <!-- Segundo elemento ocupa todo el alto disponible -->
-                <div class="bg-green-500 text-white">
-                    @yield('content') <!-- aqui esta el div id=cuerpecito -->
-                </div>
+                <!-- Elemento que ocupa todo el espacio disponible -->
+                @yield('content')
             </div>
         </div>
 
-        <!-- si viene de un componente de livewire(componente que ocupara toda la pantalla) -->
+    <!-- si viene de un componente de livewire(componente que ocupara toda la pantalla) -->
     @else
         {{ $slot }}
     @endif
 
 
-    @livewireScripts
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const header = document.querySelector('header');
@@ -79,9 +85,10 @@
             }
         });
     </script>
+    <!-- Scripts para q funcione livewire -->
+    @livewireScripts
     <!-- Scripts personalizados -->
     @stack('scripts')
-
 </body>
 
 </html>

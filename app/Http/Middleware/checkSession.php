@@ -16,7 +16,7 @@ class checkSession
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            return redirect()->route('principal');
+            return redirect()->route('home');
         }
 
         return $next($request);

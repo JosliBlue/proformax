@@ -9,11 +9,12 @@ Route::get('/login', Login::class)->name('login')->middleware([checkSession::cla
 
 Route::middleware('auth')->group(function () {
     Route::get('/logout', function () {
-        auth()->logout();
+        Session::flush();
+        Auth::logout();
         return redirect()->route('login');
     })->name('logout');
 
     Route::get('/', function () {
-        return view('welcome');
-    })->name('principal');
+        return view('home');
+    })->name('home');
 });

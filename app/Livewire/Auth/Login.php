@@ -57,7 +57,7 @@ class Login extends Component
 
         if (Auth::attempt($credentials)) {
             // Redirigir al dashboard después del login
-            return redirect()->route('principal');
+            return redirect()->route('home');
         } else {
             // Mostrar error si las credenciales son incorrectas
             $this->error = 'Credenciales incorrectas. Por favor, inténtalo de nuevo.';

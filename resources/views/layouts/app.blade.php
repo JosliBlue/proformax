@@ -32,16 +32,16 @@
 <body>
     <!-- si viene de una vista blade tradicional -->
     @hasSection('content')
-        <x-global.header />
+        @livewire('global.header')
         <div class="flex flex-col p-4 gap-4 mx-0 md:mx-16" id="cuerpecito">
-            <div>
-                Home / Inicio / loginsito xdddd
-            </div>
+            @if (Route::currentRouteName() !== 'home')
+                {{ Breadcrumbs::render(Route::currentRouteName()) }}
+            @endif
 
-            <div class="grid flex-1">
+            <divmain class="grid flex-1">
                 <!-- Elemento que ocupa todo el espacio disponible -->
                 @yield('content')
-            </div>
+            </divmain>
         </div>
 
     <!-- si viene de un componente de livewire(componente que ocupara toda la pantalla) -->
@@ -49,14 +49,10 @@
         {{ $slot }}
     @endif
 
-
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const header = document.querySelector('header');
             const headerHeight = header.offsetHeight;
-
-
             const mainContent = document.getElementById('cuerpecito');
 
             if (mainContent) {

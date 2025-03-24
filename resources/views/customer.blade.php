@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    @livewire('home')
+    <h1>Clientes</h1>
 @endsection

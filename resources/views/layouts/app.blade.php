@@ -30,60 +30,29 @@
 </head>
 
 <body>
-    <!-- si viene de una vista blade tradicional -->
+    {{-- si viene de una vista blade tradicional --}}
     @hasSection('content')
+        {{-- Aqui se llama al header --}}
         @livewire('global.header')
-        <div class="flex flex-col p-4 gap-4 mx-0 md:mx-16" id="cuerpecito">
-            @if (Route::currentRouteName() !== 'home')
-                {{ Breadcrumbs::render(Route::currentRouteName()) }}
-            @endif
 
-            <divmain class="grid flex-1">
-                <!-- Elemento que ocupa todo el espacio disponible -->
-                @yield('content')
-            </divmain>
+        {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
+        @if (Route::currentRouteName() !== 'home')
+            {{ Breadcrumbs::render(Route::currentRouteName()) }}
+        @endif
+
+        {{-- Aqui se llama carga la vista que llama el controlador --}}
+        <div class="mx-4 md:mx-20">
+            @yield('content')
         </div>
 
-    <!-- si viene de un componente de livewire(componente que ocupara toda la pantalla) -->
+        {{-- si viene de un componente de livewire(componente que ocupara toda la pantalla) --}}
     @else
         {{ $slot }}
     @endif
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const header = document.querySelector('header');
-            const headerHeight = header.offsetHeight;
-            const mainContent = document.getElementById('cuerpecito');
-
-            if (mainContent) {
-                // Para pantallas más grandes (md y mayores)
-                if (window.innerWidth >= 768) {
-                    mainContent.style.height = `calc(100vh - ${headerHeight}px)`;
-                } else {
-                    // Para pantallas móviles, la altura será automática
-                    mainContent.style.height = 'auto';
-                }
-            }
-        });
-
-        // Aseguramos que también se ajuste cuando cambie el tamaño de la ventana
-        window.addEventListener('resize', function() {
-            const header = document.querySelector('header');
-            const headerHeight = header.offsetHeight;
-            const mainContent = document.getElementById('cuerpecito');
-
-            if (mainContent) {
-                if (window.innerWidth >= 768) {
-                    mainContent.style.height = `calc(100vh - ${headerHeight}px)`;
-                } else {
-                    mainContent.style.height = 'auto';
-                }
-            }
-        });
-    </script>
-    <!-- Scripts para q funcione livewire -->
+    {{-- Scripts para q funcione livewire --}}
     @livewireScripts
-    <!-- Scripts personalizados -->
+    {{-- Scripts personalizados --}}
     @stack('scripts')
 </body>
 

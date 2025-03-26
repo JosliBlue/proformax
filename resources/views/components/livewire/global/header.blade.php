@@ -1,6 +1,6 @@
 <div>
-    <header class="bg-white shadow-md px-4 py-5">
-        <div class="mx-0 md:mx-16 flex justify-between items-center">
+    <header class="shadow-md">
+        <div class="mx-0 px-4 py-5 md:mx-20 md:px-0 flex justify-between items-center">
             <!-- Nombre de la empresa -->
             <div class="text-lg font-semibold text-gray-800">
                 {{ strtoupper(config('app.name', 'Mi Empresa')) }}
@@ -15,7 +15,7 @@
                     </div>
 
                     <!-- Ícono de usuario -->
-                    <span class="iconify w-10 h-12" data-icon="mdi:account-circle"></span>
+                    <span class="iconify w-auto h-12" data-icon="mdi:account-circle"></span>
                 </summary>
 
                 <!-- Menú flotante -->

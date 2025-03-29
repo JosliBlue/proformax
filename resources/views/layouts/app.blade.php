@@ -40,8 +40,10 @@
             {{ Breadcrumbs::render(Route::currentRouteName()) }}
         @endif
 
-        {{-- Aqui se llama carga la vista que llama el controlador --}}
-        <div class="mx-4 md:mx-20">
+        {{-- Aqui se carga la vista que llama el controlador --}}
+        {{-- El javascript de este id solo se aplica cuando esta en Home(el proceso esta en home) --}}
+        <div class="mx-4 rounded-lg md:mx-20 md:p-4 md:bg-blue-200" id="WhenEnHome">
+            {{-- Aqui se carga el contenido --}}
             @yield('content')
         </div>
 

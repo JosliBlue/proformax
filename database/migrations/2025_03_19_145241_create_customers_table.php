@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('customer_lastname', 100);
             $table->string('customer_phone', 20);
             $table->string('customer_email', 100);
+            $table->boolean('customer_status')->default(true);
             $table->timestamps();
         });
     }

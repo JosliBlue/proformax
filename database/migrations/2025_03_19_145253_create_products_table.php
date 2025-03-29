@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('product_name', 100);
-            $table->text('product_description')->nullable();
+            $table->enum('product_type', ['producto', 'servicio']);
             $table->decimal('product_price', 10, 2);
+            $table->boolean('product_status')->default(true);
             $table->timestamps();
         });
     }

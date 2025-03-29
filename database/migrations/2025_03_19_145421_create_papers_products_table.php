@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('papers_products', function (Blueprint $table) {
             $table->id();
-            $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2);
-            $table->decimal('subtotal', 10, 2);
-
             // Claves foráneas
             $table->unsignedBigInteger('paper_id'); // Columna para la clave foránea
             $table->unsignedBigInteger('product_id'); // Columna para la clave foránea
+
+            $table->integer('quantity');
+            $table->decimal('unit_price', 10, 2);
+            $table->decimal('subtotal', 10, 2);
 
             // Definir las relaciones
             $table->foreign('paper_id')->references('id')->on('papers')->onDelete('cascade');

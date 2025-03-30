@@ -37,7 +37,9 @@
 
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
         @if (Route::currentRouteName() !== 'home')
-            {{ Breadcrumbs::render(Route::currentRouteName()) }}
+            @if (class_exists('Breadcrumbs'))
+                {{ Breadcrumbs::render(Route::currentRouteName()) }}
+            @endif
         @endif
 
         {{-- Aqui se carga la vista que llama el controlador --}}

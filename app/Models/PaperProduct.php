@@ -19,6 +19,12 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class PaperProduct extends Pivot
 {
     /**
+     * El nombre de la tabla asociada al modelo.
+     *
+     * @var string
+     */
+    protected $table = 'papers_products';
+    /**
      * Indica si los IDs son autoincrementales.
      *
      * @var bool

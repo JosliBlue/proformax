@@ -10,17 +10,23 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'user_name' => 'Administrador',
-            'user_email' => 'admin@proformax.com',
-            'user_password' => Hash::make('admin123'),
-            'user_rol' => 'admin'
-        ]);
-        User::create([
-            'user_name' => 'Usuario',
-            'user_email' => 'user@proformax.com',
-            'user_password' => Hash::make('user123'),
-            'user_rol' => 'user'
-        ]);
+        $users = [
+            [
+                'user_name' => 'Administrador',
+                'user_email' => 'admin@proformax.com',
+                'user_password' => Hash::make('admin123'),
+                'user_rol' => 'admin'
+            ],
+            [
+                'user_name' => 'Usuario',
+                'user_email' => 'user@proformax.com',
+                'user_password' => Hash::make('user123'),
+                'user_rol' => 'user'
+            ]
+        ];
+
+        foreach ($users as $user) {
+            User::create($user);
+        }
     }
 }

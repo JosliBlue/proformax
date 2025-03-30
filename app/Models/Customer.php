@@ -83,4 +83,8 @@ class Customer extends Model
     {
         return $query->where('customer_status', true);
     }
+    public function getFullName()
+    {
+        return $this->customer_name . ' ' . $this->customer_lastname;
+    }
 }

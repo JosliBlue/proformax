@@ -2,27 +2,85 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo Customer para manejar los clientes del sistema
+ *
+ * @property int $id
+ * @property string $customer_name
+ * @property string $customer_lastname
+ * @property string $customer_phone
+ * @property string $customer_email
+ * @property bool $customer_status
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ */
 class Customer extends Model
 {
-     /**
-     * The attributes that are mass assignable.
+    use HasFactory;
+
+    /**
+     * Los atributos que son asignables masivamente.
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $fillable = [
-        'customer_name',
-        'customer_lastname',
-        'customer_phone',
-        'customer_email',
+        'customer_name',      // Nombre del cliente
+        'customer_lastname',  // Apellido del cliente
+        'customer_phone',     // Teléfono del cliente
+        'customer_email',     // Email del cliente
+        'customer_status'     // Estado del cliente (activo/inactivo)
+    ];
+
+    /**
+     * Los atributos que deben ser convertidos a tipos nativos.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'customer_status' => 'boolean' // Convertir a booleano
     ];
 
     /**
      * Relación con los papers (documentos) asociados al cliente.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function papers()
     {
-        return $this->hasMany(Paper::class, 'customer_id');
+        return $this->hasMany(Paper::class);
+    }
+
+    /**
+     * Obtiene el nombre completo del cliente.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute()
+    {
+        return "{$this->customer_name} {$this->customer_lastname}";
+    }
+
+    /**
+     * Verifica si el cliente está activo.
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->customer_status === true;
+    }
+
+    /**
+     * Scope para filtrar clientes activos.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('customer_status', true);
     }
 }

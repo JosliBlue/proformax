@@ -2,43 +2,60 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\UserRole;
 
+/**
+ * Modelo User para manejar los usuarios del sistema
+ *
+ * @property int $id
+ * @property string $user_name
+ * @property string $user_email
+ * @property string $user_password
+ * @property UserRole $user_rol
+ * @property bool $user_status
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use Notifiable;
 
+    /**
+     * Los atributos que son asignables masivamente.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'user_name',
-        'user_email',
-        'user_password',
-        'user_rol'
+        'user_name',    // Nombre del usuario
+        'user_email',   // Email único del usuario
+        'user_password', // Contraseña hasheada
+        'user_rol',     // Rol del usuario (admin/user)
+        'user_status'   // Estado del usuario (activo/inactivo)
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Los atributos que deben ser ocultos para serialización.
      *
      * @var array<int, string>
      */
     protected $hidden = [
-        'user_password'
+        'user_password', // Ocultar contraseña en respuestas JSON
     ];
 
     /**
-     * The attributes that should be cast.
+     * Los atributos que deben ser convertidos a tipos nativos.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'user_rol'=> UserRole::class
+        'user_rol' => UserRole::class, // Convertir a Enum UserRole
+        'user_status' => 'boolean'     // Convertir a booleano
     ];
 
     /**
-     * Get the password for the user.
+     * Obtiene el campo que se usa como contraseña para autenticación.
      *
      * @return string
      */
@@ -48,7 +65,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtiene el campo que se usa como nombre de usuario para autenticación.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'user_email';
+    }
+
+    /**
      * Relación con los papers (documentos) creados por el usuario.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function papers()
     {
@@ -63,5 +92,15 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->user_rol === UserRole::ADMIN;
+    }
+
+    /**
+     * Verifica si el usuario está activo.
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->user_status === true;
     }
 }

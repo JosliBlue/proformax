@@ -16,5 +16,11 @@ class AdminSeeder extends Seeder
             'user_password' => Hash::make('admin123'),
             'user_rol' => 'admin'
         ]);
+        User::create([
+            'user_name' => 'Usuario',
+            'user_email' => 'user@proformax.com',
+            'user_password' => Hash::make('user123'),
+            'user_rol' => 'user'
+        ]);
     }
 }

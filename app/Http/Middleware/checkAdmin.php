@@ -2,12 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
-class checkSession
+class checkAdmin
 {
     /**
      * Handle an incoming request.
@@ -16,10 +18,12 @@ class checkSession
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check()) {
-            return redirect()->route('home');
+        // Verificar si el usuario está autenticado y tiene el rol ADMIN
+        if (Auth::user()->isAdmin()) {
+            // Redirigir si no está autenticado o no tiene el rol adecuado
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect()->route('home');
     }
 }

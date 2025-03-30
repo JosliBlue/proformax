@@ -54,4 +54,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Paper::class, 'user_id');
     }
+
+    /**
+     * Verifica si el usuario tiene el rol de administrador.
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->user_rol === UserRole::ADMIN;
+    }
 }

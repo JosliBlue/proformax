@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\checkAdmin;
 use App\Http\Middleware\checkSession;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         // aqui se ve un ejemplo de como quedaria un archivo de X tipo integrado(registrado)
-        $middleware->append(checkSession::class);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // aqui se ve un ejemplo de como quedaria un metodo sin necesidad de archivo a parte

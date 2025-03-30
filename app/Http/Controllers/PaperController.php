@@ -11,7 +11,7 @@ class PaperController extends Controller
      */
     public function index()
     {
-        return "<h1>Proformas</h1>";
+        return view('papers');
     }
 
     /**

@@ -23,13 +23,17 @@
                 {{ Auth::user()->user_name }}
             </div>
 
-            <!-- Botón para cerrar sesión -->
-            <form method="GET" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Cerrar Sesión
-                </button>
-            </form>
+            <!-- Botón para editar el perfil -->
+            <a href="{{ route('profile') }}" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 hover:cursor-pointer">
+                <!-- Ícono a la izquierda -->
+                <span class="iconify w-5 h-5 hover:text-gray-500" data-icon="fluent:person-20-filled" data-inline="false"></span>
+                <span>Mi perfil</span>
+            </a>
+            <a href="{{ route('logout') }}" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 hover:cursor-pointer">
+                <!-- Ícono a la izquierda -->
+                <span class="iconify w-5 h-5 hover:text-gray-500" data-icon="tabler:logout" data-inline="false"></span>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
     </details>
 </header>

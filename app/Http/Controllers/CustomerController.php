@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Customer;
 
 class CustomerController extends Controller
 {
@@ -11,7 +12,31 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return view("customers");
+        $columns = ["Cliente", "Telefono", "Correo", "Estado"];
+
+        $data = Customer::select(
+            'customer_name',
+            'customer_lastname',
+            'customer_phone',
+            'customer_email',
+            'customer_status'
+        )->paginate(10);
+
+        // Convertimos los modelos a arrays asociativos
+        $rows = $data->getCollection()->map(function ($item) {
+            return [
+                'Cliente' => "{$item->customer_name} {$item->customer_lastname}",
+                'Telefono' => $item->customer_phone,
+                'Correo' => $item->customer_email,
+                'Estado' => $item->customer_status
+            ];
+        });
+
+        return view("customers", [
+            'columns' => $columns,
+            'rows' => $rows,
+            'paginator' => $data
+        ]);
     }
 
     /**

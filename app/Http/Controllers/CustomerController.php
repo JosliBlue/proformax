@@ -12,13 +12,35 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $columns = ["Cliente", "Telefono", "Correo", "Estado"];
+        $columns = [
+            ['name' => 'Cliente', 'field' => 'customer_name'],
+            ['name' => 'Telefono', 'field' => 'customer_phone'],
+            ['name' => 'Correo', 'field' => 'customer_email'],
+            ['name' => 'Estado', 'field' => 'customer_status']
+        ];
 
-        $data = Customer::paginate(5);
+        $sortField = request('sort', 'customer_name');
+        $sortDirection = request('direction', 'asc');
+        $search = request('search');
+
+        $query = Customer::query();
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_lastname', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('customer_email', 'like', "%{$search}%");
+            });
+        }
+
+        $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
         return view("customers", [
             'columns' => $columns,
-            'data' => $data
+            'data' => $data,
+            'sortField' => $sortField,
+            'sortDirection' => $sortDirection
         ]);
     }
 
@@ -27,7 +49,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+        // ESTE SE ENCUENTRA EN EL COMPONENTE LIVEWIRE CRUD/FORMULARIO-CLIENTES
     }
 
     /**

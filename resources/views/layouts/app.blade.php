@@ -25,7 +25,7 @@
             border-radius: 50px;
         }
     </style>
-
+    @stack('styles')
     @livewireStyles
 </head>
 
@@ -34,6 +34,25 @@
     @hasSection('content')
         {{-- Aqui se llama al header --}}
         @livewire('global.header')
+
+        <!-- Mostrar alertas de sesión -->
+        @if (session()->has('success'))
+            @livewire('partials.alerts', [
+                'type' => 'success',
+                'message' => session('success'),
+                'floating' => true,
+                'autoclose' => 5000,
+            ])
+        @endif
+
+        @if (session()->has('error'))
+            @livewire('partials.alerts', [
+                'type' => 'danger',
+                'message' => session('error'),
+                'floating' => true,
+                'autoclose' => 5000,
+            ])
+        @endif
 
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
         @if (Route::currentRouteName() !== 'home')

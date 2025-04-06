@@ -1,5 +1,5 @@
-@extends('layouts.app')
+@extends('appsita')
 
 @section('content')
-    @livewire('profile')
+    <h1>Mi perfil</h1>
 @endsection

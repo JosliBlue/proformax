@@ -30,18 +30,11 @@
         </div>
 
         {{-- Botón Nuevo Cliente --}}
-        <div class="mt-4 sm:mt-0 w-full sm:w-auto">
-            <button data-modal-toggle="nuevoCliente"
-                class="cursor-pointer w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Nuevo cliente
-            </button>
-        </div>
+        <a href="{{ route('customers.create') }}"
+            class="text-center cursor-pointer w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Nuevo cliente
+        </a>
     </div>
-
-
-    <x-partials.modal modal-id="nuevoCliente" title="Nuevo cliente">
-        <x-sin-clase.forms.customer-create />
-    </x-partials.modal>
 
     {{-- TABLA DE CLIENTES --}}
     <div class="overflow-x-auto rounded-lg shadow">
@@ -105,34 +98,31 @@
                             </span>
                         </td>
                         <td class="whitespace-nowrap text-sm text-gray-700">
-                            <!-- Botón Editar (Amarillo) -->
                             <div class="flex space-x-2">
                                 <!-- Botón Editar (Amarillo) -->
-                                <button onclick="openEditModal('{{ $customer->id }}')"
+                                <a href="{{ route('customers.edit', $customer->id) }}"
                                     class="cursor-pointer p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                     title="Editar">
                                     <span class="iconify w-6 h-6" data-icon="flowbite:edit-outline"></span>
-                                </button>
+                                </a>
 
                                 <!-- Botón Desactivar (Naranja) -->
                                 <form id="deactivateForm-{{ $customer->id }}"
-                                      action="{{ route('customers.soft_destroy', $customer->id) }}"
-                                      method="POST"
-                                      class="inline">
+                                    action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST"
+                                    class="inline">
                                     @csrf
                                     @method('PATCH')
                                     <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
                                         class="cursor-pointer p-2 bg-orange-500 text-white rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
                                         title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
-                                        <span class="iconify w-6 h-6" data-icon="{{ $customer->customer_status ? 'mdi:account-cancel' : 'mdi:account-check' }}"></span>
+                                        <span class="iconify w-6 h-6"
+                                            data-icon="{{ $customer->customer_status ? 'mdi:account-cancel' : 'mdi:account-check' }}"></span>
                                     </button>
                                 </form>
 
                                 <!-- Botón Eliminar (Rojo) -->
                                 <form id="deleteForm-{{ $customer->id }}"
-                                      action="{{ route('customers.destroy', $customer->id) }}"
-                                      method="POST"
-                                      class="inline">
+                                    action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
@@ -149,12 +139,6 @@
             </tbody>
         </table>
     </div>
-
-    <x-partials.modal modal-id="editCliente" title="Editar Cliente">
-        <div id="editCustomerContent">
-            <!-- Contenido se cargará dinámicamente aquí -->
-        </div>
-    </x-partials.modal>
     <!-- Mostrar la paginación -->
     <div class="mt-4">
         {{ $data->appends(request()->query())->links() }}
@@ -163,22 +147,6 @@
 
 @push('scripts')
     <script>
-        // Función para abrir el modal con el cliente específico
-        function openEditModal(customerId) {
-            // Hacer una petición para obtener el formulario de edición
-            fetch(`/customers/${customerId}/edit-form`)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('editCustomerContent').innerHTML = html;
-                    Modal.toggle('editCliente', true);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('editCustomerContent').innerHTML = '<p>Error al cargar el formulario</p>';
-                    Modal.toggle('editCliente', true);
-                });
-        }
-
         function confirmDelete(customerId) {
             Swal.fire({
                 title: '¿Estás seguro?',
@@ -195,21 +163,22 @@
                 }
             });
         }
+
         function confirmDeactivate(customerId) {
-        Swal.fire({
-            title: '¿Confirmar acción?',
-            text: "¿Deseas cambiar el estado de este cliente?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#f97316',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Sí, cambiar estado',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`deactivateForm-${customerId}`).submit();
-            }
-        });
-    }
+            Swal.fire({
+                title: '¿Confirmar acción?',
+                text: "¿Deseas cambiar el estado de este cliente?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#f97316',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, cambiar estado',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deactivateForm-${customerId}`).submit();
+                }
+            });
+        }
     </script>
 @endpush

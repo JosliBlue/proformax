@@ -47,7 +47,7 @@
         {{-- Solo muestra el contenido del login --}}
         @yield('content')
     @else
-        <x-sin-clase.header />
+        <x-partials.header />
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
         @if (Route::currentRouteName() !== 'home')
             {{ Breadcrumbs::render(Route::currentRouteName()) }}

@@ -12,14 +12,25 @@ use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
     $trail->push('Menú', route('home'));
 });
+
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Mi perfil', route('profile'));
 });
+
 Breadcrumbs::for('customers', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Clientes', route('customers'));
 });
+Breadcrumbs::for('customers.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('customers');
+    $trail->push('Nuevo cliente', route('customers.create'));
+});
+Breadcrumbs::for('customers.edit', function (BreadcrumbTrail $trail) {
+    $trail->parent('customers');
+    $trail->push('Editar cliente');
+});
+
 Breadcrumbs::for('papers', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Proformas', route('papers'));

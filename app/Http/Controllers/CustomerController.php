@@ -33,7 +33,7 @@ class CustomerController extends Controller
 
         $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
-        return view("_general.customers", [
+        return view("_general.customers.customers", [
             'columns' => $columns,
             'data' => $data,
             'sortField' => $sortField,
@@ -42,18 +42,57 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return view('_general.customers.customers-form');
+    }
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_lastname' => 'required|string|max:255',
-            'customer_phone' => 'required|numeric|max_digits:10',
-            'customer_email' => 'required|email|unique:customers,customer_email',
-        ]);
+        try {
+            $validated = $request->validate([
+                'customer_name' => 'required|string|max:255',
+                'customer_lastname' => 'required|string|max:255',
+                'customer_phone' => 'required|numeric|digits:10',
+                'customer_email' => 'required|email|unique:customers,customer_email'
+            ], [
+                'customer_name.required' => 'El nombre del cliente es obligatorio',
+                'customer_name.string' => 'El nombre debe ser texto válido',
+                'customer_name.max' => 'El nombre no debe exceder 255 caracteres',
 
-        Customer::create($validated);
+                'customer_lastname.required' => 'El apellido del cliente es obligatorio',
+                'customer_lastname.string' => 'El apellido debe ser texto válido',
+                'customer_lastname.max' => 'El apellido no debe exceder 255 caracteres',
 
-        return redirect()->route('customers')->with('success', 'Cliente creado correctamente.');
+                'customer_phone.required' => 'El teléfono es obligatorio',
+                'customer_phone.numeric' => 'El teléfono debe contener solo números',
+                'customer_phone.digits' => 'El teléfono debe tener exactamente 10 dígitos',
+
+                'customer_email.required' => 'El correo electrónico es obligatorio',
+                'customer_email.email' => 'Ingresa un correo electrónico válido',
+                'customer_email.unique' => 'Este correo electrónico ya está registrado',
+            ]);
+
+            Customer::create($validated);
+            return redirect()->route('customers')
+                ->with('success', 'Cliente creado correctamente.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Por favor corrige los errores en el formulario') // Toast de error
+                ->withErrors($e->validator); // Mensajes específicos por campo
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        $customer = Customer::findOrFail($id);
+        return view('_general.customers.customers-form', compact('customer'));
     }
 
     public function update(Request $request, $id)
@@ -62,8 +101,8 @@ class CustomerController extends Controller
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_lastname' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:20',
-            'customer_email' => 'required|email|max:255'
+            'customer_phone' => 'required|numeric|digits:10',
+            'customer_email' => 'required|email|unique:customers,customer_email,' . $id,
         ]);
 
         $customer->update($validated);

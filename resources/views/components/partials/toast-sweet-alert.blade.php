@@ -44,24 +44,23 @@
         toast: true, // Obligatorio para modo toast
         title: '{{ $message }}', // Texto principal (puede usar HTML)
         //text: 'Texto adicional', // Subtítulo (opcional)
-        width: 'auto', // <- Esto hace que el ancho se ajuste al contenido
+        width: 'full', // <- Esto hace que el ancho se ajuste al contenido
         icon: '{{ $icon }}', // 'success', 'error', 'warning', 'info', 'question'
-        padding: '1em 0.5em',
+        padding: '0.5em 1em',
         target: document.body, // Contenedor donde se insertará (por defecto: body)
 
         // -------------------------------
         // POSICIONAMIENTO
         // -------------------------------
-        position: 'bottom-end', // Opciones: 'top', 'top-start', 'top-end', 'center', 'bottom', 'bottom-start', 'bottom-end'
+        position: 'top', // Opciones: 'top', 'top-start', 'top-end', 'center', 'bottom', 'bottom-start', 'bottom-end'
         grow: false, // Hace que el toast crezca hacia arriba o abajo (opciones: 'row', 'column', 'fullscreen', false)
-
         // -------------------------------
         // TEMPORIZADOR Y CIERRE
         // -------------------------------
         timer: 4000, // Duración en milisegundos (0 = infinito)
         timerProgressBar: true, // Muestra barra de progreso
         showConfirmButton: false, // Oculta el botón "OK"
-        showCloseButton: true, // Muestra la "X" de cierre
+        showCloseButton: false, // Muestra la "X" de cierre
         closeButtonHtml: `
         <span class="iconify" data-icon="streamline:delete-1-solid"></span>
         `,
@@ -75,9 +74,8 @@
         background: '#ffffff', // Fondo del toast
         color: '#000000', // Color del texto
         customClass: {
-            popup: 'colored-toast', // Clase CSS para el toast
-            title: 'mi-clase-titulo', // Clase para el título
-            closeButton: 'mi-boton-cerrar' // Clase para la "X"
+            closeButton: 'mi-boton-cerrar', // Clase para la "X"
+            popup: 'colored-toast' // Clase para el popup
         },
 
         // -------------------------------
@@ -92,7 +90,6 @@
             popup: 'swal2-hide' // Clase nativa
             //popup: 'animate__animated animate__fadeOut' // Animación al cerrar
         },
-
         // -------------------------------
         // CALLBACKS (FUNCIONES)
         // -------------------------------

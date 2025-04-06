@@ -40,58 +40,7 @@
 
 
     <x-partials.modal modal-id="nuevoCliente" title="Nuevo cliente">
-        <form action="{{ route('customers.store') }}" method="POST">
-            @csrf
-
-            {{-- Nombre --}}
-            <div>
-                <label for="customer_name" class="block text-lg font-medium text-gray-800">Nombre</label>
-                <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name') }}"
-                    class="mt-2 block w-full rounded-lg border-2 border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-gray-700 transition duration-200">
-                @error('customer_name')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Apellido --}}
-            <div>
-                <label for="customer_lastname" class="block text-lg font-medium text-gray-800">Apellido</label>
-                <input type="text" name="customer_lastname" id="customer_lastname" value="{{ old('customer_lastname') }}"
-                    class="mt-2 block w-full rounded-lg border-2 border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-gray-700 transition duration-200">
-                @error('customer_lastname')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Teléfono --}}
-            <div>
-                <label for="customer_phone" class="block text-lg font-medium text-gray-800">Teléfono</label>
-                <input type="text" name="customer_phone" id="customer_phone" value="{{ old('customer_phone') }}"
-                    class="mt-2 block w-full rounded-lg border-2 border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-gray-700 transition duration-200">
-                @error('customer_phone')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Email --}}
-            <div>
-                <label for="customer_email" class="block text-lg font-medium text-gray-800">Correo electrónico</label>
-                <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email') }}"
-                    class="mt-2 block w-full rounded-lg border-2 border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-gray-700 transition duration-200">
-                @error('customer_email')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Botón Guardar --}}
-            <div class="pt-4 text-right">
-                <button type="submit"
-                    class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-md transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    Guardar Cliente
-                </button>
-            </div>
-        </form>
-
+        <x-sin-clase.forms.customer-create />
     </x-partials.modal>
 
     {{-- TABLA DE CLIENTES --}}
@@ -132,6 +81,7 @@
                             </div>
                         </th>
                     @endforeach
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
 
@@ -154,14 +104,112 @@
                                 {{ $customer->customer_status ? 'Activo' : 'Inactivo' }}
                             </span>
                         </td>
+                        <td class="whitespace-nowrap text-sm text-gray-700">
+                            <!-- Botón Editar (Amarillo) -->
+                            <div class="flex space-x-2">
+                                <!-- Botón Editar (Amarillo) -->
+                                <button onclick="openEditModal('{{ $customer->id }}')"
+                                    class="cursor-pointer p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                    title="Editar">
+                                    <span class="iconify w-6 h-6" data-icon="flowbite:edit-outline"></span>
+                                </button>
+
+                                <!-- Botón Desactivar (Naranja) -->
+                                <form id="deactivateForm-{{ $customer->id }}"
+                                      action="{{ route('customers.soft_destroy', $customer->id) }}"
+                                      method="POST"
+                                      class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
+                                        class="cursor-pointer p-2 bg-orange-500 text-white rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
+                                        <span class="iconify w-6 h-6" data-icon="{{ $customer->customer_status ? 'mdi:account-cancel' : 'mdi:account-check' }}"></span>
+                                    </button>
+                                </form>
+
+                                <!-- Botón Eliminar (Rojo) -->
+                                <form id="deleteForm-{{ $customer->id }}"
+                                      action="{{ route('customers.destroy', $customer->id) }}"
+                                      method="POST"
+                                      class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
+                                        class="cursor-pointer p-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        title="Eliminar">
+                                        <span class="iconify w-6 h-6" data-icon="fluent:delete-32-regular"></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
 
+    <x-partials.modal modal-id="editCliente" title="Editar Cliente">
+        <div id="editCustomerContent">
+            <!-- Contenido se cargará dinámicamente aquí -->
+        </div>
+    </x-partials.modal>
     <!-- Mostrar la paginación -->
     <div class="mt-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Función para abrir el modal con el cliente específico
+        function openEditModal(customerId) {
+            // Hacer una petición para obtener el formulario de edición
+            fetch(`/customers/${customerId}/edit-form`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('editCustomerContent').innerHTML = html;
+                    Modal.toggle('editCliente', true);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('editCustomerContent').innerHTML = '<p>Error al cargar el formulario</p>';
+                    Modal.toggle('editCliente', true);
+                });
+        }
+
+        function confirmDelete(customerId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deleteForm-${customerId}`).submit();
+                }
+            });
+        }
+        function confirmDeactivate(customerId) {
+        Swal.fire({
+            title: '¿Confirmar acción?',
+            text: "¿Deseas cambiar el estado de este cliente?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#f97316',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sí, cambiar estado',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`deactivateForm-${customerId}`).submit();
+            }
+        });
+    }
+    </script>
+@endpush

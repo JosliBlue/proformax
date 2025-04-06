@@ -12,6 +12,7 @@
 
     <script src="{{ asset('js/tailwind-josliblue.js') }}"></script>
     <script src="{{ asset('js/iconify.min.js') }}"></script>
+    <script src="{{ asset('js/sweetalert2@11') }}"></script>
 
     <style>
         * {

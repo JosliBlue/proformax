@@ -7,9 +7,6 @@ use App\Models\Customer;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $columns = [
@@ -45,17 +42,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -70,27 +56,35 @@ class CustomerController extends Controller
         return redirect()->route('customers')->with('success', 'Cliente creado correctamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_lastname' => 'required|string|max:255',
+            'customer_phone' => 'required|string|max:20',
+            'customer_email' => 'required|email|max:255'
+        ]);
+
+        $customer->update($validated);
+
+        return redirect()->route('customers')->with('success', 'Cliente actualizado correctamente');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function soft_destroy(string $id)
     {
-        //
-    }
+        $customer = Customer::findOrFail($id);
+        $customer->update(['customer_status' => !$customer->customer_status]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
+        return back()->with([
+            'status' => 'success',
+            'message' => $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado'
+        ]);
+    }
     public function destroy(string $id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+        $customer->delete();
+        return redirect()->route('customers')->with('success', 'Cliente eliminado');
     }
 }

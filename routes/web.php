@@ -8,6 +8,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Middleware\checkSession;
 use App\Http\Middleware\checkAdmin;
 use App\Livewire\Auth\Login;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,13 @@ Route::middleware('auth')->group(function () {
     // USER LINKS
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
     Route::post('/customers-store', [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('/customers/{id}/edit-form', function ($id) {
+        return view('components.sin-clase.forms.customer-edit', ['customer' => Customer::findOrFail($id)]);
+    })->name('customers.edit-form');
+    Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::patch('/customers/{id}/soft_destroy', [CustomerController::class, 'soft_destroy'])
+     ->name('customers.soft_destroy');
+    Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::get('/papers', [PaperController::class, 'index'])->name('papers');
 
     // ADMIN LINKS

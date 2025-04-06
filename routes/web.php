@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // USER LINKS
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
+    Route::post('/customers-store', [CustomerController::class, 'store'])->name('customers.store');
     Route::get('/papers', [PaperController::class, 'index'])->name('papers');
 
     // ADMIN LINKS

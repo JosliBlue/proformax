@@ -26,11 +26,11 @@ class CustomerController extends Controller
         $query = Customer::query();
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('customer_name', 'like', "%{$search}%")
-                  ->orWhere('customer_lastname', 'like', "%{$search}%")
-                  ->orWhere('customer_phone', 'like', "%{$search}%")
-                  ->orWhere('customer_email', 'like', "%{$search}%");
+                    ->orWhere('customer_lastname', 'like', "%{$search}%")
+                    ->orWhere('customer_phone', 'like', "%{$search}%")
+                    ->orWhere('customer_email', 'like', "%{$search}%");
             });
         }
 
@@ -40,7 +40,8 @@ class CustomerController extends Controller
             'columns' => $columns,
             'data' => $data,
             'sortField' => $sortField,
-            'sortDirection' => $sortDirection
+            'sortDirection' => $sortDirection,
+            'searchTerm' => $search // Pasamos el término de búsqueda a la vista
         ]);
     }
 
@@ -49,7 +50,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        // ESTE SE ENCUENTRA EN EL COMPONENTE LIVEWIRE CRUD/FORMULARIO-CLIENTES
+        //
     }
 
     /**
@@ -57,15 +58,16 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_lastname' => 'required|string|max:255',
+            'customer_phone' => 'required|numeric|max_digits:10',
+            'customer_email' => 'required|email|unique:customers,customer_email',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        Customer::create($validated);
+
+        return redirect()->route('customers')->with('success', 'Cliente creado correctamente.');
     }
 
     /**

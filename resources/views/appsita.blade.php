@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <script src="{{ asset('js/tailwind-josliblue.js') }}"></script>
-    <script src="{{ asset('js/iconify.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/css2-google_fonts.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
+
+    <script src="{{ asset('js/tailwind-josliblue.js') }}"></script>
+    <script src="{{ asset('js/iconify.min.js') }}"></script>
+
     <style>
         * {
             font-family: "Inter", sans-serif !important;
@@ -25,7 +25,9 @@
             border-radius: 50px;
         }
     </style>
+
     @stack('styles')
+
 </head>
 
 <body>
@@ -35,7 +37,7 @@
     @else
         <x-sin-clase.header />
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
-        @if (Route::currentRouteName() !== 'home' && class_exists('Breadcrumbs'))
+        @if (Route::currentRouteName() !== 'home')
             {{ Breadcrumbs::render(Route::currentRouteName()) }}
         @endif
 

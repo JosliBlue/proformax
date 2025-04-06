@@ -26,39 +26,17 @@
         }
     </style>
     @stack('styles')
-    @livewireStyles
 </head>
 
 <body>
-    {{-- si viene de una vista blade tradicional --}}
-    @hasSection('content')
-        {{-- Aqui se llama al header --}}
-        @livewire('global.header')
-
-        <!-- Mostrar alertas de sesión -->
-        @if (session()->has('success'))
-            @livewire('partials.alerts', [
-                'type' => 'success',
-                'message' => session('success'),
-                'floating' => true,
-                'autoclose' => 5000,
-            ])
-        @endif
-
-        @if (session()->has('error'))
-            @livewire('partials.alerts', [
-                'type' => 'danger',
-                'message' => session('error'),
-                'floating' => true,
-                'autoclose' => 5000,
-            ])
-        @endif
-
+    @if (Route::currentRouteName() == 'login')
+        {{-- Solo muestra el contenido del login --}}
+        @yield('content')
+    @else
+        <x-sin-clase.header />
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
-        @if (Route::currentRouteName() !== 'home')
-            @if (class_exists('Breadcrumbs'))
-                {{ Breadcrumbs::render(Route::currentRouteName()) }}
-            @endif
+        @if (Route::currentRouteName() !== 'home' && class_exists('Breadcrumbs'))
+            {{ Breadcrumbs::render(Route::currentRouteName()) }}
         @endif
 
         {{-- Aqui se carga la vista que llama el controlador --}}
@@ -68,13 +46,8 @@
             @yield('content')
         </div>
 
-        {{-- si viene de un componente de livewire(componente que ocupara toda la pantalla) --}}
-    @else
-        {{ $slot }}
     @endif
 
-    {{-- Scripts para q funcione livewire --}}
-    @livewireScripts
     {{-- Scripts personalizados --}}
     @stack('scripts')
 </body>

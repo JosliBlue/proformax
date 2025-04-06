@@ -1,36 +1,8 @@
-@extends('layouts.app')
+@extends('appsita')
 
 @push('styles')
 @endpush
 @section('content')
-    <h1>Clientes</h1>
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-
-        <div class="w-full sm:w-auto">
-            @livewire('partials.search-box', [
-                'route' => 'customers',
-                'placeholder' => 'Buscar clientes...',
-                'additionalParams' => ['sort' => request('sort'), 'direction' => request('direction')],
-            ])
-        </div>
-
-        @component('components.partials.boton', [
-            'href' => '#modal',
-        ])
-            Agregar cliente
-        @endcomponent
-
-
-        <!-- Componente Modal -->
-        @component('components.partials.modal')
-            @slot('title', 'Agregar nuevo cliente')
-
-            @slot('content')
-                <!-- Aquí va el contenido específico del formulario -->
-                @livewire('crud.formulario-clientes')
-            @endslot
-        @endcomponent
-    </div>
 
     <div class="overflow-x-auto rounded-lg shadow">
         <table class="min-w-full bg-white">

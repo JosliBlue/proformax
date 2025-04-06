@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PaperController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\SessionController;
 use App\Http\Middleware\checkSession;
 use App\Http\Middleware\checkAdmin;
 use App\Livewire\Auth\Login;
@@ -12,23 +13,22 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 
 // LOGIN LINK
-Route::get('/login', Login::class)->name('login')->middleware([checkSession::class]);
+Route::middleware([checkSession::class])->group(function () {
+    Route::get('/loginsito', [SessionController::class, 'index'])->name('login');
+    Route::post('login', [SessionController::class, 'login'])->name('login-submit');
+});
 
 Route::middleware('auth')->group(function () {
     // PRINCIPAL LINK
     Route::get('/', function () {
-        return view('home');
+        return view('_general.home');
     })->name('home');
 
     // HEADER LINKS
     Route::get('/profile', function () {
-        return view('profile');
+        return view('_general.profile');
     })->name('profile');
-    Route::get('/logout', function () {
-        Session::flush();
-        Auth::logout();
-        return redirect()->route('login');
-    })->name('logout');
+    Route::get('/logout', [SessionController::class, 'logout'])->name('logout');
 
     // USER LINKS
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/products', [ProductController::class, 'index'])->name('products');
         Route::get('/sellers', [SellerController::class, 'index'])->name('sellers');
         Route::get('/settings', function () {
-            return view('admin.settings');
+            return view('_admin.settings');
         })->name('settings');
     });
 });

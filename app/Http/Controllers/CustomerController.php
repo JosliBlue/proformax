@@ -36,7 +36,7 @@ class CustomerController extends Controller
 
         $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
-        return view("customers", [
+        return view("_general.customers", [
             'columns' => $columns,
             'data' => $data,
             'sortField' => $sortField,

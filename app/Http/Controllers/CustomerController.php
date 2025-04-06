@@ -76,10 +76,7 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($id);
         $customer->update(['customer_status' => !$customer->customer_status]);
 
-        return back()->with([
-            'status' => 'success',
-            'message' => $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado'
-        ]);
+        return back()->with('success', $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado');
     }
     public function destroy(string $id)
     {

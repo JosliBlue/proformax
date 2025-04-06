@@ -32,6 +32,17 @@
 </head>
 
 <body>
+    @if (session('success'))
+        <x-partials.toast-sweet-alert icon="success" message="{{ session('success') }}" />
+    @elseif (session('error'))
+        <x-partials.toast-sweet-alert icon="error" message="{{ session('error') }}" />
+    @elseif (session('warning'))
+        <x-partials.toast-sweet-alert icon="warning" message="{{ session('warning') }}" />
+    @elseif (session('info'))
+        <x-partials.toast-sweet-alert icon="info" message="{{ session('info') }}" />
+    @elseif(session('question'))
+        <x-partials.toast-sweet-alert icon="question" message="{{ session('question') }}" />
+    @endif
     @if (Route::currentRouteName() == 'login')
         {{-- Solo muestra el contenido del login --}}
         @yield('content')

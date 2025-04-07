@@ -149,8 +149,8 @@
     <script>
         function confirmDelete(customerId) {
             Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡No podrás revertir esto!",
+                title: '¿Eliminar cliente?',
+                text: "¡Si lo eliminas toda su informacion relacionada se perdera!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -166,13 +166,13 @@
 
         function confirmDeactivate(customerId) {
             Swal.fire({
-                title: '¿Confirmar acción?',
-                text: "¿Deseas cambiar el estado de este cliente?",
-                icon: 'question',
+                title: '¿Desactivar cliente?',
+                text: "Si lo desactivas todo lo relacionado con este cliente tambien se desactivará",
+                icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#f97316',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Sí, cambiar estado',
+                confirmButtonText: 'Sí, desactivar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {

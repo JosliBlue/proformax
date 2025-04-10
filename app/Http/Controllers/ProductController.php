@@ -3,62 +3,153 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Enums\ProductType;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('admin.products');
+        $columns = [
+            ['name' => 'Nombre', 'field' => 'product_name'],
+            ['name' => 'Tipo', 'field' => 'product_type'],
+            ['name' => 'Precio', 'field' => 'product_price'],
+            ['name' => 'Estado', 'field' => 'product_status']
+        ];
+
+        $sortField = request('sort', 'product_name');
+        $sortDirection = request('direction', 'asc');
+        $search = request('search');
+
+        $query = Product::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                    ->orWhere('product_price', 'like', "%{$search}%");
+            });
+        }
+
+        $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
+
+        return view("_admin.products.products", [
+            'columns' => $columns,
+            'data' => $data,
+            'sortField' => $sortField,
+            'sortDirection' => $sortDirection,
+            'searchTerm' => $search
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $types = ProductType::cases();
+        return view('_admin.products.products-form', compact('types'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $validated = $request->validate(
+                $this->getValidationRules(),
+                $this->getValidationMessages()
+            );
+
+            Product::create($validated);
+            return redirect()->route('products')
+                ->with('success', 'Producto creado correctamente.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->withErrors($e->validator);
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $types = ProductType::cases();
+        return view('_admin.products.products-form', compact('product', 'types'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $product = Product::findOrFail($id);
+
+            $validated = $request->validate(
+                $this->getValidationRules($id),
+                $this->getValidationMessages()
+            );
+
+            $product->update($validated);
+
+            return redirect()->route('products')
+                ->with('success', 'Producto actualizado correctamente.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->withErrors($e->validator);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('products')
+                ->with('error', 'El producto que intentas actualizar no existe.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al actualizar el producto: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function soft_destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->update(['product_status' => !$product->product_status]);
+
+        return back()->with('success', $product->product_status ? 'Producto activado' : 'Producto desactivado');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return redirect()->route('products')->with('success', 'Producto eliminado');
+    }
+
+    /**
+     * Obtiene los mensajes de validación comunes para Product
+     */
+    private function getValidationMessages()
+    {
+        return [
+            'product_name.required' => 'El nombre del producto es obligatorio',
+            'product_name.string' => 'El nombre debe ser texto válido',
+            'product_name.max' => 'El nombre no debe exceder 100 caracteres',
+
+            'product_type.required' => 'El tipo de producto es obligatorio',
+            'product_type.in' => 'El tipo de producto no es válido',
+
+            'product_price.required' => 'El precio es obligatorio',
+            'product_price.numeric' => 'El precio debe ser un número válido',
+            'product_price.min' => 'El precio no puede ser negativo',
+        ];
+    }
+
+    /**
+     * Obtiene las reglas de validación comunes para Product
+     */
+    private function getValidationRules($id = null)
+    {
+        return [
+            'product_name' => 'required|string|max:100',
+            'product_type' => 'required|in:'.implode(',', array_column(ProductType::cases(), 'value')),
+            'product_price' => 'required|numeric|min:0',
+        ];
     }
 }

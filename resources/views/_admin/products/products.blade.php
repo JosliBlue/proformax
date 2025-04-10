@@ -1,0 +1,183 @@
+@extends('appsita')
+
+@section('content')
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+
+        {{-- Buscador --}}
+        <div class="w-full sm:w-auto">
+            <form action="{{ route('products') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-2">
+                {{-- Input de búsqueda --}}
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar productos..."
+                    class="w-full sm:w-96 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                {{-- Contenedor de botones --}}
+                <div class="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+                    {{-- Botón Buscar --}}
+                    <button type="submit"
+                        class="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+                        Buscar
+                    </button>
+
+                    {{-- Botón Limpiar (solo visible con búsqueda) --}}
+                    @if (request('search'))
+                        <a href="{{ route('products') }}"
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none w-full sm:w-auto text-center">
+                            Limpiar
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+
+        {{-- Botón Nuevo Producto --}}
+        <a href="{{ route('products.create') }}"
+            class="text-center cursor-pointer w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Nuevo producto
+        </a>
+    </div>
+
+    {{-- TABLA DE PRODUCTOS --}}
+    <div class="overflow-x-auto rounded-lg shadow">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-100">
+                <tr>
+                    @foreach ($columns as $column)
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div class="flex items-center">
+                                <a href="{{ route('products', [
+                                    'sort' => $column['field'],
+                                    'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
+                                    'search' => request('search'),
+                                ]) }}"
+                                    class="hover:text-gray-700">
+                                    {{ $column['name'] }}
+                                </a>
+                                @if ($sortField === $column['field'])
+                                    <span class="ml-1">
+                                        @if ($sortDirection === 'asc')
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        @endif
+                                    </span>
+                                @endif
+                            </div>
+                        </th>
+                    @endforeach
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200">
+                @foreach ($data as $product)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {{ $product->product_name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {{ ucfirst($product->product_type->value) }}
+
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${{ number_format($product->product_price, 2) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            <span
+                                class="{{ $product->product_status ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800' : 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800' }}">
+                                {{ $product->product_status ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
+                        <td class="whitespace-nowrap text-sm text-gray-700">
+                            <div class="flex space-x-2">
+                                <!-- Botón Editar (Amarillo) -->
+                                <a href="{{ route('products.edit', $product->id) }}"
+                                    class="cursor-pointer p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                    title="Editar">
+                                    <span class="iconify w-6 h-6" data-icon="flowbite:edit-outline"></span>
+                                </a>
+
+                                <!-- Botón Desactivar (Naranja) -->
+                                <form id="deactivateForm-{{ $product->id }}"
+                                    action="{{ route('products.soft_destroy', $product->id) }}" method="POST"
+                                    class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="button" onclick="confirmDeactivate('{{ $product->id }}')"
+                                        class="cursor-pointer p-2 bg-orange-500 text-white rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        title="{{ $product->product_status ? 'Desactivar' : 'Activar' }}">
+                                        <span class="iconify w-6 h-6"
+                                            data-icon="{{ $product->product_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
+                                    </button>
+                                </form>
+
+                                <!-- Botón Eliminar (Rojo) -->
+                                <form id="deleteForm-{{ $product->id }}"
+                                    action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('{{ $product->id }}')"
+                                        class="cursor-pointer p-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        title="Eliminar">
+                                        <span class="iconify w-6 h-6" data-icon="fluent:delete-32-regular"></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <!-- Mostrar la paginación -->
+    <div class="mt-4">
+        {{ $data->appends(request()->query())->links() }}
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        function confirmDelete(productId) {
+            Swal.fire({
+                title: '¿Eliminar producto?',
+                text: "¡Esta acción no se puede deshacer!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deleteForm-${productId}`).submit();
+                }
+            });
+        }
+
+        function confirmDeactivate(productId) {
+            Swal.fire({
+                title: '¿Cambiar estado del producto?',
+                text: "Podrás activarlo/desactivarlo cuando lo necesites",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f97316',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deactivateForm-${productId}`).submit();
+                }
+            });
+        }
+    </script>
+@endpush

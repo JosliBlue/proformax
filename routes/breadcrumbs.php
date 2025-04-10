@@ -39,10 +39,28 @@ Breadcrumbs::for('products', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Productos', route('products'));
 });
+Breadcrumbs::for('products.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('products');
+    $trail->push('Nuevo cliente', route('products.create'));
+});
+Breadcrumbs::for('products.edit', function (BreadcrumbTrail $trail) {
+    $trail->parent('products');
+    $trail->push('Editar cliente');
+});
+
 Breadcrumbs::for('sellers', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Vendedores', route('sellers'));
 });
+Breadcrumbs::for('sellers.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('sellers');
+    $trail->push('Nuevo vendedor', route('sellers.create'));
+});
+Breadcrumbs::for('sellers.edit', function (BreadcrumbTrail $trail) {
+    $trail->parent('sellers');
+    $trail->push('Editar vendedor');
+});
+
 Breadcrumbs::for('settings', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Preferencias', route('settings'));

@@ -3,62 +3,56 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('_general.profile');
+        $user = Auth::user();
+        return view('_general.profile', compact('user'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function update(Request $request)
     {
-        //
-    }
+        $user = Auth::user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        try {
+            $validated = $request->validate([
+                'current_password' => 'required|string',
+                'user_password' => 'required|string|min:8|confirmed',
+            ], [
+                'current_password.required' => 'La contraseña actual es obligatoria',
+                'user_password.required' => 'La nueva contraseña es obligatoria',
+                'user_password.min' => 'La nueva contraseña debe tener al menos 8 caracteres',
+                'user_password.confirmed' => 'Las contraseñas no coinciden',
+            ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+            // Verificar contraseña actual
+            if (!Hash::check($validated['current_password'], $user->user_password)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'La contraseña actual no es correcta');
+            }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+            // Actualizar contraseña
+            $user->update([
+                'user_password' => Hash::make($validated['user_password']),
+            ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+            return redirect()->route('profile')
+                ->with('success', 'Contraseña actualizada correctamente.');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->withErrors($e->validator);
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al actualizar la contraseña: ' . $e->getMessage());
+        }
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Middleware\checkAdmin;
-use App\Http\Middleware\checkSession;
+use App\Http\Middleware\companyStyles;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // aqui se ve un ejemplo de como quedaria un archivo de X tipo integrado(registrado)
 
     })
     ->withExceptions(function (Exceptions $exceptions) {

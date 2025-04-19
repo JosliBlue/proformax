@@ -4,26 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <title>{{ $company->company_name }}</title>
+    <meta name="theme-color" content="{{ $company->company_primary_color }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="icon" href="{{ $company->getLogoUrlAttribute() }}" type="image/webp">
 
     <link rel="stylesheet" href="{{ asset('css/css2-google_fonts.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <script src="{{ asset('js/tailwind-josliblue.js') }}"></script>
+    <script src="{{ asset('js/tailwind-3_4_16.js') }}"></script>
     <script src="{{ asset('js/iconify.min.js') }}"></script>
-    <script src="{{ asset('js/sweetalert2@11') }}"></script>
+    <script src="{{ asset('js/sweetalert2@11.js') }}"></script>
+    <script>
+        // Configuración de Tailwind (debe ir PRIMERO)
+        tailwind.config = {
+            darkMode: 'class'
+        };
 
+        // Detección temprana del tema (auto-ejecutable)
+        // Código que se ejecuta ANTES de renderizar la página
+        (function() {
+            // 1. Verificar localStorage
+            const savedTheme = localStorage.getItem('theme');
+            // 2. Verificar preferencia del sistema
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // 3. Aplicar tema oscuro si:
+            //    - Hay tema guardado en localStorage como 'dark' O
+            //    - No hay tema guardado Y el sistema prefiere oscuro
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+                // Opcional: Asegura que elementos nativos (scrollbars, inputs) también sean oscuros
+                document.documentElement.style.colorScheme = 'dark';
+            }
+        })();
+    </script>
     <style>
+        :root {
+            --primary-color: {{ $company->company_primary_color }};
+            --secondary-color: {{ $company->company_secondary_color }};
+            --primary-text-color: {{ $company->company_primary_text_color }};
+            --secondary-text-color: {{ $company->company_secondary_text_color }};
+            --mi-oscuro: #010812;
+        }
+
         * {
             font-family: "Inter", sans-serif !important;
             font-optical-sizing: auto;
             font-weight: normal;
             font-style: normal;
-        }
-
-        .btn-sito {
-            border-radius: 50px;
         }
     </style>
 
@@ -31,7 +63,8 @@
 
 </head>
 
-<body>
+<body class="bg-gray-100 dark:bg-[var(--mi-oscuro)]">
+    {{-- TOASTS PARA NOTIFICACIONES --}}
     @if (session('success'))
         <x-partials.toast-sweet_alert icon="success" message="{{ session('success') }}" />
     @elseif (session('error'))
@@ -43,27 +76,32 @@
     @elseif(session('question'))
         <x-partials.toast-sweet_alert icon="question" message="{{ session('question') }}" />
     @endif
+
     @if (Route::currentRouteName() == 'login')
         {{-- Solo muestra el contenido del login --}}
         @yield('content')
     @else
         <x-partials.header />
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
-        @if (Route::currentRouteName() !== 'home')
+        @unless (Route::is('home'))
             {{ Breadcrumbs::render(Route::currentRouteName()) }}
-        @endif
+        @endunless
 
         {{-- Aqui se carga la vista que llama el controlador --}}
         {{-- El javascript de este id solo se aplica cuando esta en Home(el proceso esta en home) --}}
-        <div class="mx-4 rounded-lg md:mx-20 md:p-4 md:bg-blue-200" id="WhenEnHome">
+        <main @class([
+            'mx-4 mb-5 md:mx-20 md:pb-5 rounded-lg', // Clases siempre aplicadas
+            'md:p-4 md:bg-white dark:md:bg-gray-800' => !Route::is('home'), // Clases condicionales
+            'mt-4' => Route::is('home'), // Clases para cuando ese en HOME
+        ])>
             {{-- Aqui se carga el contenido --}}
             @yield('content')
-        </div>
-
+        </main>
     @endif
 
     {{-- Scripts personalizados --}}
     @stack('scripts')
+
 </body>
 
 </html>

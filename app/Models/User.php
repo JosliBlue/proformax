@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Modelo User para manejar los usuarios del sistema
@@ -32,7 +33,8 @@ class User extends Authenticatable
         'user_email',   // Email único del usuario
         'user_password', // Contraseña hasheada
         'user_rol',     // Rol del usuario (admin/user)
-        'user_status'   // Estado del usuario (activo/inactivo)
+        'user_status',   // Estado del usuario (activo/inactivo)
+        'company_id'
     ];
 
     /**
@@ -102,5 +104,9 @@ class User extends Authenticatable
     public function isActive()
     {
         return $this->user_status === true;
+    }
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

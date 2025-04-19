@@ -17,6 +17,7 @@
         'ruta' => 'papers',
     ];
 
+    // Opciones de administrador
     if (auth()->check() && auth()->user()->isAdmin()) {
         $items[] = [
             'icono' => 'line-md:briefcase-filled',
@@ -40,30 +41,65 @@
 @endphp
 
 @section('content')
-    <div class="flex flex-wrap items-center justify-center gap-4">
+    {{-- Contenedor Flex de tarjetas --}}
+    <div class="flex flex-wrap items-stretch justify-center gap-4 md:gap-6">
         @foreach ($items as $item)
             <a href="{{ route($item['ruta']) }}"
-                class="w-full sm:w-50 group sm:aspect-square p-4 flex flex-col items-center justify-center text-center
-                     rounded-lg shadow-lg bg-gray-200 hover:-translate-y-2 duration-500 transition-transform">
-                <span class="iconify w-15 h-15 text-black group-hover:w-20 group-hover:h-20 duration-500 transition-all"
-                    data-icon="{{ $item['icono'] }}"></span>
-                <p class="text-3xl font-medium text-gray-900 group-hover:text-2xl duration-500 transition-all">
-                    {{ $item['titulo'] }}
-                </p>
-                <p class="text-sm leading-tight text-gray-500">
-                    {{ $item['texto'] }}
-                </p>
+               class="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.5rem)] lg:w-[calc(25%-1.5rem)]
+                      group relative overflow-hidden rounded-xl shadow-md transition-all duration-300
+                      bg-white dark:bg-gray-800
+                      dark:hover:bg-gray-700
+                      hover:-translate-y-1
+                      flex flex-col min-h-[220px]
+                      border border-gray-100 dark:border-gray-700">
+
+                {{-- Efecto de borde primario al hacer hover --}}
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-[var(--primary-color)] dark:group-hover:border-[var(--secondary-color)]
+                            transition-all duration-300 rounded-xl pointer-events-none"></div>
+
+                {{-- Contenido de la tarjeta --}}
+                <div class="p-6 flex flex-col items-center text-center flex-grow justify-center">
+                    {{-- Icono con contenedor circular --}}
+                    <div class="mb-4 p-3 rounded-full bg-gray-100 dark:bg-gray-700/50
+                                group-hover:bg-[var(--primary-color)]/10 transition-all duration-300
+                                flex items-center justify-center">
+                        <span class="iconify w-14 h-14 text-gray-700 dark:text-gray-300
+                                  group-hover:text-[var(--primary-color)] dark:group-hover:text-white
+                                  transition-colors duration-300"
+                              data-icon="{{ $item['icono'] }}"></span>
+                    </div>
+
+                    {{-- Título --}}
+                    <h2 class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200
+                               group-hover:text-[var(--primary-color)] dark:group-hover:text-white
+                               transition-colors duration-300 mb-2">
+                        {{ $item['titulo'] }}
+                    </h2>
+
+                    {{-- Descripción --}}
+                    <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400
+                              group-hover:text-gray-800 dark:group-hover:text-gray-300
+                              transition-colors duration-300 px-2">
+                        {{ $item['texto'] }}
+                    </p>
+                </div>
             </a>
         @endforeach
     </div>
 @endsection
+
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const enHomeElement = document.getElementById('WhenEnHome');
-            if (enHomeElement) {
-                enHomeElement.classList.add('mt-2');
-            }
+            // Efecto de carga progresiva para las tarjetas
+            const cards = document.querySelectorAll('.flex > a');
+            cards.forEach((card, index) => {
+                card.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => {
+                    card.classList.remove('opacity-0', 'translate-y-4');
+                    card.classList.add('opacity-100', 'translate-y-0');
+                }, 150 * index);
+            });
         });
     </script>
 @endpush

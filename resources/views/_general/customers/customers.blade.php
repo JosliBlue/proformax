@@ -1,27 +1,28 @@
 @extends('appsita')
 
 @section('content')
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-
-        {{-- Buscador --}}
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
+        <!-- Buscador Mejorado -->
         <div class="w-full sm:w-auto">
-            <form action="{{ route('customers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-2">
-                {{-- Input de búsqueda --}}
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar clientes..."
-                    class="w-full sm:w-96 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <form action="{{ route('customers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
 
-                {{-- Contenedor de botones --}}
-                <div class="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
-                    {{-- Botón Buscar --}}
+                <div class="relative w-full sm:w-96">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span class="iconify h-6 w-6 text-gray-500" data-icon="heroicons:magnifying-glass"></span>
+                    </span>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar clientes..."
+                        class="w-full pl-12 pr-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                </div>
+
+                <div class="flex gap-3 w-full sm:w-auto">
                     <button type="submit"
-                        class="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+                        class="flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
                         Buscar
                     </button>
 
-                    {{-- Botón Limpiar (solo visible con búsqueda) --}}
                     @if (request('search'))
                         <a href="{{ route('customers') }}"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 focus:outline-none w-full sm:w-auto text-center">
+                            class="flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
                             Limpiar
                         </a>
                     @endif
@@ -29,156 +30,182 @@
             </form>
         </div>
 
-        {{-- Botón Nuevo Cliente --}}
+        <!-- Botón Nuevo Cliente Mejorado -->
         <a href="{{ route('customers.create') }}"
-            class="text-center cursor-pointer w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            Nuevo cliente
+            class="flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-5 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
+            <span>Nuevo cliente</span>
         </a>
     </div>
 
-    {{-- TABLA DE CLIENTES --}}
-    <div class="overflow-x-auto rounded-lg shadow">
-        <table class="min-w-full bg-white">
-            <thead class="bg-gray-100">
+    <!-- Tabla con Tamaño Aumentado -->
+    <div class="overflow-x-auto rounded-lg md:border md:border-gray-200 dark:md:border-gray-700">
+        <table class="min-w-full bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <!-- Cabecera Estilizada -->
+            <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
                     @foreach ($columns as $column)
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <div class="flex items-center">
+                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                            <div class="flex items-center gap-2">
                                 <a href="{{ route('customers', [
                                     'sort' => $column['field'],
                                     'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
                                     'search' => request('search'),
                                 ]) }}"
-                                    class="hover:text-gray-700">
+                                    class="hover:text-[var(--primary-color)] dark:hover:text-[var(--secondary-color)] transition-colors duration-150">
                                     {{ $column['name'] }}
                                 </a>
                                 @if ($sortField === $column['field'])
-                                    <span class="ml-1">
+                                    <span class="text-[var(--primary-color)] dark:text-[var(--secondary-color)]">
                                         @if ($sortDirection === 'asc')
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
+                                            <span class="iconify h-4 w-4" data-icon="heroicons:chevron-up-20-solid"></span>
                                         @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
+                                            <span class="iconify h-4 w-4" data-icon="heroicons:chevron-down-20-solid"></span>
                                         @endif
                                     </span>
                                 @endif
                             </div>
                         </th>
                     @endforeach
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                        Acciones
+                    </th>
                 </tr>
             </thead>
 
-            <tbody class="divide-y divide-gray-200">
+            <!-- Cuerpo de Tabla con Tamaño Aumentado -->
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach ($data as $customer)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 flex items-center aling-center">
-                            <span class="iconify w-7 h-5 text-gra-500" data-icon="ic:sharp-person"></span>
-                            <span>{{ $customer->getFullName() }}</span>
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
+                        <!-- Celda de Nombre Mejorada -->
+                        <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
+                            <div class="flex items-center gap-3">
+                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400" data-icon="heroicons:user-20-solid"></span>
+                                <span>{{ $customer->getFullName() }}</span>
+                            </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {{ $customer->customer_phone }}
+
+                        <!-- Celda de Teléfono -->
+                        <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
+                            <div class="flex items-center gap-3">
+                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400" data-icon="heroicons:phone-20-solid"></span>
+                                <span>{{ $customer->customer_phone }}</span>
+                            </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {{ $customer->customer_email }}
+
+                        <!-- Celda de Email -->
+                        <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
+                            <div class="flex items-center gap-3">
+                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400" data-icon="heroicons:envelope-20-solid"></span>
+                                <span>{{ $customer->customer_email }}</span>
+                            </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            <span
-                                class="{{ $customer->customer_status ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800' : 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800' }}">
+
+                        <!-- Estado con Badge Mejorado -->
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $customer->customer_status ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }}">
+                                <span class="iconify h-4 w-4 mr-1.5" data-icon="{{ $customer->customer_status ? 'heroicons:check-circle-20-solid' : 'heroicons:x-circle-20-solid' }}"></span>
                                 {{ $customer->customer_status ? 'Activo' : 'Inactivo' }}
                             </span>
                         </td>
-                        <td class="whitespace-nowrap text-sm text-gray-700">
-                            <div class="flex space-x-2">
-                                <!-- Botón Editar (Amarillo) -->
+
+                        <!-- Acciones con Tamaño Aumentado -->
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <!-- Botón Editar -->
                                 <a href="{{ route('customers.edit', $customer->id) }}"
-                                    class="cursor-pointer p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
                                     title="Editar">
-                                    <span class="iconify w-6 h-6" data-icon="flowbite:edit-outline"></span>
+                                    <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
                                 </a>
 
-                                <!-- Botón Desactivar (Naranja) -->
+                                <!-- Botón Desactivar/Activar -->
                                 <form id="deactivateForm-{{ $customer->id }}"
                                     action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST"
                                     class="inline">
                                     @csrf
                                     @method('PATCH')
                                     <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
-                                        class="cursor-pointer p-2 bg-orange-500 text-white rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                        class="p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-200"
                                         title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
-                                        <span class="iconify w-6 h-6"
-                                            data-icon="{{ $customer->customer_status ? 'mdi:account-cancel' : 'mdi:account-check' }}"></span>
+                                        <span class="iconify w-5 h-5"
+                                            data-icon="{{ $customer->customer_status ? 'heroicons:user-minus-20-solid' : 'heroicons:user-plus-20-solid' }}"></span>
                                     </button>
                                 </form>
 
-                                <!-- Botón Eliminar (Rojo) -->
+                                <!-- Botón Eliminar -->
                                 <form id="deleteForm-{{ $customer->id }}"
                                     action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
-                                        class="cursor-pointer p-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
                                         title="Eliminar">
-                                        <span class="iconify w-6 h-6" data-icon="fluent:delete-32-regular"></span>
+                                        <span class="iconify w-5 h-5" data-icon="heroicons:trash-20-solid"></span>
                                     </button>
                                 </form>
                             </div>
                         </td>
-
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    <!-- Mostrar la paginación -->
-    <div class="mt-4">
+
+    <!-- Paginación Centrada -->
+    <div class="flex justify-center">
         {{ $data->appends(request()->query())->links() }}
     </div>
 @endsection
 
 @push('scripts')
-    <script>
-        function confirmDelete(customerId) {
-            Swal.fire({
-                title: '¿Eliminar cliente?',
-                text: "¡Si lo eliminas toda su informacion relacionada se perdera!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`deleteForm-${customerId}`).submit();
-                }
-            });
-        }
+<script>
+    // Alertas Modernas con Tamaño Aumentado
+    function showAlert(options) {
+        const defaults = {
+            background: '#ffffff',
+            color: 'var(--mi-oscuro)',
+            customClass: {
+                popup: '!bg-white dark:!bg-[var(--mi-oscuro)] !rounded-lg !shadow-xl !max-w-md',
+                title: '!text-[var(--mi-oscuro)] dark:!text-white !font-semibold !text-lg',
+                htmlContainer: '!text-[var(--mi-oscuro)] dark:!text-gray-300 !text-base',
+                confirmButton: '!bg-[var(--primary-color)] hover:!bg-[var(--primary-color)]/90 dark:!bg-[var(--secondary-color)] dark:hover:!bg-[var(--secondary-color)]/90 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200',
+                cancelButton: '!bg-gray-500 hover:!bg-gray-600 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200'
+            }
+        };
 
-        function confirmDeactivate(customerId) {
-            Swal.fire({
-                title: '¿Desactivar cliente?',
-                text: "Si lo desactivas todo lo relacionado con este cliente tambien se desactivará",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#f97316',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Sí, desactivar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`deactivateForm-${customerId}`).submit();
-                }
-            });
-        }
-    </script>
+        return Swal.fire({ ...defaults, ...options });
+    }
+
+    function confirmDelete(customerId) {
+        showAlert({
+            title: '¿Eliminar cliente?',
+            text: "¡Esta acción no se puede deshacer! Se perderán todos los datos asociados.",
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`deleteForm-${customerId}`).submit();
+            }
+        });
+    }
+
+    function confirmDeactivate(customerId) {
+        showAlert({
+            title: '¿Cambiar estado?',
+            text: "¿Estás seguro de querer cambiar el estado de este cliente?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cambiar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`deactivateForm-${customerId}`).submit();
+            }
+        });
+    }
+</script>
 @endpush

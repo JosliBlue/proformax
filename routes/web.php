@@ -9,16 +9,17 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Middleware\checkSession;
 use App\Http\Middleware\checkAdmin;
+use App\Http\Middleware\companyStyles;
 use Illuminate\Support\Facades\Route;
 
 // LOGIN LINK
 Route::middleware([checkSession::class])->group(function () {
     Route::get('/loginsito', [SessionController::class, 'index'])->name('login');
-    Route::post('login', [SessionController::class, 'login'])->name('login-submit');
+    Route::post('login', [SessionController::class, 'login'])->name('login.submit');
 });
 
-Route::middleware('auth')->group(function () {
-    // PRINCIPAL LINK
+// DESPUES DE INICIAR SESION LINKS
+Route::middleware(['auth', companyStyles::class])->group(function () {
     Route::get('/', function () {
         return view('_general.home');
     })->name('home');
@@ -58,5 +59,6 @@ Route::middleware('auth')->group(function () {
         Route::patch('/sellers/soft_destroy/{id}', [SellerController::class, 'soft_destroy'])->name('sellers.soft_destroy');
 
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+        Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     });
 });

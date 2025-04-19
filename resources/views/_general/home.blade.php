@@ -45,39 +45,45 @@
     <div class="flex flex-wrap items-stretch justify-center gap-4 md:gap-6">
         @foreach ($items as $item)
             <a href="{{ route($item['ruta']) }}"
-               class="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.5rem)] lg:w-[calc(25%-1.5rem)]
+                class="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.5rem)] lg:w-[calc(25%-1.5rem)]
                       group relative overflow-hidden rounded-xl shadow-md transition-all duration-300
                       bg-white dark:bg-gray-800
                       dark:hover:bg-gray-700
                       hover:-translate-y-1
-                      flex flex-col min-h-[220px]
+                      flex flex-col
                       border border-gray-100 dark:border-gray-700">
 
                 {{-- Efecto de borde primario al hacer hover --}}
-                <div class="absolute inset-0 border-2 border-transparent group-hover:border-[var(--primary-color)] dark:group-hover:border-[var(--secondary-color)]
-                            transition-all duration-300 rounded-xl pointer-events-none"></div>
+                <div
+                    class="absolute inset-0 border-2 border-transparent group-hover:border-[var(--primary-color)] dark:group-hover:border-[var(--secondary-color)]
+                            transition-all duration-300 rounded-xl pointer-events-none">
+                </div>
 
                 {{-- Contenido de la tarjeta --}}
-                <div class="p-6 flex flex-col items-center text-center flex-grow justify-center">
+                <div class="p-5 flex flex-col items-center text-center flex-grow justify-center">
                     {{-- Icono con contenedor circular --}}
-                    <div class="mb-4 p-3 rounded-full bg-gray-100 dark:bg-gray-700/50
+                    <div
+                        class="mb-4 p-3 rounded-full bg-gray-100 dark:bg-gray-700/50
                                 group-hover:bg-[var(--primary-color)]/10 transition-all duration-300
                                 flex items-center justify-center">
-                        <span class="iconify w-14 h-14 text-gray-700 dark:text-gray-300
+                        <span
+                            class="iconify w-14 h-14 text-gray-700 dark:text-gray-300
                                   group-hover:text-[var(--primary-color)] dark:group-hover:text-white
                                   transition-colors duration-300"
-                              data-icon="{{ $item['icono'] }}"></span>
+                            data-icon="{{ $item['icono'] }}"></span>
                     </div>
 
                     {{-- Título --}}
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200
+                    <h2
+                        class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200
                                group-hover:text-[var(--primary-color)] dark:group-hover:text-white
-                               transition-colors duration-300 mb-2">
+                               transition-colors duration-300">
                         {{ $item['titulo'] }}
                     </h2>
 
                     {{-- Descripción --}}
-                    <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400
+                    <p
+                        class="text-xs md:text-sm text-gray-600 dark:text-gray-400
                               group-hover:text-gray-800 dark:group-hover:text-gray-300
                               transition-colors duration-300 px-2">
                         {{ $item['texto'] }}
@@ -98,7 +104,7 @@
                 setTimeout(() => {
                     card.classList.remove('opacity-0', 'translate-y-4');
                     card.classList.add('opacity-100', 'translate-y-0');
-                }, 150 * index);
+                }, 200 * index);
             });
         });
     </script>

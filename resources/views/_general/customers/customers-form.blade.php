@@ -1,86 +1,97 @@
 @extends('appsita')
 
 @section('content')
-    <div class="md:p-6 bg-mi-blanco md:rounded-xl md:shadow-md">
+    {{--
+    @if (isset($customer))
+        <h2
+            class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">
+            Datos de {{ $customer->customer_name . ' ' . $customer->customer_lastname }}
+        </h2>
+    @else
+        <h2
+            class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">
+            Crear nuevo cliente
+        </h2>
+    @endif
+ --}}
+
+    <form action="{{ isset($customer) ? route('customers.update', $customer->id) : route('customers.store') }}" method="POST"
+        class="my-5" autocomplete="on" spellcheck="true">
+        @csrf
         @if (isset($customer))
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">Datos de {{ $customer->customer_name ." ". $customer->customer_lastname}}</h2>
-        @else
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">Crear nuevo cliente</h2>
+            @method('PUT')
         @endif
 
-        <form action="{{ isset($customer) ? route('customers.update', $customer->id) : route('customers.store') }}"
-            method="POST" class="space-y-6" autocomplete="on" spellcheck="true">
-            @csrf
-            @if (isset($customer))
-                @method('PUT')
-            @endif
+        {{-- Token de seguridad adicional --}}
+        <input type="hidden" name="form_token" value="{{ Str::random(40) }}">
 
-            {{-- Token de seguridad adicional --}}
-            <input type="hidden" name="form_token" value="{{ Str::random(40) }}">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Nombre --}}
+            <div>
+                <label for="customer_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Nombre *
+                </label>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Nombre --}}
-                <div>
-                    <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-                    <input type="text" name="customer_name" id="customer_name"
-                        value="{{ old('customer_name', $customer->customer_name ?? '') }}" required
-                        class="w-full px-4 py-2 border border-primary-color mdsita:border-secondary-color rounded-lg bg-white text-mi-oscuro focus:outline-none focus:ring-2 ring-secondary-color mdsita:ring-primary-color focus:ring-primary-color mdsita:focus:ring-secondary-color"
-                        autocomplete="given-name">
-                    @error('customer_name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                <input type="text" name="customer_name" id="customer_name"
+                    value="{{ old('customer_name', $customer->customer_name ?? '') }}" required
+                    class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                    autocomplete="given-name">
 
-                {{-- Apellido --}}
-                <div>
-                    <label for="customer_lastname" class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
-                    <input type="text" name="customer_lastname" id="customer_lastname"
-                        value="{{ old('customer_lastname', $customer->customer_lastname ?? '') }}" required
-                        class="w-full px-4 py-2 border border-primary-color mdsita:border-secondary-color rounded-lg bg-white text-mi-oscuro focus:outline-none focus:ring-2 ring-secondary-color mdsita:ring-primary-color focus:ring-primary-color mdsita:focus:ring-secondary-color"
-                        autocomplete="family-name">
-                    @error('customer_lastname')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Teléfono --}}
-                <div>
-                    <label for="customer_phone" class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
-                    <input type="tel" name="customer_phone" id="customer_phone"
-                        value="{{ old('customer_phone', $customer->customer_phone ?? '') }}" required
-                        class="w-full px-4 py-2 border border-primary-color mdsita:border-secondary-color rounded-lg bg-white text-mi-oscuro focus:outline-none focus:ring-2 ring-secondary-color mdsita:ring-primary-color focus:ring-primary-color mdsita:focus:ring-secondary-color"
-                        autocomplete="tel">
-                    @error('customer_phone')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Email --}}
-                <div>
-                    <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico *</label>
-                    <input type="email" name="customer_email" id="customer_email"
-                        value="{{ old('customer_email', $customer->customer_email ?? '') }}" required
-                        class="w-full px-4 py-2 border border-primary-color mdsita:border-secondary-color rounded-lg bg-white text-mi-oscuro focus:outline-none focus:ring-2 ring-secondary-color mdsita:ring-primary-color focus:ring-primary-color mdsita:focus:ring-secondary-color"
-                        autocomplete="email">
-                    @error('customer_email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                @error('customer_name')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
             </div>
 
-            {{-- Protección contra bots --}}
-            <div class="hidden" aria-hidden="true">
-                <label for="website">Sitio web</label>
-                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            {{-- Apellido --}}
+            <div>
+                <label for="customer_lastname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Apellido *
+                </label>
+                <input type="text" name="customer_lastname" id="customer_lastname"
+                    value="{{ old('customer_lastname', $customer->customer_lastname ?? '') }}" required
+                    class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                    autocomplete="family-name">
+                @error('customer_lastname')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
             </div>
 
-            {{-- Botón Guardar --}}
-            <div class="pt-4 flex justify-end">
-                <button type="submit"
-                    class="inline-flex justify-center px-6 py-2.5 rounded-md bg-secondary-color text-secondary-text-color transition duration-150 ease-in-out cursor-pointer">
-                    {{ isset($customer) ? 'Actualizar cliente ' : 'Guardar nuevo cliente' }}
-                </button>
+            {{-- Teléfono --}}
+            <div>
+                <label for="customer_phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Teléfono *
+                </label>
+                <input type="tel" name="customer_phone" id="customer_phone"
+                    value="{{ old('customer_phone', $customer->customer_phone ?? '') }}" required
+                    class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                    autocomplete="tel">
+                @error('customer_phone')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
             </div>
-        </form>
-    </div>
+
+            {{-- Email --}}
+            <div>
+                <label for="customer_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Correo electrónico *
+                </label>
+
+                <input type="email" name="customer_email" id="customer_email"
+                    value="{{ old('customer_email', $customer->customer_email ?? '') }}" required
+                    class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                    autocomplete="email">
+                @error('customer_email')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        {{-- Botones --}}
+        <div class="pt-4 flex justify-end gap-3">
+            <button type="submit"
+                class="flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:brightness-125 px-6 py-2.5 rounded-lg transition-all duration-200">
+                {{ isset($customer) ? 'Actualizar cliente' : 'Guardar cliente' }}
+            </button>
+        </div>
+    </form>
 @endsection

@@ -162,5 +162,4 @@ class CustomerController extends Controller
 
         return $rules;
     }
-
 }

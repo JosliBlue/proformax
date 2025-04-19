@@ -44,7 +44,7 @@ class SellerController extends Controller
     public function create()
     {
         // Solo mostramos el rol 'user' en el formulario
-        $roles = [UserRole::USER];
+        $roles = UserRole::cases();
         return view('_admin.users.users-form', compact('roles'));
     }
 

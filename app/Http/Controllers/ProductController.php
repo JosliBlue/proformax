@@ -63,7 +63,6 @@ class ProductController extends Controller
                 ->withInput()
                 ->with('error', 'Por favor corrige los errores en el formulario')
                 ->withErrors($e->validator);
-
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -148,7 +147,7 @@ class ProductController extends Controller
     {
         return [
             'product_name' => 'required|string|max:100',
-            'product_type' => 'required|in:'.implode(',', array_column(ProductType::cases(), 'value')),
+            'product_type' => 'required|in:' . implode(',', array_column(ProductType::cases(), 'value')),
             'product_price' => 'required|numeric|min:0',
         ];
     }

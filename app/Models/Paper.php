@@ -34,7 +34,8 @@ class Paper extends Model
         'customer_id',        // ID del cliente asociado
         'paper_total_price',  // Precio total del documento
         'paper_days',         // Días asociados al documento
-        'paper_status'        // Estado del documento (activo/inactivo)
+        'paper_status',        // Estado del documento (activo/inactivo)
+        'company_id'
     ];
 
     /**
@@ -74,9 +75,8 @@ class Paper extends Model
      */
     public function products()
     {
-        return $this->belongsToMany(Product::class)
-            ->using(PaperProduct::class)
-            ->withPivot(['quantity', 'unit_price', 'subtotal'])
+        return $this->belongsToMany(Product::class, 'papers_products') // Especifica el nombre correcto
+            ->withPivot('quantity', 'unit_price', 'subtotal')
             ->withTimestamps();
     }
 

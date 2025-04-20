@@ -17,7 +17,11 @@ return new class extends Migration
             $table->enum('product_type', ['producto', 'servicio']);
             $table->decimal('product_price', 10, 2);
             $table->boolean('product_status')->default(true);
+            $table->unsignedBigInteger('company_id')->nullable(); // Relación con companies
             $table->timestamps();
+
+            // Clave foránea
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }
 

@@ -41,11 +41,11 @@ Breadcrumbs::for('products', function (BreadcrumbTrail $trail) {
 });
 Breadcrumbs::for('products.create', function (BreadcrumbTrail $trail) {
     $trail->parent('products');
-    $trail->push('Nuevo cliente', route('products.create'));
+    $trail->push('Nuevo producto', route('products.create'));
 });
 Breadcrumbs::for('products.edit', function (BreadcrumbTrail $trail) {
     $trail->parent('products');
-    $trail->push('Editar cliente');
+    $trail->push('Editar producto');
 });
 
 Breadcrumbs::for('sellers', function (BreadcrumbTrail $trail) {

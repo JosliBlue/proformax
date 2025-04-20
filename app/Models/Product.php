@@ -31,7 +31,8 @@ class Product extends Model
         'product_name',   // Nombre del producto/servicio
         'product_type',    // Tipo (producto/servicio)
         'product_price',   // Precio del producto
-        'product_status'   // Estado del producto (activo/inactivo)
+        'product_status',   // Estado del producto (activo/inactivo)
+        'company_id'
     ];
 
     /**
@@ -44,6 +45,13 @@ class Product extends Model
         'product_type' => ProductType::class, // Que el tipo este dentro de esas opciones del enum
         'product_status' => 'boolean'   // Convertir a booleano
     ];
+
+    public function papers()
+    {
+        return $this->belongsToMany(Paper::class, 'papers_products') // Especifica el nombre correcto
+            ->withPivot('quantity', 'unit_price', 'subtotal')
+            ->withTimestamps();
+    }
 
     /**
      * Verifica si el producto es de tipo "producto".

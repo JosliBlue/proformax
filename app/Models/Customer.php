@@ -31,7 +31,8 @@ class Customer extends Model
         'customer_lastname',  // Apellido del cliente
         'customer_phone',     // Teléfono del cliente
         'customer_email',     // Email del cliente
-        'customer_status'     // Estado del cliente (activo/inactivo)
+        'customer_status',     // Estado del cliente (activo/inactivo)
+        'company_id'
     ];
 
     /**

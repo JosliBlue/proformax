@@ -18,7 +18,11 @@ return new class extends Migration
             $table->string('customer_phone', 20);
             $table->string('customer_email', 100);
             $table->boolean('customer_status')->default(true);
+            $table->unsignedBigInteger('company_id')->nullable(); // Campo para la relación
             $table->timestamps();
+
+            // Definición de la clave foránea
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }
 

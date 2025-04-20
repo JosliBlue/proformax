@@ -15,18 +15,22 @@ return new class extends Migration
             $table->id();
 
             // Claves foráneas
-            $table->unsignedBigInteger('user_id'); // Columna para la clave foránea
-            $table->unsignedBigInteger('customer_id'); // Columna para la clave foránea
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('company_id'); // Nueva relación con companies
 
             $table->decimal('paper_total_price', 10, 2)->default(0.00);
             $table->string('paper_days');
+            $table->boolean('paper_status')->default(true);
+            $table->timestamps();
 
             // Definir las relaciones
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
 
-            $table->boolean('paper_status')->default(true);
-            $table->timestamps();
+            // Nueva relación con companies
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }
 

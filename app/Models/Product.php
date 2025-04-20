@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ProductType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Modelo Product para manejar los productos/servicios del sistema
@@ -114,5 +115,9 @@ class Product extends Model
     public function scopeOfType($query, $type)
     {
         return $query->where('product_type', $type);
+    }
+    public function scopeForCompany(Builder $query, $companyId): Builder
+    {
+        return $query->where('company_id', $companyId);
     }
 }

@@ -39,6 +39,11 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
     Route::patch('/customers/{id}/soft_destroy', [CustomerController::class, 'soft_destroy'])->name('customers.soft_destroy');
 
     Route::get('/papers', [PaperController::class, 'index'])->name('papers');
+    Route::get('/papers/create', [PaperController::class, 'create'])->name('papers.create');
+    Route::post('/papers', [PaperController::class, 'store'])->name('papers.store');
+    Route::get('/papers/{paper}/edit', [PaperController::class, 'edit'])->name('papers.edit');
+    Route::put('/papers/{paper}', [PaperController::class, 'update'])->name('papers.update');
+    Route::delete('/papers/{paper}', [PaperController::class, 'destroy'])->name('papers.destroy');
 
     // ADMIN LINKS
     Route::middleware([checkAdmin::class])->group(function () {

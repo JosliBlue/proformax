@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Modelo Customer para manejar los clientes del sistema
@@ -87,5 +88,9 @@ class Customer extends Model
     public function getFullName()
     {
         return $this->customer_name . ' ' . $this->customer_lastname;
+    }
+    public function scopeForCompany(Builder $query, $companyId): Builder
+    {
+        return $query->where('company_id', $companyId);
     }
 }

@@ -20,8 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id'); // Nueva relación con companies
 
             $table->decimal('paper_total_price', 10, 2)->default(0.00);
-            $table->string('paper_days');
-            $table->boolean('paper_status')->default(true);
+            $table->integer('paper_days');
             $table->timestamps();
 
             // Definir las relaciones

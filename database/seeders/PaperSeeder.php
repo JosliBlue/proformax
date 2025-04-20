@@ -22,8 +22,7 @@ class PaperSeeder extends Seeder
                 'customer_id' => 1, // Juan Pérez
                 'company_id' => 1,
                 'paper_total_price' => 325.50,
-                'paper_days' => '7 días',
-                'paper_status' => true,
+                'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(3),
                 'products' => [
                     [
@@ -51,8 +50,7 @@ class PaperSeeder extends Seeder
                 'customer_id' => 5, // Luis Rodríguez
                 'company_id' => 1,
                 'paper_total_price' => 180.00,
-                'paper_days' => '15 días',
-                'paper_status' => true,
+                'paper_days' => 10,
                 'created_at' => Carbon::now()->subDays(2),
                 'products' => [
                     [
@@ -68,8 +66,7 @@ class PaperSeeder extends Seeder
                 'customer_id' => 10, // Elena Sánchez
                 'company_id' => 1,
                 'paper_total_price' => 310.00,
-                'paper_days' => '30 días',
-                'paper_status' => false,
+                'paper_days' => 5,
                 'created_at' => Carbon::now()->subDays(1),
                 'products' => [
                     [
@@ -91,8 +88,7 @@ class PaperSeeder extends Seeder
                 'customer_id' => 15, // Andrés Morales
                 'company_id' => 1,
                 'paper_total_price' => 435.00,
-                'paper_days' => '10 días',
-                'paper_status' => true,
+                'paper_days' => 7,
                 'created_at' => Carbon::now(),
                 'products' => [
                     [
@@ -131,7 +127,6 @@ class PaperSeeder extends Seeder
                 'company_id' => $paperData['company_id'],
                 'paper_total_price' => $paperData['paper_total_price'],
                 'paper_days' => $paperData['paper_days'],
-                'paper_status' => $paperData['paper_status'],
                 'created_at' => $paperData['created_at']
             ]);
 

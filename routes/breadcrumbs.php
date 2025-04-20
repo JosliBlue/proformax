@@ -35,6 +35,15 @@ Breadcrumbs::for('papers', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Proformas', route('papers'));
 });
+Breadcrumbs::for('papers.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('papers');
+    $trail->push('Nueva proforma', route('papers.create'));
+});
+Breadcrumbs::for('papers.edit', function (BreadcrumbTrail $trail) {
+    $trail->parent('papers');
+    $trail->push('Editar');
+});
+
 Breadcrumbs::for('products', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Productos', route('products'));

@@ -62,7 +62,8 @@
                     Teléfono *
                 </label>
                 <input type="tel" name="customer_phone" id="customer_phone"
-                    value="{{ old('customer_phone', $customer->customer_phone ?? '') }}" required
+                    value="{{ old('customer_phone', $customer->customer_phone ?? '') }}" required pattern="[0-9]*"
+                    inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                     class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
                     autocomplete="tel">
                 @error('customer_phone')
@@ -70,7 +71,6 @@
                 @enderror
             </div>
 
-            {{-- Email --}}
             <div>
                 <label for="customer_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Correo electrónico *
@@ -78,8 +78,16 @@
 
                 <input type="email" name="customer_email" id="customer_email"
                     value="{{ old('customer_email', $customer->customer_email ?? '') }}" required
-                    class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
-                    autocomplete="email">
+                    @if (isset($customer) && !auth()->user()->isAdmin()) readonly @endif
+                    class="w-full px-4 py-3 text-base border rounded-lg transition-all duration-200
+                           @if (!isset($customer) || auth()->user()->isAdmin()) border-[var(--primary-color)] dark:border-[var(--secondary-color)]
+                               bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                               focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)]
+                           @else
+                               border-gray-300 dark:border-gray-600
+                               bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300
+                               cursor-not-allowed @endif">
+
                 @error('customer_email')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror

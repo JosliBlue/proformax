@@ -44,7 +44,8 @@
             <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
                     @foreach ($columns as $column)
-                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                        <th
+                            class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('customers', [
                                     'sort' => $column['field'],
@@ -59,14 +60,16 @@
                                         @if ($sortDirection === 'asc')
                                             <span class="iconify h-4 w-4" data-icon="heroicons:chevron-up-20-solid"></span>
                                         @else
-                                            <span class="iconify h-4 w-4" data-icon="heroicons:chevron-down-20-solid"></span>
+                                            <span class="iconify h-4 w-4"
+                                                data-icon="heroicons:chevron-down-20-solid"></span>
                                         @endif
                                     </span>
                                 @endif
                             </div>
                         </th>
                     @endforeach
-                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                    <th
+                        class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
                         Acciones
                     </th>
                 </tr>
@@ -79,7 +82,8 @@
                         <!-- Celda de Nombre Mejorada -->
                         <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
                             <div class="flex items-center gap-3">
-                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400" data-icon="heroicons:user-20-solid"></span>
+                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400"
+                                    data-icon="heroicons:user-20-solid"></span>
                                 <span>{{ $customer->getFullName() }}</span>
                             </div>
                         </td>
@@ -87,7 +91,8 @@
                         <!-- Celda de Teléfono -->
                         <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
                             <div class="flex items-center gap-3">
-                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400" data-icon="heroicons:phone-20-solid"></span>
+                                <span class="iconify hidden md:block h-5 w-5 text-gray-600 dark:text-gray-400 "
+                                    data-icon="heroicons:phone-20-solid"></span>
                                 <span>{{ $customer->customer_phone }}</span>
                             </div>
                         </td>
@@ -95,19 +100,23 @@
                         <!-- Celda de Email -->
                         <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
                             <div class="flex items-center gap-3">
-                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400" data-icon="heroicons:envelope-20-solid"></span>
+                                <span class="iconify hidden md:block h-5 w-5 text-gray-600 dark:text-gray-400"
+                                    data-icon="heroicons:envelope-20-solid"></span>
                                 <span>{{ $customer->customer_email }}</span>
                             </div>
                         </td>
 
                         <!-- Estado con Badge Mejorado -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $customer->customer_status ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }}">
-                                <span class="iconify h-4 w-4 mr-1.5" data-icon="{{ $customer->customer_status ? 'heroicons:check-circle-20-solid' : 'heroicons:x-circle-20-solid' }}"></span>
-                                {{ $customer->customer_status ? 'Activo' : 'Inactivo' }}
-                            </span>
-                        </td>
-
+                        @if (auth()->check() && auth()->user()->isAdmin())
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $customer->customer_status ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }}">
+                                    <span class="iconify h-4 w-4 mr-1.5"
+                                        data-icon="{{ $customer->customer_status ? 'heroicons:check-circle-20-solid' : 'heroicons:x-circle-20-solid' }}"></span>
+                                    {{ $customer->customer_status ? 'Activo' : 'Inactivo' }}
+                                </span>
+                            </td>
+                        @endif
                         <!-- Acciones con Tamaño Aumentado -->
                         <td class="px-4 py-3 whitespace-nowrap">
                             <div class="flex items-center gap-2">
@@ -125,24 +134,29 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
-                                        class="p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-200"
+                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
                                         title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
                                         <span class="iconify w-5 h-5"
-                                            data-icon="{{ $customer->customer_status ? 'heroicons:user-minus-20-solid' : 'heroicons:user-plus-20-solid' }}"></span>
+                                            data-icon="{{ $customer->customer_status ? 'mdi:trash-can' : 'tabler:trash-off' }}"></span>
                                     </button>
                                 </form>
 
+                                {{--
                                 <!-- Botón Eliminar -->
-                                <form id="deleteForm-{{ $customer->id }}"
-                                    action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
-                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
-                                        title="Eliminar">
-                                        <span class="iconify w-5 h-5" data-icon="heroicons:trash-20-solid"></span>
-                                    </button>
-                                </form>
+                                @if (auth()->check() && auth()->user()->isAdmin())
+                                    <form id="deleteForm-{{ $customer->id }}"
+                                        action="{{ route('customers.destroy', $customer->id) }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
+                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
+                                            title="Eliminar">
+                                            <span class="iconify w-5 h-5" data-icon="heroicons:trash-20-solid"></span>
+                                        </button>
+                                    </form>
+                                @endif
+                                 --}}
                             </div>
                         </td>
                     </tr>
@@ -158,54 +172,58 @@
 @endsection
 
 @push('scripts')
-<script>
-    // Alertas Modernas con Tamaño Aumentado
-    function showAlert(options) {
-        const defaults = {
-            background: '#ffffff',
-            color: 'var(--mi-oscuro)',
-            customClass: {
-                popup: '!bg-white dark:!bg-[var(--mi-oscuro)] !rounded-lg !shadow-xl !max-w-md',
-                title: '!text-[var(--mi-oscuro)] dark:!text-white !font-semibold !text-lg',
-                htmlContainer: '!text-[var(--mi-oscuro)] dark:!text-gray-300 !text-base',
-                confirmButton: '!bg-[var(--primary-color)] hover:!bg-[var(--primary-color)]/90 dark:!bg-[var(--secondary-color)] dark:hover:!bg-[var(--secondary-color)]/90 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200',
-                cancelButton: '!bg-gray-500 hover:!bg-gray-600 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200'
-            }
-        };
+    <script>
+        // Alertas Modernas con Tamaño Aumentado
+        function showAlert(options) {
+            const defaults = {
+                background: '#ffffff',
+                color: 'var(--mi-oscuro)',
+                customClass: {
+                    popup: '!bg-white dark:!bg-[var(--mi-oscuro)] !rounded-lg !shadow-xl !max-w-md',
+                    title: '!text-[var(--mi-oscuro)] dark:!text-white !font-semibold !text-lg',
+                    htmlContainer: '!text-[var(--mi-oscuro)] dark:!text-gray-300 !text-base',
+                    confirmButton: '!bg-[var(--primary-color)] hover:!bg-[var(--primary-color)]/90 dark:!bg-[var(--secondary-color)] dark:hover:!bg-[var(--secondary-color)]/90 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200',
+                    cancelButton: '!bg-gray-500 hover:!bg-gray-600 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200'
+                }
+            };
 
-        return Swal.fire({ ...defaults, ...options });
-    }
+            return Swal.fire({
+                ...defaults,
+                ...options
+            });
+        }
 
-    function confirmDelete(customerId) {
-        showAlert({
-            title: '¿Eliminar cliente?',
-            text: "¡Esta acción no se puede deshacer! Se perderán todos los datos asociados.",
-            icon: 'error',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`deleteForm-${customerId}`).submit();
-            }
-        });
-    }
-
-    function confirmDeactivate(customerId) {
-        showAlert({
-            title: '¿Cambiar estado?',
-            text: "¿Estás seguro de querer cambiar el estado de este cliente?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, cambiar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`deactivateForm-${customerId}`).submit();
-            }
-        });
-    }
-</script>
+        /*
+        function confirmDelete(customerId) {
+            showAlert({
+                title: '¿Eliminar cliente?',
+                text: "¡Esta acción no se puede deshacer! Se perderán todos los datos asociados.",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deleteForm-${customerId}`).submit();
+                }
+            });
+        }
+        */
+        function confirmDeactivate(customerId) {
+            showAlert({
+                title: '¿Cambiar estado?',
+                text: "¿Estás seguro de querer cambiar el estado de este cliente?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deactivateForm-${customerId}`).submit();
+                }
+            });
+        }
+    </script>
 @endpush

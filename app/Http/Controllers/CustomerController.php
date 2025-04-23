@@ -4,23 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $columns = [
-            ['name' => 'Cliente', 'field' => 'customer_name'],
-            ['name' => 'Telefono', 'field' => 'customer_phone'],
-            ['name' => 'Correo', 'field' => 'customer_email'],
-            ['name' => 'Estado', 'field' => 'customer_status']
-        ];
+        $columns = [];
+        $columns[] = ['name' => 'Cliente', 'field' => 'customer_name'];
+        $columns[] = ['name' => 'Telefono', 'field' => 'customer_phone'];
+        $columns[] = ['name' => 'Correo', 'field' => 'customer_email'];
+
+        // Solo admin ve la columna de estado
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            $columns[] = ['name' => 'Estado', 'field' => 'customer_status'];
+        }
 
         $sortField = request('sort', 'customer_name');
         $sortDirection = request('direction', 'asc');
         $search = request('search');
 
         $query = Customer::query();
+
+        // Filtrar por compañía del usuario (excepto para admins)
+        $query->where('company_id', Auth::user()->company_id);
+
+        if (Auth::check() && !Auth::user()->isAdmin()) {
+            $query->where('customer_status', true);
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -38,7 +49,7 @@ class CustomerController extends Controller
             'data' => $data,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
-            'searchTerm' => $search // Pasamos el término de búsqueda a la vista
+            'searchTerm' => $search
         ]);
     }
 
@@ -55,15 +66,16 @@ class CustomerController extends Controller
                 $this->getValidationMessages()
             );
 
+            $validated['company_id'] = Auth::user()->company_id;
+
             Customer::create($validated);
             return redirect()->route('customers')
                 ->with('success', 'Cliente creado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
                 ->withInput()
-                ->with('error', 'Por favor corrige los errores en el formulario') // Toast de error
-                ->withErrors($e->validator); // Mensajes específicos por campo
-
+                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->withErrors($e->validator);
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -81,11 +93,24 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::findOrFail($id);
+            $isAdmin = Auth::user()->isAdmin();
+
+            // Guardar el email original
+            $originalEmail = $customer->customer_email;
 
             $validated = $request->validate(
                 $this->getValidationRules($id),
                 $this->getValidationMessages()
             );
+            // Si no es admin, remover el campo del request
+            if (!$isAdmin) {
+                $request->request->remove('customer_email');
+            }
+
+            // Si no es admin, restaurar el valor original
+            if (!$isAdmin) {
+                $validated['customer_email'] = $originalEmail;
+            }
 
             $customer->update($validated);
 
@@ -105,7 +130,6 @@ class CustomerController extends Controller
                 ->with('error', 'Ocurrió un error al actualizar el cliente: ' . $e->getMessage());
         }
     }
-
     public function soft_destroy(string $id)
     {
         $customer = Customer::findOrFail($id);
@@ -113,12 +137,14 @@ class CustomerController extends Controller
 
         return back()->with('success', $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado');
     }
+    /*
     public function destroy(string $id)
     {
         $customer = Customer::findOrFail($id);
         $customer->delete();
         return redirect()->route('customers')->with('success', 'Cliente eliminado');
     }
+    */
 
     /**
      * Obtiene los mensajes de validación comunes para Customer

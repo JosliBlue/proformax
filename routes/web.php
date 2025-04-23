@@ -35,8 +35,8 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
-    Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::patch('/customers/{id}/soft_destroy', [CustomerController::class, 'soft_destroy'])->name('customers.soft_destroy');
+    /*  Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy'); */
 
     Route::get('/papers', [PaperController::class, 'index'])->name('papers');
     Route::get('/papers/create', [PaperController::class, 'create'])->name('papers.create');

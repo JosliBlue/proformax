@@ -26,7 +26,14 @@ class AdminsUsersSeeder extends Seeder
                 'user_email' => 'user@proformax.com',
                 'user_password' => Hash::make('user123'),
                 'user_rol' => 'user',
-                'company_id' => null // para que al iniciar sesion con este se vean los datos por default :3
+                'company_id' => '1'
+            ],
+            [
+                'user_name' => 'Nulito',
+                'user_email' => 'nulo@proformax.com',
+                'user_password' => Hash::make('nulo123'),
+                'user_rol' => 'user',
+                'company_id' => null // para que al iniciar sesion con este se vean los datos por default :3 y pruebas en entornos sin nada
             ]
         ];
 

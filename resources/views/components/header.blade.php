@@ -1,0 +1,67 @@
+<header
+    class="flex justify-between items-center p-4 md:mx-20 md:rounded-lg md:mt-2 bg-[var(--primary-color)] text-[var(--primary-text-color)]">
+    <!-- Logo y nombre de empresa -->
+    <div class="flex items-center space-x-3">
+        @if ($company->logo_url)
+            <img src="{{ $company->getLogoUrlAttribute() }}" alt="{{ $company->company_name }}"
+                class="h-10 w-auto object-contain">
+        @endif
+        <div class="text-lg font-semibold">
+            {{ strtoupper($company->company_name) }}
+        </div>
+    </div>
+
+    <!-- Contenedor usuario -->
+    <details class="relative" id="userMenu">
+        <summary class="flex items-center space-x-2 cursor-pointer list-none">
+            <!-- Nombre usuario -->
+            <div class="hidden text-sm md:block">
+                {{ Auth::user()->user_name }}
+            </div>
+
+            <!-- Ícono usuario -->
+            <span class="iconify w-auto h-12" data-icon="mdi:account-circle"></span>
+        </summary>
+
+        <!-- Menú flotante - Full width en mobile -->
+        <div
+            class="fixed md:absolute inset-x-0 md:right-0 md:left-auto mt-4 md:bottom-auto md:top-full md:mt-2 md:w-48  mx-4 rounded-t-lg md:rounded-lg shadow-lg py-2 z-50 bg-white text-black dark:bg-[var(--mi-oscuro)] dark:text-white">
+            <div
+                class="block text-center px-4 py-2 text-sm border-b border-gray-200 dark:border-gray-600 md:hidden select-none">
+                {{ Auth::user()->user_name }}
+            </div>
+
+            <!-- Switch de tema -->
+            <div class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                <x-theme-switcher/>
+            </div>
+
+            <!-- Opción de perfil -->
+            <a href="{{ route('profile') }}"
+                class="w-full text-center px-4 py-3 text-sm flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <span>Mi perfil</span>
+            </a>
+
+            <!-- Opción de cerrar sesión -->
+            <a href="{{ route('logout') }}"
+                class="w-full text-center px-4 py-3 text-sm flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                Cerrar Sesión
+            </a>
+        </div>
+    </details>
+</header>
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userMenu = document.getElementById('userMenu');
+
+            // Cerrar menú al hacer clic fuera en mobile
+            document.addEventListener('click', (e) => {
+                if (!userMenu.contains(e.target) && window.innerWidth < 768) {
+                    userMenu.removeAttribute('open');
+                }
+            });
+        });
+    </script>
+@endpush

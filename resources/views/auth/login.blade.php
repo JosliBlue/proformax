@@ -5,17 +5,17 @@
 @endphp
 
 @section('content')
-    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
-        <!-- Botón de cambio de tema -->
-        <button id="theme-toggle" type="button"
-            class="absolute top-4 right-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2.5 transition-colors duration-300">
-            <span id="theme-icon" class="iconify" data-icon="heroicons:sun-20-solid"></span>
+    <div
+        class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div class="absolute top-4 right-4 flex items-center">
+            <x-theme-switcher/>
             <span class="sr-only">Cambiar tema</span>
-        </button>
+        </div>
 
         <div class="mb-6 text-center">
             <img class="mx-auto h-20 w-auto" src="{{ $company->getLogoUrlAttribute() }}" alt="{{ $company->company_name }}">
-            <span class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $company->company_name }}</span>
+            <span
+                class="block mt-2 text-2xl font-semibold text-gray-900 dark:text-white">{{ $company->company_name }}</span>
         </div>
         <div
             class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 transition-colors duration-300">
@@ -43,12 +43,13 @@
                                 required>
                             <button type="button" id="togglePassword"
                                 class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600 dark:text-gray-300">
-                                <span class="iconify" id="password-icon" data-icon="heroicons:eye-20-solid"></span>
+                                <span id="passwordIcon" class="iconify" data-icon="heroicons:eye-20-solid"></span>
+                                <span class="sr-only">Mostrar/Ocultar contraseña</span>
                             </button>
                         </div>
                     </div>
                     <button type="submit"
-                        class="w-full bg-[var(--primary-color)] text-[var(--primary-text-color)] focus:ring-4 focus:outline-none font-medium rounded-lg px-5 py-2.5 text-center transition-colors duration-300">
+                        class="w-full bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center transition-colors duration-300 dark:focus:ring-blue-800">
                         Ingresar
                     </button>
                 </form>
@@ -59,45 +60,15 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = document.getElementById('theme-icon');
-            const html = document.documentElement;
-
-            const savedTheme = localStorage.getItem('theme') ||
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-            if (savedTheme === 'dark') {
-                html.classList.add('dark');
-                themeIcon.setAttribute('data-icon', 'heroicons:moon-20-solid');
-            }
-
-            themeToggle.addEventListener('click', function() {
-                html.classList.toggle('dark');
-                const isDark = html.classList.contains('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                themeIcon.setAttribute('data-icon', isDark ? 'heroicons:moon-20-solid' :
-                    'heroicons:sun-20-solid');
-            });
-
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (!localStorage.getItem('theme')) {
-                    html.classList.toggle('dark', e.matches);
-                    themeIcon.setAttribute('data-icon', e.matches ? 'heroicons:moon-20-solid' :
-                        'heroicons:sun-20-solid');
-                }
-            });
-
+        document.addEventListener('DOMContentLoaded', () => {
             // Mostrar/Ocultar contraseña
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('user_password');
-            const passwordIcon = document.getElementById('password-icon');
 
+            // Verificar que todos los elementos existan antes de añadir el listener
             togglePassword.addEventListener('click', function() {
                 const isPasswordVisible = passwordInput.type === 'text';
                 passwordInput.type = isPasswordVisible ? 'password' : 'text';
-                passwordIcon.setAttribute('data-icon', isPasswordVisible ? 'heroicons:eye-20-solid' :
-                    'heroicons:eye-off-20-solid');
             });
         });
     </script>

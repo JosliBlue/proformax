@@ -19,14 +19,13 @@
     <script src="{{ asset('js/iconify.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert2@11.js') }}"></script>
     <script>
-        // Configuración de Tailwind (debe ir PRIMERO)
+        // Configuración de Tailwind
         tailwind.config = {
             darkMode: 'class'
         };
 
-        // Detección temprana del tema (auto-ejecutable)
-        // Código que se ejecuta ANTES de renderizar la página
-        (function() {
+        // Función para aplicar el tema inicial
+        function applyInitialTheme() {
             // 1. Verificar localStorage
             const savedTheme = localStorage.getItem('theme');
             // 2. Verificar preferencia del sistema
@@ -37,10 +36,12 @@
             //    - No hay tema guardado Y el sistema prefiere oscuro
             if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
                 document.documentElement.classList.add('dark');
-                // Opcional: Asegura que elementos nativos (scrollbars, inputs) también sean oscuros
                 document.documentElement.style.colorScheme = 'dark';
             }
-        })();
+        }
+
+        // Aplicar tema al cargar la página
+        applyInitialTheme();
     </script>
     <style>
         :root {
@@ -60,7 +61,6 @@
     </style>
 
     @stack('styles')
-
 </head>
 
 <body class="bg-gray-100 dark:bg-[var(--mi-oscuro)]">
@@ -81,27 +81,24 @@
         {{-- Solo muestra el contenido del login --}}
         @yield('content')
     @else
-        <x-partials.header />
+        <x-header :company="$company" />
+
         {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
         @unless (Route::is('home'))
             {{ Breadcrumbs::render(Route::currentRouteName()) }}
         @endunless
 
-        {{-- Aqui se carga la vista que llama el controlador --}}
-        {{-- El javascript de este id solo se aplica cuando esta en Home(el proceso esta en home) --}}
+        {{-- Contenido principal --}}
         <main @class([
-            'mx-4 mb-5 md:mx-20 md:pb-5 rounded-lg', // Clases siempre aplicadas
-            'md:p-4 md:bg-white dark:md:bg-gray-800' => !Route::is('home'), // Clases condicionales
-            'mt-4' => Route::is('home'), // Clases para cuando ese en HOME
+            'mx-4 mb-5 md:mx-20 md:pb-5 rounded-lg',
+            'md:p-4 md:bg-white dark:md:bg-gray-800' => !Route::is('home'),
+            'mt-4' => Route::is('home'),
         ])>
-            {{-- Aqui se carga el contenido --}}
             @yield('content')
         </main>
     @endif
 
-    {{-- Scripts personalizados --}}
     @stack('scripts')
-
 </body>
 
 </html>

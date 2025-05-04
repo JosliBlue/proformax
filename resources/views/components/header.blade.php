@@ -15,7 +15,7 @@
     <details class="relative" id="userMenu">
         <summary class="flex items-center space-x-2 cursor-pointer list-none">
             <!-- Nombre usuario -->
-            <div class="hidden text-sm md:block">
+            <div class="hidden md:block">
                 {{ Auth::user()->user_name }}
             </div>
 
@@ -25,9 +25,9 @@
 
         <!-- Menú flotante - Full width en mobile -->
         <div
-            class="fixed md:absolute inset-x-0 md:right-0 md:left-auto mt-4 md:bottom-auto md:top-full md:mt-2 md:w-48  mx-4 rounded-t-lg md:rounded-lg shadow-lg py-2 z-50 bg-white text-black dark:bg-[var(--mi-oscuro)] dark:text-white">
+            class="fixed md:absolute inset-x-0 md:right-0 md:left-auto mt-2 md:bottom-auto md:top-full md:mt-2 md:w-48 mx-5 md:mx-0 rounded-lg md:rounded-lg shadow-lg py-2 z-50 bg-white text-black dark:bg-[var(--mi-oscuro)] dark:text-white">
             <div
-                class="block text-center px-4 py-2 text-sm border-b border-gray-200 dark:border-gray-600 md:hidden select-none">
+                class="block text-center px-4 py-2  border-b border-gray-200 dark:border-gray-600 md:hidden select-none">
                 {{ Auth::user()->user_name }}
             </div>
 
@@ -38,13 +38,13 @@
 
             <!-- Opción de perfil -->
             <a href="{{ route('profile') }}"
-                class="w-full text-center px-4 py-3 text-sm flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="w-full text-center px-4 py-2  flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
                 <span>Mi perfil</span>
             </a>
 
             <!-- Opción de cerrar sesión -->
             <a href="{{ route('logout') }}"
-                class="w-full text-center px-4 py-3 text-sm flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="w-full text-center px-4 py-2  flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
                 Cerrar Sesión
             </a>
         </div>
@@ -58,7 +58,7 @@
 
             // Cerrar menú al hacer clic fuera en mobile
             document.addEventListener('click', (e) => {
-                if (!userMenu.contains(e.target) && window.innerWidth < 768) {
+                if (!userMenu.contains(e.target)) {
                     userMenu.removeAttribute('open');
                 }
             });

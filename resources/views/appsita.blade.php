@@ -12,9 +12,7 @@
     <link rel="icon" href="{{ $company->getLogoUrlAttribute() }}" type="image/webp">
 
     <link rel="stylesheet" href="{{ asset('css/css2-google_fonts.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
+    
     <script src="{{ asset('js/tailwind-3_4_16.js') }}"></script>
     <script src="{{ asset('js/iconify.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert2@11.js') }}"></script>

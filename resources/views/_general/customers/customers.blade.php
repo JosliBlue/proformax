@@ -91,8 +91,6 @@
                         <!-- Celda de Teléfono -->
                         <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
                             <div class="flex items-center gap-3">
-                                <span class="iconify hidden md:block h-5 w-5 text-gray-600 dark:text-gray-400 "
-                                    data-icon="heroicons:phone-20-solid"></span>
                                 <span>{{ $customer->customer_phone }}</span>
                             </div>
                         </td>
@@ -100,8 +98,6 @@
                         <!-- Celda de Email -->
                         <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
                             <div class="flex items-center gap-3">
-                                <span class="iconify hidden md:block h-5 w-5 text-gray-600 dark:text-gray-400"
-                                    data-icon="heroicons:envelope-20-solid"></span>
                                 <span>{{ $customer->customer_email }}</span>
                             </div>
                         </td>

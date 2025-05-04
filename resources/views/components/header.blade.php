@@ -13,14 +13,14 @@
 
     <!-- Contenedor usuario -->
     <details class="relative" id="userMenu">
-        <summary class="flex items-center space-x-2 cursor-pointer list-none">
+        <summary class="flex items-center md:space-x-2 cursor-pointer list-none">
             <!-- Nombre usuario -->
             <div class="hidden md:block">
                 {{ Auth::user()->user_name }}
             </div>
 
             <!-- Ícono usuario -->
-            <span class="iconify w-auto h-12" data-icon="mdi:account-circle"></span>
+            <span class="iconify w-12 h-12" data-icon="mdi:account-circle"></span>
         </summary>
 
         <!-- Menú flotante - Full width en mobile -->

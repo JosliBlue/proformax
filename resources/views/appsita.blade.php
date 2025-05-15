@@ -12,7 +12,7 @@
     <link rel="icon" href="{{ $company->getLogoUrlAttribute() }}" type="image/webp">
 
     <link rel="stylesheet" href="{{ asset('css/css2-google_fonts.css') }}">
-    
+
     <script src="{{ asset('js/tailwind-3_4_16.js') }}"></script>
     <script src="{{ asset('js/iconify.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert2@11.js') }}"></script>
@@ -61,7 +61,7 @@
     @stack('styles')
 </head>
 
-<body class="bg-gray-100 dark:bg-[var(--mi-oscuro)]">
+<body class="bg-[#eeeff1] dark:bg-[var(--mi-oscuro)]">
     {{-- TOASTS PARA NOTIFICACIONES --}}
     @if (session('success'))
         <x-partials.toast-sweet_alert icon="success" message="{{ session('success') }}" />
@@ -79,23 +79,22 @@
         {{-- Solo muestra el contenido del login --}}
         @yield('content')
     @else
-        <x-header :company="$company" />
+        <div class="min-h-dvh grid grid-rows-[auto_1fr_auto]">
+            <x-header class="row-start-1" />
 
-        {{-- Aqui se llama a los breadcrumbs si no estan en home --}}
-        @unless (Route::is('home'))
-            {{ Breadcrumbs::render(Route::currentRouteName()) }}
-        @endunless
+            <section>
+                {{-- Contenido principal --}}
+                <main class="m-4 md:mx-20 row-start-2">
+                    @yield('content')
+                </main>
+            </section>
 
-        {{-- Contenido principal --}}
-        <main @class([
-            'mx-4 mb-5 md:mx-20 md:pb-5 rounded-lg',
-            'md:p-4 md:bg-white dark:md:bg-gray-800' => !Route::is('home'),
-            'mt-4' => Route::is('home'),
-        ])>
-            @yield('content')
-        </main>
+            <x-footer class="row-start-3" />
+        </div>
     @endif
 
+    <!-- Incluir el componente de alertas -->
+    <x-partials.sweet-alert />
     @stack('scripts')
 </body>
 

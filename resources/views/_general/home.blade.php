@@ -46,18 +46,13 @@
         @foreach ($items as $item)
             <a href="{{ route($item['ruta']) }}"
                 class="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.5rem)] lg:w-[calc(25%-1.5rem)]
-                      group relative overflow-hidden rounded-xl shadow-md transition-all duration-300
+                      group relative overflow-hidden rounded-xl transition-all duration-300
                       bg-white dark:bg-gray-800
                       dark:hover:bg-gray-700
                       hover:-translate-y-1
                       flex flex-col
-                      border border-gray-100 dark:border-gray-700">
-
-                {{-- Efecto de borde primario al hacer hover --}}
-                <div
-                    class="absolute inset-0 border-2 border-transparent group-hover:border-[var(--primary-color)] dark:group-hover:border-[var(--secondary-color)]
-                            transition-all duration-300 rounded-xl pointer-events-none">
-                </div>
+                      border-2 border-transparent
+                      hover:border-[var(--primary-color)] dark:hover:border-[var(--secondary-color)]">
 
                 {{-- Contenido de la tarjeta --}}
                 <div class="p-5 flex flex-col items-center text-center flex-grow justify-center">

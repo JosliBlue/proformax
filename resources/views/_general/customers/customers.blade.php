@@ -1,223 +1,285 @@
 @extends('appsita')
 
 @section('content')
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
-        <!-- Buscador Mejorado -->
-        <div class="w-full sm:w-auto">
-            <form action="{{ route('customers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
+    <!-- Título con flecha de retroceso - Versión con navegación JS -->
+    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm">
+        <a href="{{ route('home') }}" class="flex items-center text-[var(--primary-color)] group focus:outline">
+            <span class="iconify h-6 w-6 group-hover:-translate-x-1 transition-transform duration-200"
+                data-icon="heroicons:arrow-left-20-solid"></span>
+        </a>
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            Gestión de Clientes
+        </h1>
+    </div>
 
-                <div class="relative w-full sm:w-96">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span class="iconify h-6 w-6 text-gray-500" data-icon="heroicons:magnifying-glass"></span>
-                    </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar clientes..."
-                        class="w-full pl-12 pr-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
-                </div>
+    <div class="flex flex-col gap-4 my-4">
+        <!-- Barra superior con buscador y botón -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <!-- Buscador Mejorado -->
+            <div class="w-full sm:w-auto">
+                <form action="{{ route('customers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
+                    <div class="relative w-full sm:w-96">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                            <span class="iconify h-5 w-5 " data-icon="line-md:search-filled"></span>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Buscar clientes..."
+                            class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
+                    </div>
 
-                <div class="flex gap-3 w-full sm:w-auto">
-                    <button type="submit"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
-                        Buscar
-                    </button>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button type="submit"
+                            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                            Buscar
+                        </button>
 
-                    @if (request('search'))
-                        <a href="{{ route('customers') }}"
-                            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
-                            Limpiar
-                        </a>
-                    @endif
-                </div>
-            </form>
+                        @if (request('search'))
+                            <a href="{{ route('customers') }}"
+                                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                                <span class="iconify h-5 w-5 " data-icon="iconamoon:trash-light"></span>
+                                Limpiar
+                            </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
+            <!-- Botón Nuevo Cliente -->
+            <div class="w-full sm:w-auto">
+                <a href="{{ route('customers.create') }}"
+                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                    <span class="iconify h-5 w-5 " data-icon="fluent:add-32-filled"></span>
+                    Nuevo cliente
+                </a>
+            </div>
         </div>
 
-        <!-- Botón Nuevo Cliente Mejorado -->
-        <a href="{{ route('customers.create') }}"
-            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-5 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
-            <span>Nuevo cliente</span>
-        </a>
+        <!-- Filtros de ordenamiento con efecto hover -->
+        <div class="flex flex-wrap items-center gap-2 overflow-x-auto py-1">
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
+
+            @foreach ($columns as $column)
+                <a href="{{ route('customers', [
+                    'sort' => $column['field'],
+                    'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
+                    'search' => request('search'),
+                ]) }}"
+                    class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
+                {{ $sortField === $column['field']
+                    ? 'border-transparent bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm hover:shadow-md'
+                    : 'text-gray-900 dark:text-gray-300 border-[var(--primary-color)] hover:shadow-md bg-white dark:bg-gray-900' }}">
+                    {{ $column['name'] }}
+                    @if ($sortField === $column['field'])
+                        <span class="ml-1">
+                            @if ($sortDirection === 'asc')
+                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                    data-icon="oui:arrow-up"></span>
+                            @else
+                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                    data-icon="oui:arrow-down"></span>
+                            @endif
+                        </span>
+                    @endif
+                </a>
+            @endforeach
+        </div>
     </div>
-
-    <!-- Tabla con Tamaño Aumentado -->
-    <div class="overflow-x-auto rounded-lg md:border md:border-gray-200 dark:md:border-gray-700">
-        <table class="min-w-full bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <!-- Cabecera Estilizada -->
-            <thead class="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                    @foreach ($columns as $column)
-                        <th
-                            class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('customers', [
-                                    'sort' => $column['field'],
-                                    'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
-                                    'search' => request('search'),
-                                ]) }}"
-                                    class="hover:text-[var(--primary-color)] dark:hover:text-[var(--secondary-color)] transition-colors duration-150">
-                                    {{ $column['name'] }}
-                                </a>
-                                @if ($sortField === $column['field'])
-                                    <span class="text-[var(--primary-color)] dark:text-[var(--secondary-color)]">
-                                        @if ($sortDirection === 'asc')
-                                            <span class="iconify h-4 w-4" data-icon="heroicons:chevron-up-20-solid"></span>
-                                        @else
-                                            <span class="iconify h-4 w-4"
-                                                data-icon="heroicons:chevron-down-20-solid"></span>
-                                        @endif
-                                    </span>
-                                @endif
-                            </div>
-                        </th>
-                    @endforeach
-                    <th
-                        class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
-                        Acciones
-                    </th>
-                </tr>
-            </thead>
-
-            <!-- Cuerpo de Tabla con Tamaño Aumentado -->
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                @foreach ($data as $customer)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
-                        <!-- Celda de Nombre Mejorada -->
-                        <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
-                            <div class="flex items-center gap-3">
-                                <span class="iconify h-5 w-5 text-gray-600 dark:text-gray-400"
-                                    data-icon="heroicons:user-20-solid"></span>
-                                <span>{{ $customer->getFullName() }}</span>
-                            </div>
-                        </td>
-
-                        <!-- Celda de Teléfono -->
-                        <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
-                            <div class="flex items-center gap-3">
-                                <span>{{ $customer->customer_phone }}</span>
-                            </div>
-                        </td>
-
-                        <!-- Celda de Email -->
-                        <td class="px-4 py-3 whitespace-nowrap text-base text-gray-800 dark:text-gray-200">
-                            <div class="flex items-center gap-3">
-                                <span>{{ $customer->customer_email }}</span>
-                            </div>
-                        </td>
-
-                        <!-- Estado con Badge Mejorado -->
-                        @if (auth()->check() && auth()->user()->isAdmin())
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $customer->customer_status ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }}">
-                                    <span class="iconify h-4 w-4 mr-1.5"
-                                        data-icon="{{ $customer->customer_status ? 'heroicons:check-circle-20-solid' : 'heroicons:x-circle-20-solid' }}"></span>
-                                    {{ $customer->customer_status ? 'Activo' : 'Inactivo' }}
-                                </span>
-                            </td>
-                        @endif
-                        <!-- Acciones con Tamaño Aumentado -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <div class="flex items-center gap-2">
-                                <!-- Botón Editar -->
-                                <a href="{{ route('customers.edit', $customer->id) }}"
-                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200"
-                                    title="Editar">
-                                    <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
-                                </a>
-
-                                <!-- Botón Desactivar/Activar -->
-                                <form id="deactivateForm-{{ $customer->id }}"
-                                    action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST"
-                                    class="inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
-                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
-                                        title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
-                                        <span class="iconify w-5 h-5"
-                                            data-icon="{{ $customer->customer_status ? 'mdi:trash-can' : 'tabler:trash-off' }}"></span>
-                                    </button>
-                                </form>
-
-                                {{--
-                                <!-- Botón Eliminar -->
-                                @if (auth()->check() && auth()->user()->isAdmin())
-                                    <form id="deleteForm-{{ $customer->id }}"
-                                        action="{{ route('customers.destroy', $customer->id) }}" method="POST"
-                                        class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
-                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
-                                            title="Eliminar">
-                                            <span class="iconify w-5 h-5" data-icon="heroicons:trash-20-solid"></span>
-                                        </button>
-                                    </form>
-                                @endif
-                                 --}}
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <div class="flex md:hidden justify-center mb-4">
+        {{ $data->appends(request()->query())->links() }}
     </div>
+    <!-- Contenedor grid responsive para clientes -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+        @foreach ($data as $customer)
+            <details
+                class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full customer-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
+                id="customer-{{ $customer->id }}">
 
-    <!-- Paginación Centrada -->
-    <div class="flex justify-center">
+                <summary class="list-none p-4 cursor-pointer h-full">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                            <!-- Icono de usuario con color de estado -->
+                            <span
+                                class="iconify h-5 w-5 {{ $customer->customer_status ? 'text-green-500' : 'text-red-500' }}"
+                                data-icon="heroicons:user-20-solid"></span>
+                            {{ $customer->getFullName() }}
+                        </h3>
+                        <!-- Flecha indicadora de estado -->
+                        <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                            data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $customer->id }}"></span>
+                    </div>
+
+                    <!-- Información de contacto -->
+                    <div class="mt-auto space-y-1.5 text-sm">
+                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:phone-20-solid"></span>
+                            <span>{{ $customer->customer_phone }}</span>
+                        </div>
+
+                    </div>
+
+                </summary>
+
+                <!-- Panel flotante con diseño integrado -->
+                <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                    <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                    <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
+                        <div class="mt-auto space-y-1.5 text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:envelope-20-solid"></span>
+                                <span class="truncate">{{ strtolower($customer->customer_email) }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:calendar-20-solid"></span>
+                                <span>Registrado el: {{ $customer->created_at->format('d/m/Y') }}</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-300 dark:border-gray-600"></div>
+                        <!-- Botones de acción -->
+                        <div class="flex justify-center gap-3 p-1">
+                            <!-- Botón Editar -->
+                            <a href="{{ route('customers.edit', $customer->id) }}"
+                                class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                title="Editar">
+                                <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
+                            </a>
+
+                            <!-- Botón Desactivar/Activar -->
+                            <form id="deactivateForm-{{ $customer->id }}"
+                                action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST"
+                                class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
+                                    class="p-2 {{ $customer->customer_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                    title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
+                                    <span class="iconify w-5 h-5"
+                                        data-icon="{{ $customer->customer_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
+                                </button>
+                            </form>
+
+                            <!-- Botón Eliminar -->
+                            <form id="deleteForm-{{ $customer->id }}"
+                                action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST"
+                                class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
+                                    class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                    title="Eliminar">
+                                    <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        @endforeach
+    </div>
+    <div class="flex justify-center mt-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
 @endsection
 
 @push('scripts')
     <script>
-        // Alertas Modernas con Tamaño Aumentado
-        function showAlert(options) {
-            const defaults = {
-                background: '#ffffff',
-                color: 'var(--mi-oscuro)',
-                customClass: {
-                    popup: '!bg-white dark:!bg-[var(--mi-oscuro)] !rounded-lg !shadow-xl !max-w-md',
-                    title: '!text-[var(--mi-oscuro)] dark:!text-white !font-semibold !text-lg',
-                    htmlContainer: '!text-[var(--mi-oscuro)] dark:!text-gray-300 !text-base',
-                    confirmButton: '!bg-[var(--primary-color)] hover:!bg-[var(--primary-color)]/90 dark:!bg-[var(--secondary-color)] dark:hover:!bg-[var(--secondary-color)]/90 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200',
-                    cancelButton: '!bg-gray-500 hover:!bg-gray-600 !text-white !px-5 !py-2.5 !text-base !rounded-lg !transition-all !duration-200'
-                }
-            };
+        // Manejar las cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const allDetails = document.querySelectorAll('details.customer-card');
+            allDetails.forEach(detail => {
+                detail.addEventListener('toggle', (e) => {
+                    const customerId = detail.id.split('-')[1];
+                    const arrow = document.getElementById(`arrow-${customerId}`);
 
-            return Swal.fire({
-                ...defaults,
-                ...options
+                    if (detail.open) {
+                        arrow.style.transform = 'rotate(180deg)';
+                        allDetails.forEach(otherDetail => {
+                            if (otherDetail !== detail && otherDetail.open) {
+                                otherDetail.open = false;
+                                const otherCustomerId = otherDetail.id.split('-')[1];
+                                const otherArrow = document.getElementById(
+                                    `arrow-${otherCustomerId}`);
+                                otherArrow.style.transform = 'rotate(0deg)';
+                            }
+                        });
+                    } else {
+                        arrow.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        });
+
+        // Funciones de confirmación
+        function confirmDeactivate(customerId) {
+            const card = document.querySelector(`#customer-${customerId}`);
+            const isActive = card.querySelector('.text-green-500') !== null;
+
+            confirmAction({
+                title: isActive ? '¿Desactivar cliente?' : '¿Activar cliente?',
+                text: isActive ?
+                    "El cliente no aparecerá en las opciones de nuevas proformas" :
+                    "El cliente volverá a estar disponible para nuevas proformas",
+                icon: 'question',
+                footer: '<span class="text-sm text-gray-500 dark:text-gray-400">Puedes cambiar este estado en cualquier momento</span>',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deactivateForm-${customerId}`).submit();
+                }
             });
         }
 
-        /*
         function confirmDelete(customerId) {
-            showAlert({
-                title: '¿Eliminar cliente?',
-                text: "¡Esta acción no se puede deshacer! Se perderán todos los datos asociados.",
-                icon: 'error',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
+            confirmAction({
+                title: '¿Eliminar cliente permanentemente?',
+                html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción es irreversible y eliminará:<br>- Todos los datos del cliente<br>- Todas sus proformas asociadas</div>",
+                icon: 'warning',
+                confirmButtonText: 'Confirmar eliminación',
                 cancelButtonText: 'Cancelar',
-                reverseButtons: true
+                confirmButtonColor: '#ef4444',
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(`deleteForm-${customerId}`).submit();
                 }
             });
         }
-        */
-        function confirmDeactivate(customerId) {
-            showAlert({
-                title: '¿Cambiar estado?',
-                text: "¿Estás seguro de querer cambiar el estado de este cliente?",
-                icon: 'question',
+
+        function confirmDelete(customerId) {
+            // Primera confirmación
+            confirmAction({
+                title: '¿Estás seguro de eliminar este cliente?',
+                html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción es irreversible y eliminará:<br>- Todos los datos del cliente<br>- Todas sus proformas asociadas</div>",
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, cambiar',
+                confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`deactivateForm-${customerId}`).submit();
+                confirmButtonColor: '#ef4444',
+            }).then((firstResult) => {
+                if (firstResult.isConfirmed) {
+                    // Segunda confirmación con input
+                    confirmAction({
+                        title: 'Confirmación final',
+                        html: `
+                        <div class='text-sm text-red-600 dark:text-red-400 mb-3'>
+                        Para confirmar, escribe <strong>ELIMINAR</strong> en el cuadro:
+                        </div>
+                        <input id="confirm-delete-input" type="text" class="swal2-input dark:text-white" placeholder="Escribe ELIMINAR aqui" required>`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Confirmar eliminación',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#dc2626',
+                        focusCancel: true,
+                        preConfirm: () => {
+                            const inputValue = document.getElementById('confirm-delete-input').value;
+                            if (inputValue.toUpperCase() !== 'ELIMINAR') {
+                                Swal.showValidationMessage('Debes escribir exactamente "ELIMINAR"');
+                            }
+                            return inputValue.toUpperCase() === 'ELIMINAR';
+                        }
+                    }).then((secondResult) => {
+                        if (secondResult.isConfirmed) {
+                            document.getElementById(`deleteForm-${customerId}`).submit();
+                        }
+                    });
                 }
             });
         }

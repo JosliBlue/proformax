@@ -46,7 +46,7 @@
             <div class="relative group">
                 <!-- Tarjeta principal - toda clickeable -->
                 <div
-                    class="bg-white md:bg-gray-100 dark:bg-gray-800 dark:md:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg group-[.active]:rounded-b-none">
+                    class="bg-white md:bg-gray-100 dark:bg-gray-800 dark:md:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-xl group-[.active]:rounded-b-none">
                     <button class="paper-toggle w-full text-left p-4">
                         <div class="flex items-start gap-3">
                             <!-- Icono -->

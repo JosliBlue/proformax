@@ -18,7 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         // aqui se ve un ejemplo de como quedaria un metodo sin necesidad de archivo a parte
         // Captura la excepción de ruta no encontrada (404)
+        /*
         $exceptions->renderable(function (NotFoundHttpException $e, $request) {
             return redirect()->route('login'); // Cambia 'pagina.especifica' por el nombre de tu ruta
         });
+        */
+        // No se toma en cuenta porque ya esta puesto en routes/web.php
     })->create();

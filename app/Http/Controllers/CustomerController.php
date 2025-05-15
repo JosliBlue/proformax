@@ -11,7 +11,7 @@ class CustomerController extends Controller
     public function index()
     {
         $columns = [];
-        $columns[] = ['name' => 'Cliente', 'field' => 'customer_name'];
+        $columns[] = ['name' => 'Nombre', 'field' => 'customer_name'];
         $columns[] = ['name' => 'Telefono', 'field' => 'customer_phone'];
         $columns[] = ['name' => 'Correo', 'field' => 'customer_email'];
 
@@ -42,7 +42,7 @@ class CustomerController extends Controller
             });
         }
 
-        $data = $query->orderBy($sortField, $sortDirection)->paginate(9);
+        $data = $query->orderBy($sortField, $sortDirection)->paginate(15);
 
         return view("_general.customers.customers", [
             'columns' => $columns,

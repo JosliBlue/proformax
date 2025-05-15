@@ -1,12 +1,12 @@
 <header
-    class="flex justify-between items-center p-4 md:mx-20 md:rounded-lg md:mt-2 bg-[var(--primary-color)] text-[var(--primary-text-color)]">
+    class="flex justify-between items-center mx-auto w-full p-4 md:px-20 py-4 lg:py-4 bg-[var(--primary-color)] text-[var(--primary-text-color)]">
     <!-- Logo y nombre de empresa -->
     <div class="flex items-center space-x-3">
         @if ($company->logo_url)
             <img src="{{ $company->getLogoUrlAttribute() }}" alt="{{ $company->company_name }}"
                 class="h-10 w-auto object-contain">
         @endif
-        <div class="text-lg font-semibold">
+        <div class="text-xl font-bold">
             {{ strtoupper($company->company_name) }}
         </div>
     </div>
@@ -25,7 +25,7 @@
 
         <!-- Menú flotante - Full width en mobile -->
         <div
-            class="fixed md:absolute inset-x-0 md:right-0 md:left-auto mt-2 md:bottom-auto md:top-full md:mt-2 md:w-48 mx-5 md:mx-0 rounded-lg md:rounded-lg shadow-lg py-2 z-50 bg-white text-black dark:bg-[var(--mi-oscuro)] dark:text-white">
+            class="fixed md:absolute inset-x-0 md:right-0 md:left-auto mt-2 md:bottom-auto md:top-full md:w-48 mx-5 md:mx-0 rounded-lg shadow-lg py-2 z-50 bg-white text-black dark:bg-gray-900 dark:text-white">
             <div
                 class="block text-center px-4 py-2  border-b border-gray-200 dark:border-gray-600 md:hidden select-none">
                 {{ Auth::user()->user_name }}

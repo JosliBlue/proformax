@@ -1,85 +1,112 @@
 @if ($paginator->hasPages())
-    <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}"
-        class="flex justify-center items-center w-full mt-5">
-        <div class="flex items-center justify-center">
-            <div class="py-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-[var(--primary-color)] dark:border-[var(--secondary-color)] transition-colors duration-200">
-                <ol class="flex items-center text-sm divide-x divide-gray-200 dark:divide-gray-600">
-                    {{-- Previous Page Link --}}
+    <div class="flex items-center justify-between w-full dark:border-gray-700">
+        <div class="flex flex-1 justify-between items-center sm:hidden">
+            {{-- Mobile view --}}
+            @if ($paginator->onFirstPage())
+                <span
+                    class="relative inline-flex items-center rounded-md  bg-white px-4 py-2 text-sm font-medium text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed">
+                    {{ __('Anterior') }}
+                </span>
+            @else
+                <a href="{{ $paginator->previousPageUrl() }}" rel="prev"
+                    class="relative inline-flex items-center rounded-md border border-gray-500 dark:border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    {{ __('Anterior') }}
+                </a>
+            @endif
+
+            {{-- Mobile counter --}}
+            <div class="mx-4 text-sm text-gray-700 dark:text-gray-300">
+                <span class="font-medium">{{ $paginator->firstItem() }}</span>
+                -
+                <span class="font-medium">{{ $paginator->lastItem() }}</span>
+                de
+                <span class="font-medium">{{ $paginator->total() }}</span>
+            </div>
+
+            @if ($paginator->hasMorePages())
+                <a href="{{ $paginator->nextPageUrl() }}" rel="next"
+                    class="relative inline-flex items-center rounded-md border border-gray-500 dark:border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    {{ __('Siguiente') }}
+                </a>
+            @else
+                <span
+                    class="relative inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed">
+                    {{ __('Siguiente') }}
+                </span>
+            @endif
+        </div>
+
+        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <span class="font-medium">{{ $paginator->firstItem() }}</span>
+                    -
+                    <span class="font-medium">{{ $paginator->lastItem() }}</span>
+                    de
+                    <span class="font-medium">{{ $paginator->total() }}</span>
+                    resultados
+                </p>
+            </div>
+            <div>
+                <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm bg-white dark:bg-gray-900"
+                    aria-label="Pagination">
+                    {{-- Previous --}}
                     @if ($paginator->onFirstPage())
-                        <li>
-                            <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}">
-                                <span
-                                    class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md text-gray-400 dark:text-gray-500 cursor-not-allowed">
-                                    <span class="iconify w-5 h-5 rtl:scale-x-[-1]" data-icon="octicon:arrow-left-16"></span>
-                                </span>
-                            </span>
-                        </li>
+                        <span
+                            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-600 ring-1 ring-gray-300 dark:ring-gray-800 ring-inset cursor-not-allowed">
+                            <span class="sr-only">Previous</span>
+                            <span class="iconify h-5 w-5" data-icon="line-md:arrow-left"></span>
+                        </span>
                     @else
-                        <li>
-                            <a href="{{ $paginator->previousPageUrl() }}" rel="prev"
-                                aria-label="{{ __('pagination.previous') }}"
-                                class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md text-[var(--primary-color)] dark:text-[var(--secondary-color)] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                <span class="iconify w-5 h-5 rtl:scale-x-[-1]" data-icon="octicon:arrow-left-16"></span>
-                            </a>
-                        </li>
+                        <a href="{{ $paginator->previousPageUrl() }}" rel="prev"
+                            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-[var(--primary-color)] dark:text-gray-300 ring-1 ring-inset ring-[var(--primary-color)] dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <span class="sr-only">Anterior</span>
+                            <span class="iconify h-5 w-5" data-icon="line-md:arrow-left"></span>
+                        </a>
                     @endif
 
-                    {{-- Pagination Elements --}}
+                    {{-- Pagination Numbers --}}
                     @foreach ($elements as $element)
-                        {{-- "Three Dots" Separator --}}
                         @if (is_string($element))
-                            <li>
-                                <span aria-disabled="true"
-                                    class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 text-gray-500 dark:text-gray-400">
-                                    <span>{{ $element }}</span>
-                                </span>
-                            </li>
+                            <span
+                                class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 ring-1 ring-gray-300 dark:ring-gray-600 ring-inset">
+                                {{ $element }}
+                            </span>
                         @endif
 
-                        {{-- Array Of Links --}}
                         @if (is_array($element))
                             @foreach ($element as $page => $url)
                                 @if ($page == $paginator->currentPage())
-                                    <li>
-                                        <span aria-current="page"
-                                            class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md bg-[var(--primary-color)] dark:bg-[var(--secondary-color)] text-[var(--primary-text-color)] shadow-sm dark:text-[var(--secondary-text-color)]">
-                                            <span>{{ $page }}</span>
-                                        </span>
-                                    </li>
+                                    <span aria-current="page"
+                                        class="relative z-10 inline-flex items-center bg-[var(--primary-color)] dark:bg-gray-200 px-4 py-2 text-sm font-semibold text-[var(--primary-text-color)] dark:text-gray-800 focus:z-20 ring-1 ring-inset ring-[var(--primary-color)] dark:ring-gray-200">
+                                        {{ $page }}
+                                    </span>
                                 @else
-                                    <li>
-                                        <a href="{{ $url }}"
-                                            aria-label="{{ __('Go to page :page', ['page' => $page]) }}"
-                                            class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md text-[var(--primary-color)] dark:text-[var(--secondary-color)] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                            <span>{{ $page }}</span>
-                                        </a>
-                                    </li>
+                                    <a href="{{ $url }}"
+                                        class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-[var(--primary-color)] dark:text-gray-300 ring-1 ring-inset ring-[var(--primary-color)] dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:z-20">
+                                        {{ $page }}
+                                    </a>
                                 @endif
                             @endforeach
                         @endif
                     @endforeach
 
-                    {{-- Next Page Link --}}
+                    {{-- Next --}}
                     @if ($paginator->hasMorePages())
-                        <li>
-                            <a href="{{ $paginator->nextPageUrl() }}" rel="next"
-                                aria-label="{{ __('pagination.next') }}"
-                                class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md text-[var(--primary-color)] dark:text-[var(--secondary-color)] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                <span class="iconify w-5 h-5 rtl:scale-x-[-1]" data-icon="octicon:arrow-right-16"></span>
-                            </a>
-                        </li>
+                        <a href="{{ $paginator->nextPageUrl() }}" rel="next"
+                            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-[var(--primary-color)] dark:text-gray-300 ring-1 ring-inset ring-[var(--primary-color)] dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <span class="sr-only">Siguiente</span>
+                            <span class="iconify h-5 w-5" data-icon="line-md:arrow-right"></span>
+                        </a>
                     @else
-                        <li>
-                            <span aria-disabled="true" aria-label="{{ __('pagination.next') }}">
-                                <span
-                                    class="relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md text-gray-400 dark:text-gray-500 cursor-not-allowed">
-                                    <span class="iconify w-5 h-5 rtl:scale-x-[-1]" data-icon="octicon:arrow-right-16"></span>
-                                </span>
-                            </span>
-                        </li>
+                        <span
+                            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-600 ring-1 ring-gray-300 dark:ring-gray-800 ring-inset cursor-not-allowed">
+                            <span class="sr-only">Siguiente</span>
+                            <span class="iconify h-5 w-5" data-icon="line-md:arrow-right"></span>
+                        </span>
                     @endif
-                </ol>
+                </nav>
             </div>
         </div>
-    </nav>
+    </div>
 @endif

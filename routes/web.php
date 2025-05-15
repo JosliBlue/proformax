@@ -67,3 +67,7 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     });
 });
+
+Route::fallback(function () {
+    return redirect()->route('login');
+});

@@ -23,7 +23,53 @@
                         data-icon="heroicons:building-office-20-solid"></span>
                     Información General
                 </h3>
+                <!-- Logo de la Empresa -->
+                <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Logo de la Empresa
+                    </p>
 
+                    <!-- Contenedor principal con grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Preview del logo actual (mitad derecha) -->
+                        @if ($company->company_logo_path)
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="relative">
+                                    <img src="{{ $company->logo_url }}" alt="{{ $company->company_name }}"
+                                        class="h-32 border rounded-lg shadow-sm">
+                                </div>
+
+                            </div>
+                        @endif
+                        <!-- Área de carga de archivos (mitad izquierda) -->
+                        <div id="file-upload-container">
+                            <label
+                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 relative">
+                                <input id="company_logo" name="company_logo" type="file"
+                                    accept=".jpg,.jpeg,.png,.gif,.webp" class="hidden" />
+                                <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <span class="iconify h-8 w-8 mb-3 text-gray-500 dark:text-gray-400"
+                                        data-icon="heroicons:photo-20-solid"></span>
+                                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">Haz clic si quieres subir un
+                                        nuevo logo</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG o WEBP</p>
+                                </div>
+                                <div id="file-selected-message"
+                                    class="absolute inset-0 hidden flex-col items-center justify-center bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                                    <span class="iconify h-8 w-8 mb-2 text-green-500"
+                                        data-icon="heroicons:check-circle-20-solid"></span>
+                                    <p class="text-sm font-medium text-green-700 dark:text-green-300">Archivo seleccionado
+                                    </p>
+                                    <p id="file-name" class="text-xs text-green-600 dark:text-green-400 mt-1 text-center">
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    @error('company_logo')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
                 <!-- Nombre de la Empresa -->
                 <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <label for="company_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -36,49 +82,6 @@
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
-
-                <!-- Logo de la Empresa -->
-                <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-    <label for="company_logo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        Logo de la Empresa
-    </label>
-
-    <!-- Contenedor principal con grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Área de carga de archivos (mitad izquierda) -->
-        <div id="file-upload-container">
-            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 relative">
-                <input id="company_logo" name="company_logo" type="file" accept=".jpg,.jpeg,.png,.gif,.webp" class="hidden" />
-                <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
-                    <span class="iconify h-8 w-8 mb-3 text-gray-500 dark:text-gray-400" data-icon="heroicons:photo-20-solid"></span>
-                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">Haz clic para subir</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG o WEBP</p>
-                </div>
-                <div id="file-selected-message" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                    <span class="iconify h-8 w-8 mb-2 text-green-500" data-icon="heroicons:check-circle-20-solid"></span>
-                    <p class="text-sm font-medium text-green-700 dark:text-green-300">Archivo seleccionado</p>
-                    <p id="file-name" class="text-xs text-green-600 dark:text-green-400 mt-1 text-center"></p>
-                </div>
-            </label>
-        </div>
-
-        <!-- Preview del logo actual (mitad derecha) -->
-        @if ($company->company_logo_path)
-            <div class="flex flex-col items-center justify-center">
-                <div class="relative">
-                    <img src="{{ $company->logo_url }}" alt="{{ $company->company_name }}" class="h-32 border rounded-lg shadow-sm">
-                </div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    Logo actual
-                </p>
-            </div>
-        @endif
-    </div>
-
-    @error('company_logo')
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-    @enderror
-</div>
             </div>
 
             <!-- Sección de Esquema de Colores -->
@@ -171,9 +174,11 @@
                 if (fileInput.files.length > 0) {
                     placeholder.classList.add('hidden');
                     fileSelectedMsg.classList.remove('hidden');
+                    fileSelectedMsg.classList.add('flex'); // Añadimos flex cuando mostramos el elemento
                     fileNameElement.textContent = fileName;
                 } else {
                     placeholder.classList.remove('hidden');
+                    fileSelectedMsg.classList.remove('flex'); // Quitamos flex cuando ocultamos el elemento
                     fileSelectedMsg.classList.add('hidden');
                     fileNameElement.textContent = '';
                 }

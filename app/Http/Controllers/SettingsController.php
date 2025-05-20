@@ -63,21 +63,43 @@ class SettingsController extends Controller
                     throw new \Exception("No se pudo crear la imagen desde el archivo proporcionado.");
                 }
 
-                // Verificar el tamaño del archivo en bytes
-                $originalSize = filesize($imagePath);
+                // Configuración de compresión para alcanzar ≤50KB
+                $maxSize = 50 * 1024; // 50KB en bytes
+                $quality = 85; // Calidad inicial
+                $minQuality = 30; // Calidad mínima permitida
+                $step = 5; // Reducción de calidad por iteración
 
-                // Si es mayor a 1MB, comprimir hasta que pese menos de 1MB
-                if ($originalSize > 1048576) {
-                    $quality = 90;
-                    do {
-                        imagewebp($imageResource, $webpPath, $quality);
-                        $compressedSize = filesize($webpPath);
-                        $quality -= 5;
-                        if ($quality < 10) break; // Evita que la calidad sea muy baja
-                    } while ($compressedSize > 1048576);
-                } else {
-                    // Si es menor a 1MB, guardarla con calidad máxima (100)
-                    imagewebp($imageResource, $webpPath, 100);
+                do {
+                    imagewebp($imageResource, $webpPath, $quality);
+                    $currentSize = filesize($webpPath);
+
+                    // Si aún es mayor que 50KB y podemos reducir más la calidad
+                    if ($currentSize > $maxSize && $quality > $minQuality) {
+                        $quality -= $step;
+                        // Asegurarnos de no bajar de la calidad mínima
+                        $quality = max($quality, $minQuality);
+                    } else {
+                        break;
+                    }
+                } while ($currentSize > $maxSize);
+
+                // Si después de todo sigue siendo muy grande, reducir dimensiones
+                if (filesize($webpPath) > $maxSize) {
+                    // Obtener dimensiones originales
+                    $originalWidth = imagesx($imageResource);
+                    $originalHeight = imagesy($imageResource);
+
+                    // Calcular nuevas dimensiones (reducir a la mitad)
+                    $newWidth = $originalWidth / 2;
+                    $newHeight = $originalHeight / 2;
+
+                    // Crear nueva imagen con dimensiones reducidas
+                    $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+                    imagecopyresampled($resizedImage, $imageResource, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+
+                    // Volver a intentar compresión con calidad mínima
+                    imagewebp($resizedImage, $webpPath, $minQuality);
+                    imagedestroy($resizedImage);
                 }
 
                 $storagePath = 'companies/' . uniqid() . '.webp';
@@ -85,12 +107,15 @@ class SettingsController extends Controller
 
                 $company->company_logo_path = $storagePath;
 
+                // Limpiar recursos temporales
                 unlink($webpPath);
+                imagedestroy($imageResource);
             } catch (\Throwable $e) {
                 return redirect()->route('settings')
                     ->with('error', 'Hubo un error al subir o procesar la imagen: ' . $e->getMessage());
             }
         }
+
         $company->save();
 
         return redirect()->route('settings')->with('success', 'Configuración actualizada correctamente');

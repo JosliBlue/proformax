@@ -65,8 +65,8 @@
             closeButtonHtml: `
         <span class="iconify" data-icon="streamline:delete-1-solid"></span>
         `,
-            allowOutsideClick: false, // Si permite cerrar al hacer clic fuera
-            allowEscapeKey: false, // Si permite cerrar con la tecla ESC
+            //allowOutsideClick: false, // Si permite cerrar al hacer clic fuera
+            //allowEscapeKey: false, // Si permite cerrar con la tecla ESC
 
             // -------------------------------
             // ESTILOS Y COLORES

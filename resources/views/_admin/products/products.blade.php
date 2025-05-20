@@ -115,6 +115,10 @@
                             <span class="iconify h-3.5 w-3.5" data-icon="heroicons:currency-dollar-20-solid"></span>
                             <span>${{ number_format($product->product_price, 2) }}</span>
                         </div>
+                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:tag-20-solid"></span>
+                                <span>{{ ucfirst($product->product_type->value) }}</span>
+                            </div>
                     </div>
                 </summary>
 
@@ -122,21 +126,6 @@
                 <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
                     <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
                     <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
-                        <div class="mt-auto space-y-1.5 text-sm">
-                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:tag-20-solid"></span>
-                            <span>{{ ucfirst($product->product_type->value) }}</span>
-                        </div>
-                            <div class="flex items-center gap-2">
-                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:clock-20-solid"></span>
-                                <span>Registrado el: {{ $product->created_at->format('d/m/Y') }}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:arrow-path-20-solid"></span>
-                                <span>Actualizado el: {{ $product->updated_at->format('d/m/Y') }}</span>
-                            </div>
-                        </div>
-                        <div class="border-t border-gray-300 dark:border-gray-600"></div>
                         <!-- Botones de acción -->
                         <div class="flex justify-center gap-3 p-1">
                             <!-- Botón Editar -->

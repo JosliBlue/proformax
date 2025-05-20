@@ -98,8 +98,7 @@
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             <!-- Icono de usuario con color de estado -->
-                            <span
-                                class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
+                            <span class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
                                 data-icon="heroicons:user-20-solid"></span>
                             {{ $seller->user_name }}
                         </h3>
@@ -121,6 +120,7 @@
                                     @case(App\Enums\UserRole::ADMIN->value)
                                         Administrador
                                     @break
+
                                     @case(App\Enums\UserRole::USER->value)
                                         Vendedor
                                     @break
@@ -134,17 +134,8 @@
                 <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
                     <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
                     <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
-                        <div class="mt-auto space-y-1.5 text-sm">
-                            <div class="flex items-center gap-2">
-                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:calendar-20-solid"></span>
-                                <span>Registrado el: {{ $seller->created_at->format('d/m/Y') }}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:clock-20-solid"></span>
-                                <span>Última actualización: {{ $seller->updated_at->format('d/m/Y') }}</span>
-                            </div>
-                        </div>
-                        <div class="border-t border-gray-300 dark:border-gray-600"></div>
+
+                       
                         <!-- Botones de acción -->
                         <div class="flex justify-center gap-3 p-1">
                             <!-- Botón Editar -->
@@ -156,8 +147,7 @@
 
                             <!-- Botón Desactivar/Activar -->
                             <form id="deactivateForm-{{ $seller->id }}"
-                                action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST"
-                                class="inline">
+                                action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PATCH')
                                 <button type="button" onclick="confirmDeactivate('{{ $seller->id }}')"
@@ -169,9 +159,8 @@
                             </form>
 
                             <!-- Botón Eliminar -->
-                            <form id="deleteForm-{{ $seller->id }}"
-                                action="{{ route('sellers.destroy', $seller->id) }}" method="POST"
-                                class="inline">
+                            <form id="deleteForm-{{ $seller->id }}" action="{{ route('sellers.destroy', $seller->id) }}"
+                                method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="confirmDelete('{{ $seller->id }}')"
@@ -227,8 +216,7 @@
             confirmAction({
                 title: isActive ? '¿Desactivar vendedor?' : '¿Activar vendedor?',
                 text: isActive ?
-                    "El vendedor no podrá acceder al sistema" :
-                    "El vendedor volverá a tener acceso al sistema",
+                    "El vendedor no podrá acceder al sistema" : "El vendedor volverá a tener acceso al sistema",
                 icon: 'question',
                 footer: '<span class="text-sm text-gray-500 dark:text-gray-400">Puedes cambiar este estado en cualquier momento</span>',
             }).then((result) => {

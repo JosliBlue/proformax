@@ -1,37 +1,53 @@
 @extends('appsita')
 
 @section('content')
+    <!-- Título con flecha de retroceso -->
+    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm mb-6">
+        <a href="{{ route('papers') }}" class="flex items-center text-[var(--primary-color)] group focus:outline">
+            <span class="iconify h-6 w-6 group-hover:-translate-x-1 transition-transform duration-200"
+                data-icon="heroicons:arrow-left-20-solid"></span>
+        </a>
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            {{ isset($paper) ? 'Editar Documento' : 'Nuevo Documento' }}
+        </h1>
+    </div>
+
     <form action="{{ isset($paper) ? route('papers.update', $paper->id) : route('papers.store') }}" method="POST"
-        autocomplete="on" spellcheck="true">
+        class="space-y-6" autocomplete="on" spellcheck="true">
         @csrf
         @if (isset($paper))
             @method('PUT')
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Columna izquierda - Cliente -->
-            <div>
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Información del Cliente</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Columna izquierda - Información del Cliente -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                    <span class="iconify h-5 w-5 text-[var(--primary-color)]"
+                        data-icon="heroicons:user-circle-20-solid"></span>
+                    Información del Cliente
+                </h3>
 
-                <!-- Selección de cliente existente -->
-                <div>
-                    <div class="relative">
-                        <select name="customer_id" id="customer-select" required
-                            class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
-                            <option value="">Seleccione un cliente</option>
-                            @foreach ($customers as $customer)
-                                <option value="{{ $customer->id }}"
-                                    {{ isset($paper) && $paper->customer_id == $customer->id ? 'selected' : '' }}>
-                                    {{ $customer->customer_name }} {{ $customer->customer_lastname }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                <!-- Selección de cliente -->
+                <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <label for="customer_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Cliente *
+                    </label>
+                    <select name="customer_id" id="customer-select" required
+                        class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                        <option value="">Seleccione un cliente</option>
+                        @foreach ($customers as $customer)
+                            <option value="{{ $customer->id }}"
+                                {{ isset($paper) && $paper->customer_id == $customer->id ? 'selected' : '' }}>
+                                {{ $customer->customer_name }} {{ $customer->customer_lastname }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <!-- Días del documento -->
-                <div class="mt-6">
-                    <label for="paper_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <!-- Días de validez -->
+                <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <label for="paper_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Días de validez *
                     </label>
                     <input type="number" name="paper_days" id="paper_days" min="1"
@@ -41,37 +57,42 @@
             </div>
 
             <!-- Columna derecha - Productos -->
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Productos</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                        <span class="iconify h-5 w-5 text-[var(--primary-color)]"
+                            data-icon="heroicons:shopping-bag-20-solid"></span>
+                        Productos
+                    </h3>
                     <button type="button" id="add-product"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg transition-all duration-200">
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
                         <span class="iconify h-5 w-5" data-icon="heroicons:plus-20-solid"></span>
                         Añadir Producto
                     </button>
                 </div>
 
+                <!-- Contenedor de productos -->
                 <div id="products-container" class="space-y-4">
-                    <!-- Productos se añadirán aquí dinámicamente -->
+                    <!-- Los productos se añadirán aquí dinámicamente -->
                 </div>
 
                 <!-- Total -->
-                <div
-                    class="mt-6 p-4 bg-white md:bg-gray-100 dark:bg-gray-800 dark:md:bg-gray-700 rounded-lg border-none dark:border-gray-700">
+                <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-center">
                         <span class="font-medium text-gray-800 dark:text-gray-200">Total:</span>
                         <span id="total-price" class="text-xl font-bold text-gray-800 dark:text-gray-200">$0.00</span>
                     </div>
                 </div>
 
-                <!-- Botones -->
-                <div class="pt-6 flex justify-end gap-3">
+                <!-- Botones de acción -->
+                <div class="flex justify-end gap-3 pt-4">
                     <a href="{{ route('papers') }}"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-gray-500 text-white hover:bg-opacity-90 px-5 py-2.5 rounded-lg transition-all duration-200">
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-gray-500 text-white hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         Cancelar
                     </a>
                     <button type="submit" id="submit-btn"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-5 py-2.5 rounded-lg transition-all duration-200">
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                        <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
                         {{ isset($paper) ? 'Actualizar Documento' : 'Guardar Documento' }}
                     </button>
                 </div>
@@ -83,15 +104,15 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Plantilla para productos con botón eliminar en línea
+            // Plantilla para productos
             const productTemplate = (index = 0, product = null) => `
-                <div class="product-item p-4 bg-white md:bg-gray-100 rounded-lg dark:bg-gray-800 dark:md:bg-gray-700" data-index="${index}">
+                <div class="product-item p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700" data-index="${index}">
                     <div class="grid grid-cols-12 gap-3 items-end">
-                        <!-- Selector de producto (ocupa más espacio) -->
+                        <!-- Selector de producto -->
                         <div class="col-span-12 md:col-span-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Producto *</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Producto *</label>
                             <select name="products[${index}][id]" required
-                                class="product-select w-full px-3 py-2 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                                class="product-select w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                                 <option value="">Seleccione un producto</option>
                                 @foreach ($products as $prod)
                                     <option value="{{ $prod->id }}"
@@ -103,29 +124,29 @@
                             </select>
                         </div>
 
-                        <!-- Cantidad (proporción media) -->
+                        <!-- Cantidad -->
                         <div class="col-span-4 md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cantidad *</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cantidad *</label>
                             <input type="number" name="products[${index}][quantity]" min="1" value="${product ? product.quantity : 1}" required
-                                class="w-full px-3 py-2 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                                class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                         </div>
 
-                        <!-- Precio Unitario (proporción media) -->
+                        <!-- Precio Unitario -->
                         <div class="col-span-4 md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Precio *</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Precio *</label>
                             <input type="number" step="0.01" min="0" name="products[${index}][unit_price]" required
                                 value="${product ? product.unit_price : ''}"
-                                class="w-full px-3 py-2 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                                class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                         </div>
 
-                        <!-- Botón Eliminar (espacio mínimo) -->
+                        <!-- Botón Eliminar -->
                         <div class="col-span-2 md:col-span-1 flex justify-center items-end h-full">
                             <button type="button" class="remove-product h-[42px] w-[42px] flex items-center justify-center text-red-500 hover:text-red-700 transition-colors duration-150 border border-red-500 hover:border-red-700 rounded-lg">
                                 <span class="iconify h-5 w-5" data-icon="heroicons:trash-20-solid"></span>
                             </button>
                         </div>
 
-                        <!-- Subtotal (espacio ajustado) -->
+                        <!-- Subtotal -->
                         <div class="col-span-2 md:col-span-1 flex justify-end items-center">
                             <span class="product-subtotal text-sm font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">$0.00</span>
                         </div>

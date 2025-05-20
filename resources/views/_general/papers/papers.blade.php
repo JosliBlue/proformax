@@ -1,27 +1,40 @@
 @extends('appsita')
 
 @section('content')
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
-        <!-- Buscador -->
+    <!-- Título con flecha de retroceso -->
+    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm mb-6">
+        <a href="{{ route('home') }}" class="flex items-center text-[var(--primary-color)] group focus:outline">
+            <span class="iconify h-6 w-6 group-hover:-translate-x-1 transition-transform duration-200"
+                data-icon="heroicons:arrow-left-20-solid"></span>
+        </a>
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            Gestión de Documentos
+        </h1>
+    </div>
+
+    <!-- Barra de búsqueda y acciones -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+        <!-- Buscador Mejorado -->
         <div class="w-full sm:w-auto">
             <form action="{{ route('papers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
                 <div class="relative w-full sm:w-96">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span class="iconify h-6 w-6 text-gray-500" data-icon="heroicons:magnifying-glass"></span>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                        <span class="iconify h-5 w-5" data-icon="line-md:search-filled"></span>
                     </span>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar documentos..."
-                        class="w-full pl-12 pr-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                        class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
                 </div>
 
                 <div class="flex gap-3 w-full sm:w-auto">
                     <button type="submit"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
                         Buscar
                     </button>
 
                     @if (request('search'))
                         <a href="{{ route('papers') }}"
-                            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-4 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
+                            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                            <span class="iconify h-5 w-5" data-icon="iconamoon:trash-light"></span>
                             Limpiar
                         </a>
                     @endif
@@ -30,161 +43,181 @@
         </div>
 
         <!-- Botón Nuevo Documento -->
-        <a href="{{ route('papers.create') }}"
-            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-5 py-2.5 rounded-lg w-full sm:w-auto transition-all duration-200">
-            <span>Nuevo documento</span>
-        </a>
+        <div class="w-full sm:w-auto">
+            <a href="{{ route('papers.create') }}"
+                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
+                Nuevo documento
+            </a>
+        </div>
     </div>
 
-    <!-- Contenedor grid responsive -->
+    <!-- Contenedor grid responsive para documentos -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
         @foreach ($papers as $paper)
             @php
                 $expirationDate = $paper->created_at->addDays($paper->paper_days);
             @endphp
 
-            <div class="relative group">
-                <!-- Tarjeta principal - toda clickeable -->
-                <div
-                    class="bg-white md:bg-gray-100 dark:bg-gray-800 dark:md:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-xl group-[.active]:rounded-b-none">
-                    <button class="paper-toggle w-full text-left p-4">
-                        <div class="flex items-start gap-3">
-                            <!-- Icono -->
-                            <div class="p-2 rounded-lg flex-shrink-0 bg-[var(--primary-color)]">
-                                <span class="iconify h-5 w-5 text-[var(--primary-text-color)]"
-                                    data-icon="heroicons:document-text-20-solid"></span>
-                            </div>
+            <details class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full paper-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20" id="paper-{{ $paper->id }}">
 
-                            <!-- Info principal -->
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-semibold text-gray-800 dark:text-gray-200">
-                                    {{ $paper->created_at->format('d/m/Y') }}
-                                </h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 truncate">
-                                    {{ $paper->customer->customer_name }} {{ $paper->customer->customer_lastname }}
-                                </p>
-                                <div class="mt-1 flex items-center justify-between">
-                                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                        ${{ number_format($paper->paper_total_price, 2) }}
-                                    </span>
-                                </div>
-                            </div>
+                <summary class="list-none p-4 cursor-pointer h-full">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                            <!-- Icono de documento -->
+                            <span class="iconify h-5 w-5 text-[var(--primary-color)]" data-icon="heroicons:document-text-20-solid"></span>
+                            {{ $paper->created_at->format('d/m/Y') }}
+                        </h3>
+                        <!-- Flecha indicadora -->
+                        <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                            data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $paper->id }}"></span>
+                    </div>
 
-                            <!-- Columna derecha: días arriba, estado abajo -->
-                            <div class="flex flex-col justify-between items-end min-h-[65px] h-full">
-                                <!-- Días -->
-                                <span class="text-sm text-gray-600 dark:text-gray-400">
-                                    {{ $paper->paper_days }} días
-                                </span>
-
-                                <!-- Estado -->
-                                @if ($paper->is_active)
-                                    <span
-                                        class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200">
-                                        {{ $expirationDate->diffForHumans() }}
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200">
-                                        {{ $expirationDate->diffForHumans() }}
-                                    </span>
-                                @endif
-                            </div>
+                    <!-- Información básica -->
+                    <div class="mt-auto space-y-1.5 text-sm">
+                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:user-20-solid"></span>
+                            <span>{{ $paper->customer->customer_name }} {{ $paper->customer->customer_lastname }}</span>
                         </div>
-                    </button>
-                </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-gray-800 dark:text-gray-200">
+                                ${{ number_format($paper->paper_total_price, 2) }}
+                            </span>
+                            <span class="text-xs {{ $paper->is_active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                {{ $paper->paper_days }} días
+                            </span>
+                        </div>
+                    </div>
+                </summary>
 
-                <!-- Panel flotante -->
-                <div
-                    class="bg-white md:bg-gray-100 dark:bg-gray-800 dark:md:bg-gray-700 absolute left-0 right-0 z-10 hidden group-[.active]:block rounded-b-lg shadow-lg border-t border-gray-200 dark:border-gray-700 mt-[-1px]">
-                    <div class="p-4 space-y-3">
-                        <div class="space-y-2 max-h-[300px] overflow-y-auto">
-                            <!-- Tus elementos aquí -->
-
+                <!-- Panel flotante con diseño integrado -->
+                <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                    <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                    <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
+                        <!-- Lista de productos -->
+                        <div class="space-y-2 max-h-[200px] overflow-y-auto">
                             @foreach ($paper->products as $product)
-                                <div class="flex items-start gap-2 p-2 bg-gray-50 dark:bg-gray-700/30 rounded text-sm">
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-gray-800 dark:text-gray-200">{{ $product->product_name }}</p>
-                                        <div class="grid grid-cols-3 gap-2 text-xs mt-1">
-                                            <div class="text-gray-600 dark:text-gray-400">
-                                                <span class="font-medium">Cant:</span> {{ $product->pivot->quantity }}
-                                            </div>
-                                            <div class="text-gray-600 dark:text-gray-400">
-                                                <span class="font-medium">P.Unit:</span>
-                                                ${{ number_format($product->pivot->unit_price, 2) }}
-                                            </div>
-                                            <div class="text-gray-600 dark:text-gray-400">
-                                                <span class="font-medium">Subtotal:</span>
-                                                ${{ number_format($product->pivot->subtotal, 2) }}
-                                            </div>
+                                <div class="p-2 bg-white dark:bg-gray-600 rounded-lg text-sm">
+                                    <p class="font-medium text-gray-800 dark:text-gray-200">{{ $product->product_name }}</p>
+                                    <div class="grid grid-cols-3 gap-2 text-xs mt-1">
+                                        <div>
+                                            <span class="text-gray-600 dark:text-gray-400">Cant:</span>
+                                            <span class="font-medium">{{ $product->pivot->quantity }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600 dark:text-gray-400">P.Unit:</span>
+                                            <span class="font-medium">${{ number_format($product->pivot->unit_price, 2) }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                                            <span class="font-medium">${{ number_format($product->pivot->subtotal, 2) }}</span>
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
 
-                        <div class="flex justify-center gap-3 pt-2">
-                            <a href="{{ route('papers.edit', $paper->id) }}"
-                                class="p-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                                title="Nuevo a partir de este">
-                                <span class="iconify h-6 w-6" data-icon="iconamoon:copy-bold"></span>
-                            </a>
-                            <a href="" class="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                                title="PDF">
-                                <span class="iconify h-6 w-6" data-icon="carbon:document-pdf"></span>
-                            </a>
-                            <a href="{{ route('papers.edit', $paper->id) }}"
-                                class="p-1.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600" title="Editar">
-                                <span class="iconify h-6 w-6" data-icon="heroicons:pencil-square-20-solid"></span>
+                        <!-- Estado y vencimiento -->
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2">
+                                <span class="iconify h-4 w-4" data-icon="heroicons:clock-20-solid"></span>
+                                {{ $expirationDate->diffForHumans() }}
+                            </span>
+                            <span class="{{ $paper->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }} px-2 py-1 rounded-full text-xs">
+                                {{ $paper->is_active ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="flex justify-center gap-3 p-1">
+                            <!-- Botón Copiar -->
+                            <a href="{{ route('papers.edit', ['paper' => $paper->id, 'copy' => true]) }}"
+                                class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 flex items-center justify-center"
+                                title="Copiar documento">
+                                <span class="iconify w-5 h-5" data-icon="iconamoon:copy-bold"></span>
                             </a>
 
-                            <form action="{{ route('papers.destroy', $paper->id) }}" method="POST" class="inline">
+                            <!-- Botón PDF -->
+                            <a href="{{-- {{ route('papers.pdf', $paper->id) }}  --}}" target="_blank"
+                                class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-center"
+                                title="Generar PDF">
+                                <span class="iconify w-5 h-5" data-icon="carbon:document-pdf"></span>
+                            </a>
+
+                            <!-- Botón Editar -->
+                            <a href="{{ route('papers.edit', $paper->id) }}"
+                                class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                title="Editar">
+                                <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
+                            </a>
+
+                            <!-- Botón Eliminar -->
+                            <form id="deleteForm-{{ $paper->id }}"
+                                action="{{ route('papers.destroy', $paper->id) }}" method="POST"
+                                class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="p-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                                    title="Eliminar" onclick="return confirm('¿Eliminar documento?')">
-                                    <span class="iconify h-6 w-6" data-icon="heroicons:trash-20-solid"></span>
+                                <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
+                                    class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                    title="Eliminar">
+                                    <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
-            </div>
+            </details>
         @endforeach
     </div>
 
     <!-- Paginación -->
-    @if ($papers->hasPages())
-        <div class="flex justify-center mt-6">
-            {{ $papers->appends(request()->query())->links() }}
-        </div>
-    @endif
-
-    @push('scripts')
-        <script>
-            document.querySelectorAll('.paper-toggle').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const card = this.closest('.relative');
-
-                    // Cerrar todos los demás primero
-                    document.querySelectorAll('.relative').forEach(otherCard => {
-                        if (otherCard !== card) {
-                            otherCard.classList.remove('active');
-                        }
-                    });
-
-                    // Alternar el actual
-                    card.classList.toggle('active');
-                });
-            });
-
-            // Cerrar al hacer clic fuera
-            document.addEventListener('click', function() {
-                document.querySelectorAll('.relative').forEach(card => {
-                    card.classList.remove('active');
-                });
-            });
-        </script>
-    @endpush
+    <div class="flex justify-center mt-4">
+        {{ $papers->appends(request()->query())->links() }}
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Manejar las cards de documentos
+        document.addEventListener('DOMContentLoaded', () => {
+            const allDetails = document.querySelectorAll('details.paper-card');
+            allDetails.forEach(detail => {
+                detail.addEventListener('toggle', (e) => {
+                    const paperId = detail.id.split('-')[1];
+                    const arrow = document.getElementById(`arrow-${paperId}`);
+
+                    if (detail.open) {
+                        arrow.style.transform = 'rotate(180deg)';
+                        allDetails.forEach(otherDetail => {
+                            if (otherDetail !== detail && otherDetail.open) {
+                                otherDetail.open = false;
+                                const otherPaperId = otherDetail.id.split('-')[1];
+                                const otherArrow = document.getElementById(
+                                    `arrow-${otherPaperId}`);
+                                otherArrow.style.transform = 'rotate(0deg)';
+                            }
+                        });
+                    } else {
+                        arrow.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        });
+
+        // Función de confirmación para eliminar
+        function confirmDelete(paperId) {
+            confirmAction({
+                title: '¿Eliminar documento?',
+                html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción eliminará permanentemente el documento y no se podrá recuperar</div>",
+                icon: 'warning',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ef4444',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deleteForm-${paperId}`).submit();
+                }
+            });
+        }
+    </script>
+@endpush

@@ -1,56 +1,87 @@
 @extends('appsita')
 
 @section('content')
-    <!-- Título con flecha de retroceso -->
-    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm mb-6">
+    <!-- Título con flecha de retroceso - Versión con navegación JS -->
+    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm">
         <a href="{{ route('home') }}" class="flex items-center text-[var(--primary-color)] group focus:outline">
             <span class="iconify h-6 w-6 group-hover:-translate-x-1 transition-transform duration-200"
                 data-icon="heroicons:arrow-left-20-solid"></span>
         </a>
         <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            Gestión de Documentos
+            Gestión de Proformas
         </h1>
     </div>
 
-    <!-- Barra de búsqueda y acciones -->
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
-        <!-- Buscador Mejorado -->
-        <div class="w-full sm:w-auto">
-            <form action="{{ route('papers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
-                <div class="relative w-full sm:w-96">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                        <span class="iconify h-5 w-5" data-icon="line-md:search-filled"></span>
-                    </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar documentos..."
-                        class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
-                </div>
+    <div class="flex flex-col gap-4 my-4">
+        <!-- Barra superior con buscador y botón -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <!-- Buscador Mejorado -->
+            <div class="w-full sm:w-auto">
+                <form action="{{ route('papers') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3">
+                    <div class="relative w-full sm:w-96">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                            <span class="iconify h-5 w-5 " data-icon="line-md:search-filled"></span>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Buscar proformas..."
+                            class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
+                    </div>
 
-                <div class="flex gap-3 w-full sm:w-auto">
-                    <button type="submit"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
-                        Buscar
-                    </button>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button type="submit"
+                            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                            Buscar
+                        </button>
 
-                    @if (request('search'))
-                        <a href="{{ route('papers') }}"
-                            class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
-                            <span class="iconify h-5 w-5" data-icon="iconamoon:trash-light"></span>
-                            Limpiar
-                        </a>
+                        @if (request('search'))
+                            <a href="{{ route('papers') }}"
+                                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                                <span class="iconify h-5 w-5" data-icon="iconamoon:trash-light"></span>
+                                Limpiar
+                            </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
+            <!-- Botón Nueva Proforma -->
+            <div class="w-full sm:w-auto">
+                <a href="{{ route('papers.create') }}"
+                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                    <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
+                    Nueva proforma
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtros de ordenamiento con efecto hover -->
+        <div class="flex flex-wrap items-center gap-2 overflow-x-auto py-1">
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
+
+            @foreach ($columns as $column)
+                <a href="{{ route('papers', [
+                    'sort' => $column['field'],
+                    'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
+                    'search' => request('search'),
+                ]) }}"
+                    class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
+                    {{ $sortField === $column['field']
+                        ? 'border-transparent bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm hover:shadow-md'
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)]'
+                    }}">
+                    {{ $column['name'] }}
+                    @if ($sortField === $column['field'])
+                        <span class="ml-1">
+                            @if ($sortDirection === 'asc')
+                                <span class="iconify h-3.5 w-3.5" data-icon="oui:arrow-up"></span>
+                            @else
+                                <span class="iconify h-3.5 w-3.5" data-icon="oui:arrow-down"></span>
+                            @endif
+                        </span>
                     @endif
-                </div>
-            </form>
+                </a>
+            @endforeach
         </div>
-
-        <!-- Botón Nuevo Documento -->
-        <div class="w-full sm:w-auto">
-            <a href="{{ route('papers.create') }}"
-                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
-                <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
-                Nuevo documento
-            </a>
-        </div>
-    </div>
 
     <!-- Contenedor grid responsive para documentos -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">

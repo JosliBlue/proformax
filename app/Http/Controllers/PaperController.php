@@ -13,12 +13,62 @@ class PaperController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $papers = Paper::forCompany($user->company_id)
-            ->with(['customer', 'products', 'user'])
-            ->orderBy('created_at', 'asc')
-            ->paginate(10);
 
-        return view('_general.papers.papers', compact('papers'));
+        // Definir columnas para ordenamiento
+        $columns = [
+            ['name' => 'Fecha', 'field' => 'created_at'],
+            ['name' => 'Cliente', 'field' => 'customer_name'],
+            ['name' => 'Total', 'field' => 'paper_total_price'],
+            ['name' => 'Días', 'field' => 'paper_days']
+        ];
+
+        // Obtener parámetros de ordenamiento y búsqueda
+        $sortField = request('sort', 'created_at');
+        $sortDirection = request('direction', 'desc');
+        $search = request('search');
+
+        // Construir la consulta base
+        $query = Paper::query()
+            ->with(['customer', 'products', 'user'])
+            ->where('papers.company_id', $user->company_id);
+
+        // Aplicar filtros de búsqueda
+        if ($search) {
+            $query->whereHas('customer', function($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_lastname', 'like', "%{$search}%");
+            })->orWhere('paper_total_price', 'like', "%{$search}%")
+              ->orWhere('paper_days', 'like', "%{$search}%");
+        }
+
+        // Aplicar ordenamiento
+        // Aplicar JOIN con customers si es necesario
+        if ($sortField === 'customer_name' || $search) {
+            $query->join('customers', 'papers.customer_id', '=', 'customers.id');
+        }
+
+        // Aplicar ordenamiento
+        switch ($sortField) {
+            case 'customer_name':
+                $query->orderBy('customers.customer_name', $sortDirection);
+                break;
+            default:
+                $query->orderBy('papers.' . $sortField, $sortDirection);
+                break;
+        }
+
+        // Asegurarse de seleccionar solo los campos de papers
+        $query->select('papers.*');
+
+        $papers = $query->paginate(15);
+
+        return view('_general.papers.papers', [
+            'papers' => $papers,
+            'columns' => $columns,
+            'sortField' => $sortField,
+            'sortDirection' => $sortDirection,
+            'searchTerm' => $search
+        ]);
     }
 
     public function create()

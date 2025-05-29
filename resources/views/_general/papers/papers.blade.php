@@ -138,7 +138,7 @@
                             </a>
 
                             <!-- Botón PDF -->
-                            <a href="{{-- {{ route('papers.pdf', $paper->id) }}  --}}" target="_blank"
+                            <a href="{{ route('papers.pdf', $paper) }}" target="_blank"
                                 class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-center"
                                 title="Generar PDF">
                                 <span class="iconify w-5 h-5" data-icon="carbon:document-pdf"></span>

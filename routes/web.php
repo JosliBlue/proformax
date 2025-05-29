@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PaperController;
+use App\Http\Controllers\PaperPDFController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerController;
@@ -44,6 +45,7 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
     Route::get('/papers/{paper}/edit', [PaperController::class, 'edit'])->name('papers.edit');
     Route::put('/papers/{paper}', [PaperController::class, 'update'])->name('papers.update');
     Route::delete('/papers/{paper}', [PaperController::class, 'destroy'])->name('papers.destroy');
+    Route::get('/papers/{paper}/pdf', [PaperPDFController::class, 'generatePDF'])->name('papers.pdf');
 
     // ADMIN LINKS
     Route::middleware([checkAdmin::class])->group(function () {

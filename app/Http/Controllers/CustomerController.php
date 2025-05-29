@@ -42,7 +42,7 @@ class CustomerController extends Controller
             });
         }
 
-        $data = $query->orderBy($sortField, $sortDirection)->paginate(15);
+        $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
         return view("_general.customers.customers", [
             'columns' => $columns,

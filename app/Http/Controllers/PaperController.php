@@ -60,7 +60,7 @@ class PaperController extends Controller
         // Asegurarse de seleccionar solo los campos de papers
         $query->select('papers.*');
 
-        $papers = $query->paginate(15);
+        $papers = $query->paginate(10);
 
         return view('_general.papers.papers', [
             'papers' => $papers,

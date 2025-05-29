@@ -93,7 +93,7 @@
         @endif
 
         <!-- Filtros de ordenamiento con efecto hover -->
-        <div class="flex flex-wrap items-center gap-2 overflow-x-auto py-1">
+        <div class="flex flex-wrap items-center gap-2 overflow-x-auto">
             <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
 
             @foreach ($columns as $column)
@@ -120,7 +120,7 @@
             @endforeach
         </div>
 
-        <div class="flex md:hidden justify-center mb-4">
+        <div class="flex md:hidden justify-center">
             {{ $papers->appends(request()->query())->links() }}
         </div>
         <!-- Contenedor grid responsive para documentos -->
@@ -253,7 +253,7 @@
         </div>
 
         <!-- Paginación -->
-        <div class="flex justify-center mt-4">
+        <div class="flex justify-center">
             {{ $papers->appends(request()->query())->links() }}
         </div>
     @endsection

@@ -85,14 +85,14 @@ class CustomerController extends Controller
 
     public function edit($id)
     {
-        $customer = Customer::findOrFail($id);
+        $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
         return view('_general.customers.customers-form', compact('customer'));
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $customer = Customer::findOrFail($id);
+            $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
             $isAdmin = Auth::user()->isAdmin();
 
             // Guardar el email original
@@ -132,7 +132,7 @@ class CustomerController extends Controller
     }
     public function soft_destroy(string $id)
     {
-        $customer = Customer::findOrFail($id);
+        $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $customer->update(['customer_status' => !$customer->customer_status]);
 
         return back()->with('success', $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado');
@@ -140,7 +140,7 @@ class CustomerController extends Controller
     /*
     public function destroy(string $id)
     {
-        $customer = Customer::findOrFail($id);
+        $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $customer->delete();
         return redirect()->route('customers')->with('success', 'Cliente eliminado');
     }

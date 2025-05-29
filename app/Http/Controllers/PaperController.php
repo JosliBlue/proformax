@@ -191,6 +191,13 @@ class PaperController extends Controller
 
     public function destroy(Paper $paper)
     {
+        $user = Auth::user();
+
+        // Verificar que el paper pertenezca a la compañía del usuario
+        if ($paper->company_id !== $user->company_id) {
+            abort(403, 'No autorizado');
+        }
+
         $paper->delete();
 
         return redirect()->route('papers')->with('success', 'Documento eliminado correctamente');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Enums\ProductType;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -21,7 +22,8 @@ class ProductController extends Controller
         $sortDirection = request('direction', 'asc');
         $search = request('search');
 
-        $query = Product::query();
+        $user = Auth::user();
+        $query = Product::where('company_id', $user->company_id);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -55,6 +57,7 @@ class ProductController extends Controller
                 $this->getValidationMessages()
             );
 
+            $validated['company_id'] = Auth::user()->company_id;
             Product::create($validated);
             return redirect()->route('products')
                 ->with('success', 'Producto creado correctamente.');
@@ -72,7 +75,7 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $types = ProductType::cases();
         return view('_admin.products.products-form', compact('product', 'types'));
     }
@@ -80,7 +83,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = Product::where('company_id', Auth::user()->company_id)->findOrFail($id);
 
             $validated = $request->validate(
                 $this->getValidationRules($id),
@@ -108,7 +111,7 @@ class ProductController extends Controller
 
     public function soft_destroy(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $product->update(['product_status' => !$product->product_status]);
 
         return back()->with('success', $product->product_status ? 'Producto activado' : 'Producto desactivado');
@@ -116,7 +119,7 @@ class ProductController extends Controller
 
     public function destroy(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $product->delete();
         return redirect()->route('products')->with('success', 'Producto eliminado');
     }

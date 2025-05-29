@@ -17,14 +17,14 @@ class PaperController extends Controller
 
         // Definir columnas para ordenamiento
         $columns = [
-            ['name' => 'Fecha', 'field' => 'created_at'],
+            ['name' => 'Fecha', 'field' => 'paper_date'],
             ['name' => 'Cliente', 'field' => 'customer_name'],
             ['name' => 'Total', 'field' => 'paper_total_price'],
             ['name' => 'Días', 'field' => 'paper_days']
         ];
 
         // Obtener parámetros de ordenamiento y búsqueda
-        $sortField = request('sort', 'created_at');
+        $sortField = request('sort', 'paper_date');
         $sortDirection = request('direction', 'desc');
         $search = request('search');
 
@@ -35,14 +35,17 @@ class PaperController extends Controller
 
         // Aplicar filtros de búsqueda
         if ($search) {
-            $query->whereHas('customer', function ($q) use ($search) {
-                $q->where('customer_name', 'like', "%{$search}%")
-                    ->orWhere('customer_lastname', 'like', "%{$search}%");
-            })->orWhere('paper_total_price', 'like', "%{$search}%")
+            // Filtrar por cliente solo para papers con cliente asignado
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('customer', function ($q2) use ($search) {
+                    $q2->where('customer_name', 'like', "%{$search}%")
+                        ->orWhere('customer_lastname', 'like', "%{$search}%");
+                })
+                ->orWhere('paper_total_price', 'like', "%{$search}%")
                 ->orWhere('paper_days', 'like', "%{$search}%");
+            });
         }
 
-        // Aplicar ordenamiento
         // Aplicar JOIN con customers si es necesario
         if ($sortField === 'customer_name' || $search) {
             $query->join('customers', 'papers.customer_id', '=', 'customers.id');
@@ -63,10 +66,12 @@ class PaperController extends Controller
 
         // Obtener todos los papers y separarlos en borradores y no borradores
         $allPapers = $query->get();
-        $drafts = $allPapers->where('is_draft', true);
+        $drafts = Paper::where('company_id', $user->company_id)
+            ->where('is_draft', true)
+            ->get();
         $papersList = $allPapers->where('is_draft', false)->values();
 
-        // Paginación manual solo para los no borradores
+        // Paginación normal con los que son is_draft false
         $perPage = 10;
         $currentPage = request('page', 1);
         $paginatedPapers = new LengthAwarePaginator(
@@ -107,6 +112,7 @@ class PaperController extends Controller
                 'products.*.id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
                 'products.*.unit_price' => 'required|numeric|min:0',
+                'paper_date' => 'required|date', // Cambia la validación a la nueva columna
             ];
             if (!$request->has('save_draft')) {
                 $rules['customer_id'] = 'required|exists:customers,id';
@@ -114,6 +120,14 @@ class PaperController extends Controller
                 $rules['customer_id'] = 'nullable|exists:customers,id';
             }
             $validated = $request->validate($rules);
+
+            // Si no es borrador y no hay cliente, forzar error manualmente
+            if (!$request->has('save_draft') && empty($validated['customer_id'])) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Por favor selecciona un cliente')
+                    ->withErrors(['customer_id' => 'El cliente es obligatorio']);
+            }
 
             // Calcular total
             $total = collect($validated['products'])->sum(function ($product) {
@@ -128,6 +142,7 @@ class PaperController extends Controller
                 'paper_days' => $validated['paper_days'],
                 'paper_total_price' => $total,
                 'is_draft' => $request->has('save_draft'),
+                'paper_date' => $validated['paper_date'],
             ]);
 
             // Adjuntar productos al paper
@@ -139,11 +154,11 @@ class PaperController extends Controller
                 ]);
             }
 
-            return redirect()->route('papers')->with('success', 'Documento creado correctamente');
+            return redirect()->route('papers')->with('success', 'Proforma creada correctamente');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
                 ->withInput()
-                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->with('error', 'Cliente o producto no válido')
                 ->withErrors($e->validator);
         } catch (\Exception $e) {
             return back()
@@ -191,6 +206,7 @@ class PaperController extends Controller
                 'products.*.id' => 'required|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
                 'products.*.unit_price' => 'required|numeric|min:0',
+                'paper_date' => 'required|date', // Cambia la validación a la nueva columna
             ];
             if (!$request->has('save_draft')) {
                 $rules['customer_id'] = 'required|exists:customers,id';
@@ -204,12 +220,12 @@ class PaperController extends Controller
                 return $product['quantity'] * $product['unit_price'];
             });
 
-            // Actualizar paper
             $paper->update([
                 'customer_id' => $validated['customer_id'] ?? null,
                 'paper_days' => $validated['paper_days'],
                 'paper_total_price' => $total,
                 'is_draft' => $request->has('save_draft'),
+                'paper_date' => $validated['paper_date'],
             ]);
 
             // Sincronizar productos (elimina los antiguos y añade los nuevos)

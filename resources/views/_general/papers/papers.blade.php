@@ -53,37 +53,42 @@
                 </a>
             </div>
         </div>
-        
+
         <!-- Bloque de borradores mejorado -->
         @if (isset($drafts) && $drafts->count())
-            <div class="w-full bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 dark:from-yellow-900/70 dark:via-yellow-800/60 dark:to-yellow-900/70 border border-yellow-300 dark:border-yellow-700 rounded-xl p-4 mb-4 shadow flex flex-col gap-2">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="iconify h-6 w-6 text-yellow-600 dark:text-yellow-300" data-icon="mdi:note-edit-outline"></span>
-                    <span class="font-semibold text-yellow-800 dark:text-yellow-200 text-lg">Borradores pendientes</span>
-                </div>
-                <div class="flex flex-col gap-2">
-                    @foreach($drafts as $paper)
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between bg-yellow-50 dark:bg-yellow-800/60 rounded-lg p-3 border border-yellow-200 dark:border-yellow-700 shadow-sm hover:shadow-md transition-all">
-                            <div class="flex flex-col md:flex-row md:items-center gap-4">
-                                <span class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->created_at->format('d/m/Y H:i') }}</span>
-                                <span class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
-                                <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total: ${{ number_format($paper->paper_total_price, 2) }}</span>
-                            </div>
-                            <div class="flex gap-2 mt-2 md:mt-0">
-                                <a href="{{ route('papers.edit', $paper->id) }}" class="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 font-semibold flex items-center gap-1 shadow">
-                                    <span class="iconify h-4 w-4" data-icon="mdi:pencil"></span> Editar
-                                </a>
-                                <form id="deleteForm-draft-{{ $paper->id }}" action="{{ route('papers.destroy', $paper->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('draft-{{ $paper->id }}')" class="px-3 py-1 bg-red-200 text-red-800 rounded hover:bg-red-300 font-semibold flex items-center gap-1 shadow">
-                                        <span class="iconify h-4 w-4" data-icon="mdi:trash-can"></span> Eliminar
-                                    </button>
-                                </form>
-                            </div>
+            <div class="flex items-center gap-2">
+                <span class="iconify h-6 w-6 text-yellow-600 dark:text-yellow-300" data-icon="mdi:note-edit-outline"></span>
+                <span class="font-semibold text-yellow-800 dark:text-yellow-200 text-lg">Borradores pendientes</span>
+            </div>
+            <div class="flex flex-col gap-2">
+                @foreach ($drafts as $paper)
+                    <div
+                        class="flex flex-col md:flex-row md:items-center md:justify-between bg-yellow-50 dark:bg-yellow-800/60 rounded-lg p-3 border border-yellow-200 dark:border-yellow-700 shadow-sm">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4">
+                            <span
+                                class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
+                            <span
+                                class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
+                            <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total:
+                                ${{ number_format($paper->paper_total_price, 2) }}</span>
                         </div>
-                    @endforeach
-                </div>
+                        <div class="flex gap-2 mt-2 md:mt-0">
+                            <a href="{{ route('papers.edit', $paper->id) }}"
+                                class="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 font-semibold flex items-center gap-1 shadow">
+                                <span class="iconify h-4 w-4" data-icon="mdi:pencil"></span> Editar
+                            </a>
+                            <form id="deleteForm-draft-{{ $paper->id }}"
+                                action="{{ route('papers.destroy', $paper->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="confirmDeleteDraft('draft-{{ $paper->id }}')"
+                                    class="px-3 py-1 bg-red-200 text-red-800 rounded hover:bg-red-300 font-semibold flex items-center gap-1 shadow">
+                                    <span class="iconify h-4 w-4" data-icon="mdi:trash-can"></span> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         @endif
 
@@ -122,7 +127,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             @foreach ($papers as $paper)
                 @php
-                    $expirationDate = $paper->created_at->addDays($paper->paper_days);
+                    $expirationDate = $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->addDays($paper->paper_days) : $paper->created_at->addDays($paper->paper_days);
                 @endphp
 
                 <details
@@ -135,7 +140,7 @@
                                 <!-- Icono de documento -->
                                 <span class="iconify h-5 w-5 text-[var(--primary-color)]"
                                     data-icon="heroicons:document-text-20-solid"></span>
-                                {{ $paper->created_at->format('d/m/Y') }}
+                                {{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}
                             </h3>
                             <!-- Flecha indicadora -->
                             <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
@@ -290,6 +295,22 @@
                     confirmButtonText: 'Sí, eliminar',
                     cancelButtonText: 'Cancelar',
                     confirmButtonColor: '#ef4444',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(`deleteForm-${paperId}`).submit();
+                    }
+                });
+            }
+
+            // Función de confirmación para eliminar borradores
+            function confirmDeleteDraft(paperId) {
+                confirmAction({
+                    title: '¿Eliminar borrador?',
+                    html: "<div class='text-sm text-gray-600 dark:text-gray-400'>¿Seguro que deseas eliminar este borrador? Puedes crear uno nuevo en cualquier momento.</div>",
+                    icon: 'question',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#fbbf24', // amarillo suave
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.getElementById(`deleteForm-${paperId}`).submit();

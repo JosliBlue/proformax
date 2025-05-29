@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('paper_total_price', 10, 2)->default(0.00);
             $table->boolean('is_draft')->default(false);
             $table->integer('paper_days');
+            $table->date('paper_date')->nullable(); // Nueva columna para la fecha editable por el usuario
             $table->timestamps();
 
             // Definir las relaciones

@@ -24,8 +24,8 @@
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                     <span class="iconify h-5 w-5 text-[var(--primary-color)]"
-                        data-icon="heroicons:user-circle-20-solid"></span>
-                    Información del Cliente
+                        data-icon="heroicons:document-text-20-solid"></span>
+                    Información de la proforma
                 </h3>
 
                 <!-- Selección de cliente -->
@@ -43,6 +43,17 @@
                             </option>
                         @endforeach
                     </select>
+                </div>
+
+                <!-- Fecha -->
+                <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <label for="paper_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Fecha *
+                    </label>
+                    <input type="date" name="paper_date" id="paper_date"
+                        value="{{ old('paper_date', isset($paper) ? $paper->paper_date : now()->format('Y-m-d')) }}"
+                        required
+                        class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                 </div>
 
                 <!-- Días de validez -->

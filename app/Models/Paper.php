@@ -17,7 +17,8 @@ class Paper extends Model
         'paper_days',
         'paper_status',
         'company_id',
-        'is_draft' // <-- permitir asignación masiva
+        'is_draft', // <-- permitir asignación masiva
+        'paper_date', // <-- nueva columna editable por el usuario
     ];
 
     protected $casts = [
@@ -68,7 +69,8 @@ class Paper extends Model
     // En tu modelo Paper
     public function getIsActiveAttribute()
     {
-        $expirationDate = $this->created_at->addDays($this->paper_days);
-        return now()->lte($expirationDate); // true si la fecha actual es menor o igual a la de expiración
+        $date = $this->paper_date ? \Carbon\Carbon::parse($this->paper_date) : $this->created_at;
+        $expirationDate = $date->copy()->addDays($this->paper_days);
+        return now()->lte($expirationDate);
     }
 }

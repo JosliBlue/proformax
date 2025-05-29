@@ -127,7 +127,8 @@ class PaperSeeder extends Seeder
                 'company_id' => $paperData['company_id'],
                 'paper_total_price' => $paperData['paper_total_price'],
                 'paper_days' => $paperData['paper_days'],
-                'created_at' => $paperData['created_at']
+                'created_at' => $paperData['created_at'],
+                'is_draft' => false // Asegura que todos sean reales
             ]);
 
             // Adjuntar productos con datos pivot

@@ -21,5 +21,13 @@ class CompanySeeder extends Seeder
             'company_primary_text_color' => '#FFFFFF',
             'company_secondary_text_color' => '#000000'
         ]);
+        $company2 = Company::create([
+            'company_name' => 'Giga Companiassssss',
+            'company_primary_color' => '#8a095c',
+            'company_secondary_color' => '#53abc1',
+            'company_logo_path' => 'companies/giga_compania.webp',
+            'company_primary_text_color' => '#FFFFFF',
+            'company_secondary_text_color' => '#000000'
+        ]);
     }
 }

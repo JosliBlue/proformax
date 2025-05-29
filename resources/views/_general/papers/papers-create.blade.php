@@ -33,7 +33,7 @@
                     <label for="customer_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Cliente *
                     </label>
-                    <select name="customer_id" id="customer-select" required
+                    <select name="customer_id" id="customer-select"
                         class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                         <option value="">Seleccione un cliente</option>
                         @foreach ($customers as $customer)
@@ -94,6 +94,11 @@
                         class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
                         <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
                         {{ isset($paper) ? 'Actualizar Documento' : 'Guardar Documento' }}
+                    </button>
+                    <button type="submit" name="save_draft" value="1"
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                        <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
+                        Guardar como borrador
                     </button>
                 </div>
             </div>

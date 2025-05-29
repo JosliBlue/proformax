@@ -53,6 +53,39 @@
                 </a>
             </div>
         </div>
+        
+        <!-- Bloque de borradores mejorado -->
+        @if (isset($drafts) && $drafts->count())
+            <div class="w-full bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 dark:from-yellow-900/70 dark:via-yellow-800/60 dark:to-yellow-900/70 border border-yellow-300 dark:border-yellow-700 rounded-xl p-4 mb-4 shadow flex flex-col gap-2">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="iconify h-6 w-6 text-yellow-600 dark:text-yellow-300" data-icon="mdi:note-edit-outline"></span>
+                    <span class="font-semibold text-yellow-800 dark:text-yellow-200 text-lg">Borradores pendientes</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    @foreach($drafts as $paper)
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between bg-yellow-50 dark:bg-yellow-800/60 rounded-lg p-3 border border-yellow-200 dark:border-yellow-700 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                <span class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->created_at->format('d/m/Y H:i') }}</span>
+                                <span class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
+                                <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total: ${{ number_format($paper->paper_total_price, 2) }}</span>
+                            </div>
+                            <div class="flex gap-2 mt-2 md:mt-0">
+                                <a href="{{ route('papers.edit', $paper->id) }}" class="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 font-semibold flex items-center gap-1 shadow">
+                                    <span class="iconify h-4 w-4" data-icon="mdi:pencil"></span> Editar
+                                </a>
+                                <form id="deleteForm-draft-{{ $paper->id }}" action="{{ route('papers.destroy', $paper->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('draft-{{ $paper->id }}')" class="px-3 py-1 bg-red-200 text-red-800 rounded hover:bg-red-300 font-semibold flex items-center gap-1 shadow">
+                                        <span class="iconify h-4 w-4" data-icon="mdi:trash-can"></span> Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         <!-- Filtros de ordenamiento con efecto hover -->
         <div class="flex flex-wrap items-center gap-2 overflow-x-auto py-1">
@@ -67,8 +100,7 @@
                     class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
                     {{ $sortField === $column['field']
                         ? 'border-transparent bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm hover:shadow-md'
-                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)]'
-                    }}">
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)]' }}">
                     {{ $column['name'] }}
                     @if ($sortField === $column['field'])
                         <span class="ml-1">
@@ -83,174 +115,186 @@
             @endforeach
         </div>
 
-    <!-- Contenedor grid responsive para documentos -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-        @foreach ($papers as $paper)
-            @php
-                $expirationDate = $paper->created_at->addDays($paper->paper_days);
-            @endphp
+        <div class="flex md:hidden justify-center mb-4">
+            {{ $papers->appends(request()->query())->links() }}
+        </div>
+        <!-- Contenedor grid responsive para documentos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            @foreach ($papers as $paper)
+                @php
+                    $expirationDate = $paper->created_at->addDays($paper->paper_days);
+                @endphp
 
-            <details class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full paper-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20" id="paper-{{ $paper->id }}">
+                <details
+                    class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full paper-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
+                    id="paper-{{ $paper->id }}">
 
-                <summary class="list-none p-4 cursor-pointer h-full">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                            <!-- Icono de documento -->
-                            <span class="iconify h-5 w-5 text-[var(--primary-color)]" data-icon="heroicons:document-text-20-solid"></span>
-                            {{ $paper->created_at->format('d/m/Y') }}
-                        </h3>
-                        <!-- Flecha indicadora -->
-                        <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
-                            data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $paper->id }}"></span>
-                    </div>
-
-                    <!-- Información básica -->
-                    <div class="mt-auto space-y-1.5 text-sm">
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:user-20-solid"></span>
-                            <span>{{ $paper->customer->customer_name }} {{ $paper->customer->customer_lastname }}</span>
+                    <summary class="list-none p-4 cursor-pointer h-full">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <!-- Icono de documento -->
+                                <span class="iconify h-5 w-5 text-[var(--primary-color)]"
+                                    data-icon="heroicons:document-text-20-solid"></span>
+                                {{ $paper->created_at->format('d/m/Y') }}
+                            </h3>
+                            <!-- Flecha indicadora -->
+                            <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                                data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $paper->id }}"></span>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="font-medium text-gray-800 dark:text-gray-200">
-                                ${{ number_format($paper->paper_total_price, 2) }}
-                            </span>
-                            <span class="text-xs {{ $paper->is_active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                                {{ $paper->paper_days }} días
-                            </span>
-                        </div>
-                    </div>
-                </summary>
 
-                <!-- Panel flotante con diseño integrado -->
-                <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
-                    <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
-                    <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
-                        <!-- Lista de productos -->
-                        <div class="space-y-2 max-h-[200px] overflow-y-auto">
-                            @foreach ($paper->products as $product)
-                                <div class="p-2 bg-white dark:bg-gray-600 rounded-lg text-sm">
-                                    <p class="font-medium text-gray-800 dark:text-gray-200">{{ $product->product_name }}</p>
-                                    <div class="grid grid-cols-3 gap-2 text-xs mt-1">
-                                        <div>
-                                            <span class="text-gray-600 dark:text-gray-400">Cant:</span>
-                                            <span class="font-medium">{{ $product->pivot->quantity }}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-600 dark:text-gray-400">P.Unit:</span>
-                                            <span class="font-medium">${{ number_format($product->pivot->unit_price, 2) }}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-600 dark:text-gray-400">Subtotal:</span>
-                                            <span class="font-medium">${{ number_format($product->pivot->subtotal, 2) }}</span>
+                        <!-- Información básica -->
+                        <div class="mt-auto space-y-1.5 text-sm">
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:user-20-solid"></span>
+                                <span>{{ $paper->customer->customer_name }}
+                                    {{ $paper->customer->customer_lastname }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium text-gray-800 dark:text-gray-200">
+                                    ${{ number_format($paper->paper_total_price, 2) }}
+                                </span>
+                                <span
+                                    class="text-xs {{ $paper->is_active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                    {{ $paper->paper_days }} días
+                                </span>
+                            </div>
+                        </div>
+                    </summary>
+
+                    <!-- Panel flotante con diseño integrado -->
+                    <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                        <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                        <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
+                            <!-- Lista de productos -->
+                            <div class="space-y-2 max-h-[200px] overflow-y-auto">
+                                @foreach ($paper->products as $product)
+                                    <div class="p-2 bg-white dark:bg-gray-600 rounded-lg text-sm">
+                                        <p class="font-medium text-gray-800 dark:text-gray-200">
+                                            {{ $product->product_name }}</p>
+                                        <div class="grid grid-cols-3 gap-2 text-xs mt-1">
+                                            <div>
+                                                <span class="text-gray-600 dark:text-gray-400">Cant:</span>
+                                                <span class="font-medium">{{ $product->pivot->quantity }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-600 dark:text-gray-400">P.Unit:</span>
+                                                <span
+                                                    class="font-medium">${{ number_format($product->pivot->unit_price, 2) }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                                                <span
+                                                    class="font-medium">${{ number_format($product->pivot->subtotal, 2) }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
-                        </div>
+                                @endforeach
+                            </div>
 
-                        <!-- Estado y vencimiento -->
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="flex items-center gap-2">
-                                <span class="iconify h-4 w-4" data-icon="heroicons:clock-20-solid"></span>
-                                {{ $expirationDate->diffForHumans() }}
-                            </span>
-                            <span class="{{ $paper->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }} px-2 py-1 rounded-full text-xs">
-                                {{ $paper->is_active ? 'Activo' : 'Inactivo' }}
-                            </span>
-                        </div>
+                            <!-- Estado y vencimiento -->
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="flex items-center gap-2">
+                                    <span class="iconify h-4 w-4" data-icon="heroicons:clock-20-solid"></span>
+                                    {{ $expirationDate->diffForHumans() }}
+                                </span>
+                                <span
+                                    class="{{ $paper->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }} px-2 py-1 rounded-full text-xs">
+                                    {{ $paper->is_active ? 'Activo' : 'Inactivo' }}
+                                </span>
+                            </div>
 
-                        <!-- Botones de acción -->
-                        <div class="flex justify-center gap-3 p-1">
-                            <!-- Botón Copiar -->
-                            <a href="{{ route('papers.edit', ['paper' => $paper->id, 'copy' => true]) }}"
-                                class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 flex items-center justify-center"
-                                title="Copiar documento">
-                                <span class="iconify w-5 h-5" data-icon="iconamoon:copy-bold"></span>
-                            </a>
+                            <!-- Botones de acción -->
+                            <div class="flex justify-center gap-3 p-1">
+                                <!-- Botón Copiar -->
+                                <a href="{{ route('papers.edit', ['paper' => $paper->id, 'copy' => true]) }}"
+                                    class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 flex items-center justify-center"
+                                    title="Copiar documento">
+                                    <span class="iconify w-5 h-5" data-icon="iconamoon:copy-bold"></span>
+                                </a>
 
-                            <!-- Botón PDF -->
-                            <a href="{{ route('papers.pdf', $paper) }}" target="_blank"
-                                class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-center"
-                                title="Generar PDF">
-                                <span class="iconify w-5 h-5" data-icon="carbon:document-pdf"></span>
-                            </a>
+                                <!-- Botón PDF -->
+                                <a href="{{ route('papers.pdf', $paper) }}" target="_blank"
+                                    class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-center"
+                                    title="Generar PDF">
+                                    <span class="iconify w-5 h-5" data-icon="carbon:document-pdf"></span>
+                                </a>
 
-                            <!-- Botón Editar -->
-                            <a href="{{ route('papers.edit', $paper->id) }}"
-                                class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                title="Editar">
-                                <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
-                            </a>
+                                <!-- Botón Editar -->
+                                <a href="{{ route('papers.edit', $paper->id) }}"
+                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                    title="Editar">
+                                    <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
+                                </a>
 
-                            @if(auth()->user()->isAdmin())
-                                <!-- Botón Eliminar (solo admin) -->
-                                <form id="deleteForm-{{ $paper->id }}"
-                                    action="{{ route('papers.destroy', $paper->id) }}" method="POST"
-                                    class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
-                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                        title="Eliminar">
-                                        <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
-                                    </button>
-                                </form>
-                            @endif
+                                @if (auth()->user()->isAdmin())
+                                    <!-- Botón Eliminar (solo admin) -->
+                                    <form id="deleteForm-{{ $paper->id }}"
+                                        action="{{ route('papers.destroy', $paper->id) }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
+                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                            title="Eliminar">
+                                            <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-            </details>
-        @endforeach
-    </div>
+                </details>
+            @endforeach
+        </div>
 
-    <!-- Paginación -->
-    <div class="flex justify-center mt-4">
-        {{ $papers->appends(request()->query())->links() }}
-    </div>
-@endsection
+        <!-- Paginación -->
+        <div class="flex justify-center mt-4">
+            {{ $papers->appends(request()->query())->links() }}
+        </div>
+    @endsection
 
-@push('scripts')
-    <script>
-        // Manejar las cards de documentos
-        document.addEventListener('DOMContentLoaded', () => {
-            const allDetails = document.querySelectorAll('details.paper-card');
-            allDetails.forEach(detail => {
-                detail.addEventListener('toggle', (e) => {
-                    const paperId = detail.id.split('-')[1];
-                    const arrow = document.getElementById(`arrow-${paperId}`);
+    @push('scripts')
+        <script>
+            // Manejar las cards de documentos
+            document.addEventListener('DOMContentLoaded', () => {
+                const allDetails = document.querySelectorAll('details.paper-card');
+                allDetails.forEach(detail => {
+                    detail.addEventListener('toggle', (e) => {
+                        const paperId = detail.id.split('-')[1];
+                        const arrow = document.getElementById(`arrow-${paperId}`);
 
-                    if (detail.open) {
-                        arrow.style.transform = 'rotate(180deg)';
-                        allDetails.forEach(otherDetail => {
-                            if (otherDetail !== detail && otherDetail.open) {
-                                otherDetail.open = false;
-                                const otherPaperId = otherDetail.id.split('-')[1];
-                                const otherArrow = document.getElementById(
-                                    `arrow-${otherPaperId}`);
-                                otherArrow.style.transform = 'rotate(0deg)';
-                            }
-                        });
-                    } else {
-                        arrow.style.transform = 'rotate(0deg)';
-                    }
+                        if (detail.open) {
+                            arrow.style.transform = 'rotate(180deg)';
+                            allDetails.forEach(otherDetail => {
+                                if (otherDetail !== detail && otherDetail.open) {
+                                    otherDetail.open = false;
+                                    const otherPaperId = otherDetail.id.split('-')[1];
+                                    const otherArrow = document.getElementById(
+                                        `arrow-${otherPaperId}`);
+                                    otherArrow.style.transform = 'rotate(0deg)';
+                                }
+                            });
+                        } else {
+                            arrow.style.transform = 'rotate(0deg)';
+                        }
+                    });
                 });
             });
-        });
 
-        // Función de confirmación para eliminar
-        function confirmDelete(paperId) {
-            confirmAction({
-                title: '¿Eliminar documento?',
-                html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción eliminará permanentemente el documento y no se podrá recuperar</div>",
-                icon: 'warning',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#ef4444',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`deleteForm-${paperId}`).submit();
-                }
-            });
-        }
-    </script>
-@endpush
+            // Función de confirmación para eliminar
+            function confirmDelete(paperId) {
+                confirmAction({
+                    title: '¿Eliminar documento?',
+                    html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción eliminará permanentemente el documento y no se podrá recuperar</div>",
+                    icon: 'warning',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#ef4444',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(`deleteForm-${paperId}`).submit();
+                    }
+                });
+            }
+        </script>
+    @endpush

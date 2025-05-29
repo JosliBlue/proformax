@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use \Illuminate\Pagination\LengthAwarePaginator;
 
 class PaperController extends Controller
 {
@@ -34,11 +35,11 @@ class PaperController extends Controller
 
         // Aplicar filtros de búsqueda
         if ($search) {
-            $query->whereHas('customer', function($q) use ($search) {
+            $query->whereHas('customer', function ($q) use ($search) {
                 $q->where('customer_name', 'like', "%{$search}%")
-                  ->orWhere('customer_lastname', 'like', "%{$search}%");
+                    ->orWhere('customer_lastname', 'like', "%{$search}%");
             })->orWhere('paper_total_price', 'like', "%{$search}%")
-              ->orWhere('paper_days', 'like', "%{$search}%");
+                ->orWhere('paper_days', 'like', "%{$search}%");
         }
 
         // Aplicar ordenamiento
@@ -60,10 +61,26 @@ class PaperController extends Controller
         // Asegurarse de seleccionar solo los campos de papers
         $query->select('papers.*');
 
-        $papers = $query->paginate(10);
+        // Obtener todos los papers y separarlos en borradores y no borradores
+        $allPapers = $query->get();
+        $drafts = $allPapers->where('is_draft', true);
+        $papersList = $allPapers->where('is_draft', false)->values();
 
+        // Paginación manual solo para los no borradores
+        $perPage = 10;
+        $currentPage = request('page', 1);
+        $paginatedPapers = new LengthAwarePaginator(
+            $papersList->forPage($currentPage, $perPage),
+            $papersList->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        // Pasar borradores y paginados a la vista
         return view('_general.papers.papers', [
-            'papers' => $papers,
+            'papers' => $paginatedPapers,
+            'drafts' => $drafts,
             'columns' => $columns,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
@@ -83,41 +100,56 @@ class PaperController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
+        try {
+            $rules = [
+                'paper_days' => 'required|integer|min:1',
+                'products' => 'required|array|min:1',
+                'products.*.id' => 'required|exists:products,id',
+                'products.*.quantity' => 'required|integer|min:1',
+                'products.*.unit_price' => 'required|numeric|min:0',
+            ];
+            if (!$request->has('save_draft')) {
+                $rules['customer_id'] = 'required|exists:customers,id';
+            } else {
+                $rules['customer_id'] = 'nullable|exists:customers,id';
+            }
+            $validated = $request->validate($rules);
 
-        // Validación de datos
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'paper_days' => 'required|integer|min:1',
-            'products' => 'required|array|min:1',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'products.*.unit_price' => 'required|numeric|min:0',
-        ]);
+            // Calcular total
+            $total = collect($validated['products'])->sum(function ($product) {
+                return $product['quantity'] * $product['unit_price'];
+            });
 
-        // Calcular total
-        $total = collect($validated['products'])->sum(function ($product) {
-            return $product['quantity'] * $product['unit_price'];
-        });
-
-        // Crear paper
-        $paper = Paper::create([
-            'user_id' => $user->id,
-            'customer_id' => $validated['customer_id'],
-            'company_id' => $user->company_id,
-            'paper_days' => $validated['paper_days'],
-            'paper_total_price' => $total
-        ]);
-
-        // Adjuntar productos al paper
-        foreach ($validated['products'] as $productData) {
-            $paper->products()->attach($productData['id'], [
-                'quantity' => $productData['quantity'],
-                'unit_price' => $productData['unit_price'],
-                'subtotal' => $productData['quantity'] * $productData['unit_price'],
+            // Crear paper
+            $paper = Paper::create([
+                'user_id' => $user->id,
+                'customer_id' => $validated['customer_id'] ?? null,
+                'company_id' => $user->company_id,
+                'paper_days' => $validated['paper_days'],
+                'paper_total_price' => $total,
+                'is_draft' => $request->has('save_draft'),
             ]);
-        }
 
-        return redirect()->route('papers')->with('success', 'Documento creado correctamente');
+            // Adjuntar productos al paper
+            foreach ($validated['products'] as $productData) {
+                $paper->products()->attach($productData['id'], [
+                    'quantity' => $productData['quantity'],
+                    'unit_price' => $productData['unit_price'],
+                    'subtotal' => $productData['quantity'] * $productData['unit_price'],
+                ]);
+            }
+
+            return redirect()->route('papers')->with('success', 'Documento creado correctamente');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->withErrors($e->validator);
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
+        }
     }
     public function edit(Paper $paper)
     {
@@ -146,47 +178,63 @@ class PaperController extends Controller
     public function update(Request $request, Paper $paper)
     {
         $user = Auth::user();
+        try {
+            // Verificar que el paper pertenezca a la compañía del usuario
+            if ($paper->company_id !== $user->company_id) {
+                abort(403, 'No autorizado');
+            }
 
-        // Verificar que el paper pertenezca a la compañía del usuario
-        if ($paper->company_id !== $user->company_id) {
-            abort(403, 'No autorizado');
-        }
-
-        // Validación de datos (igual que en store)
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'paper_days' => 'required|integer|min:1',
-            'products' => 'required|array|min:1',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
-            'products.*.unit_price' => 'required|numeric|min:0',
-        ]);
-
-        // Calcular total
-        $total = collect($validated['products'])->sum(function ($product) {
-            return $product['quantity'] * $product['unit_price'];
-        });
-
-        // Actualizar paper
-        $paper->update([
-            'customer_id' => $validated['customer_id'],
-            'paper_days' => $validated['paper_days'],
-            'paper_total_price' => $total
-        ]);
-
-        // Sincronizar productos (elimina los antiguos y añade los nuevos)
-        $productsData = [];
-        foreach ($validated['products'] as $productData) {
-            $productsData[$productData['id']] = [
-                'quantity' => $productData['quantity'],
-                'unit_price' => $productData['unit_price'],
-                'subtotal' => $productData['quantity'] * $productData['unit_price']
+            // Validación de datos (igual que en store)
+            $rules = [
+                'paper_days' => 'required|integer|min:1',
+                'products' => 'required|array|min:1',
+                'products.*.id' => 'required|exists:products,id',
+                'products.*.quantity' => 'required|integer|min:1',
+                'products.*.unit_price' => 'required|numeric|min:0',
             ];
+            if (!$request->has('save_draft')) {
+                $rules['customer_id'] = 'required|exists:customers,id';
+            } else {
+                $rules['customer_id'] = 'nullable|exists:customers,id';
+            }
+            $validated = $request->validate($rules);
+
+            // Calcular total
+            $total = collect($validated['products'])->sum(function ($product) {
+                return $product['quantity'] * $product['unit_price'];
+            });
+
+            // Actualizar paper
+            $paper->update([
+                'customer_id' => $validated['customer_id'] ?? null,
+                'paper_days' => $validated['paper_days'],
+                'paper_total_price' => $total,
+                'is_draft' => $request->has('save_draft'),
+            ]);
+
+            // Sincronizar productos (elimina los antiguos y añade los nuevos)
+            $productsData = [];
+            foreach ($validated['products'] as $productData) {
+                $productsData[$productData['id']] = [
+                    'quantity' => $productData['quantity'],
+                    'unit_price' => $productData['unit_price'],
+                    'subtotal' => $productData['quantity'] * $productData['unit_price']
+                ];
+            }
+
+            $paper->products()->sync($productsData);
+
+            return redirect()->route('papers')->with('success', 'Documento actualizado correctamente');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Por favor corrige los errores en el formulario')
+                ->withErrors($e->validator);
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
         }
-
-        $paper->products()->sync($productsData);
-
-        return redirect()->route('papers')->with('success', 'Documento actualizado correctamente');
     }
 
     public function destroy(Paper $paper)

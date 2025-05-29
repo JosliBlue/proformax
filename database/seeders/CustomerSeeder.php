@@ -15,7 +15,7 @@ class CustomerSeeder extends Seeder
                 'customer_lastname' => 'Pérez',
                 'customer_phone' => '999888777',
                 'customer_email' => 'juan@example.com',
-                'company_id' => '1',
+                'company_id' => '2',
             ],
             [
                 'customer_name' => 'María',

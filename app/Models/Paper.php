@@ -16,12 +16,14 @@ class Paper extends Model
         'paper_total_price',
         'paper_days',
         'paper_status',
-        'company_id'
+        'company_id',
+        'is_draft' // <-- permitir asignación masiva
     ];
 
     protected $casts = [
         'paper_total_price' => 'decimal:2',
-        'paper_status' => 'boolean'
+        'paper_status' => 'boolean',
+        'is_draft' => 'boolean' // <-- casteo booleano
     ];
 
     public function user()

@@ -16,10 +16,11 @@ return new class extends Migration
 
             // Claves foráneas
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('company_id'); // Nueva relación con companies
 
             $table->decimal('paper_total_price', 10, 2)->default(0.00);
+            $table->boolean('is_draft')->default(false);
             $table->integer('paper_days');
             $table->timestamps();
 

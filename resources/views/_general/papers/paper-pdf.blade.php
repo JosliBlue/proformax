@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ now()->format('d/m/Y') }} - {{ $paper->customer->getFullNameAttribute() }} - Proforma
+    <title>{{ $paper->created_at->format('d/m/Y') }} - {{ $paper->customer->getFullNameAttribute() }} - Proforma
         {{ $paper->id }} - {{ $company->company_name }}</title>
     <style>
         :root {
@@ -25,7 +25,7 @@
         }
 
         .container {
-            padding: 40px 20px;
+            padding: 20px;
             max-width: 800px;
             margin: 0 auto;
         }
@@ -169,7 +169,7 @@
 
         <div class="document-details">
             <div class="info-group">
-                <h3>Detalles del documento</h3>
+                <h3>Detalles</h3>
                 {{--
                 <div class="info-row">
                     <span class="label">Proforma:</span>
@@ -184,10 +184,6 @@
                 <div class="info-row">
                     <span class="label">Fecha de creación:</span>
                     <span class="value">{{ $paper->created_at->format('d/m/Y') }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Fecha de emisión:</span>
-                    <span class="value">{{ now()->format('d/m/Y') }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Días de vigencia:</span>

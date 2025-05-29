@@ -16,15 +16,15 @@
         'texto' => 'Crear y editar proformas',
         'ruta' => 'papers',
     ];
+    $items[] = [
+        'icono' => 'line-md:briefcase-filled',
+        'titulo' => 'Productos',
+        'texto' => 'Lista de productos',
+        'ruta' => 'products',
+    ];
 
     // Opciones de administrador
     if (auth()->check() && auth()->user()->isAdmin()) {
-        $items[] = [
-            'icono' => 'line-md:briefcase-filled',
-            'titulo' => 'Productos',
-            'texto' => 'Lista de productos',
-            'ruta' => 'products',
-        ];
         $items[] = [
             'icono' => 'line-md:emoji-neutral-filled',
             'titulo' => 'Vendedores',

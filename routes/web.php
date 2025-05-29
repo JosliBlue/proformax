@@ -37,7 +37,7 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
     Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
     Route::patch('/customers/{id}/soft_destroy', [CustomerController::class, 'soft_destroy'])->name('customers.soft_destroy');
-    /*  Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy'); */
+    Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('/papers', [PaperController::class, 'index'])->name('papers');
     Route::get('/papers/create', [PaperController::class, 'create'])->name('papers.create');
@@ -47,16 +47,16 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
     Route::delete('/papers/{paper}', [PaperController::class, 'destroy'])->name('papers.destroy');
     Route::get('/papers/{paper}/pdf', [PaperPDFController::class, 'generatePDF'])->name('papers.pdf');
 
+    Route::get('/products', [ProductController::class, 'index'])->name('products');
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::patch('/products/soft_destroy/{id}', [ProductController::class, 'soft_destroy'])->name('products.soft_destroy');
+
     // ADMIN LINKS
     Route::middleware([checkAdmin::class])->group(function () {
-        Route::get('/products', [ProductController::class, 'index'])->name('products');
-        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-        Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
-        Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
-        Route::patch('/products/soft_destroy/{id}', [ProductController::class, 'soft_destroy'])->name('products.soft_destroy');
-
         Route::get('/sellers', [SellerController::class, 'index'])->name('sellers');
         Route::get('/sellers/create', [SellerController::class, 'create'])->name('sellers.create');
         Route::post('/sellers', [SellerController::class, 'store'])->name('sellers.store');

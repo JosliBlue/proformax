@@ -137,14 +137,13 @@ class CustomerController extends Controller
 
         return back()->with('success', $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado');
     }
-    /*
+
     public function destroy(string $id)
     {
         $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $customer->delete();
         return redirect()->route('customers')->with('success', 'Cliente eliminado');
     }
-    */
 
     /**
      * Obtiene los mensajes de validación comunes para Customer

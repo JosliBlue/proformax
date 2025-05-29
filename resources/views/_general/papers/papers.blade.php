@@ -182,18 +182,20 @@
                                 <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
                             </a>
 
-                            <!-- Botón Eliminar -->
-                            <form id="deleteForm-{{ $paper->id }}"
-                                action="{{ route('papers.destroy', $paper->id) }}" method="POST"
-                                class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
-                                    class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Eliminar">
-                                    <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
-                                </button>
-                            </form>
+                            @if(auth()->user()->isAdmin())
+                                <!-- Botón Eliminar (solo admin) -->
+                                <form id="deleteForm-{{ $paper->id }}"
+                                    action="{{ route('papers.destroy', $paper->id) }}" method="POST"
+                                    class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
+                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                        title="Eliminar">
+                                        <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>

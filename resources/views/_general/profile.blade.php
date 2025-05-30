@@ -51,6 +51,7 @@
                             @case(App\Enums\UserRole::ADMIN->value)
                                 Administrador
                             @break
+
                             @case(App\Enums\UserRole::USER->value)
                                 Vendedor
                             @break
@@ -62,10 +63,11 @@
                 <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 mb-1">
                         <span class="iconify h-4 w-4 {{ $user->user_status ? 'text-green-500' : 'text-red-500' }}"
-                              data-icon="heroicons:check-circle-20-solid"></span>
+                            data-icon="heroicons:check-circle-20-solid"></span>
                         Estado
                     </p>
-                    <span class="{{ $user->user_status ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }} font-medium">
+                    <span
+                        class="{{ $user->user_status ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }} font-medium">
                         {{ $user->user_status ? 'Activo' : 'Inactivo' }}
                     </span>
                 </div>
@@ -95,7 +97,8 @@
                             <input type="password" name="current_password" id="current_password" required
                                 class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
                                 placeholder="••••••••">
-                            <span class="iconify absolute right-3 top-3.5 text-gray-400" data-icon="heroicons:lock-closed-20-solid"></span>
+                            <span class="iconify absolute right-3 top-3.5 text-gray-400"
+                                data-icon="heroicons:lock-closed-20-solid"></span>
                         </div>
                         @error('current_password')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -114,7 +117,8 @@
                             <input type="password" name="user_password" id="user_password" required
                                 class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
                                 placeholder="••••••••">
-                            <span class="iconify absolute right-3 top-3.5 text-gray-400" data-icon="heroicons:key-20-solid"></span>
+                            <span class="iconify absolute right-3 top-3.5 text-gray-400"
+                                data-icon="heroicons:key-20-solid"></span>
                         </div>
                         @error('user_password')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -128,10 +132,12 @@
                             Confirmar nueva contraseña *
                         </label>
                         <div class="relative">
-                            <input type="password" name="user_password_confirmation" id="user_password_confirmation" required
+                            <input type="password" name="user_password_confirmation" id="user_password_confirmation"
+                                required
                                 class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
                                 placeholder="••••••••">
-                            <span class="iconify absolute right-3 top-3.5 text-gray-400" data-icon="heroicons:check-circle-20-solid"></span>
+                            <span class="iconify absolute right-3 top-3.5 text-gray-400"
+                                data-icon="heroicons:check-circle-20-solid"></span>
                         </div>
                     </div>
                 </div>

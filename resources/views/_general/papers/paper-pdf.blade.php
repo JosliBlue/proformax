@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }} - {{ $paper->customer->getFullNameAttribute() }} - Proforma
+    <title>{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }} -
+        {{ $paper->customer->getFullNameAttribute() }} - Proforma
         {{ $paper->id }} - {{ $company->company_name }}</title>
     <style>
         :root {
@@ -183,7 +184,8 @@
                 </div>
                 <div class="info-row">
                     <span class="label">Fecha:</span>
-                    <span class="value">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
+                    <span
+                        class="value">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
                 </div>
                 <div class="info-row">
                     <span class="label">Días de vigencia:</span>

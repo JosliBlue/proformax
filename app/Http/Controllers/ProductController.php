@@ -25,6 +25,11 @@ class ProductController extends Controller
         $user = Auth::user();
         $query = Product::where('company_id', $user->company_id);
 
+        // Solo productos activos para usuarios normales
+        if (Auth::check() && !Auth::user()->isAdmin()) {
+            $query->where('product_status', true);
+        }
+
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('product_name', 'like', "%{$search}%")
@@ -125,7 +130,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Obtiene los mensajes de validación comunes para Product
+     * Mensajes de validación para Product
      */
     private function getValidationMessages()
     {
@@ -144,7 +149,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Obtiene las reglas de validación comunes para Product
+     * Reglas de validación para Product
      */
     private function getValidationRules($id = null)
     {

@@ -43,7 +43,6 @@ class ProfileController extends Controller
 
             return redirect()->route('profile')
                 ->with('success', 'Contraseña actualizada correctamente.');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
                 ->withInput()

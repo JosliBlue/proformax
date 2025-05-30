@@ -127,7 +127,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             @foreach ($papers as $paper)
                 @php
-                    $expirationDate = $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->addDays($paper->paper_days) : $paper->created_at->addDays($paper->paper_days);
+                    $expirationDate = $paper->paper_date
+                        ? \Carbon\Carbon::parse($paper->paper_date)->addDays($paper->paper_days)
+                        : $paper->created_at->addDays($paper->paper_days);
                 @endphp
 
                 <details

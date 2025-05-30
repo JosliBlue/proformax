@@ -23,10 +23,10 @@ class SellerController extends Controller
         $search = request('search');
 
         $user = Auth::user();
-        
+
         // Construir la consulta base con filtro de compañía y rol
         $query = User::where('user_rol', 'user')
-                     ->where('company_id', $user->company_id);
+            ->where('company_id', $user->company_id);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -84,8 +84,8 @@ class SellerController extends Controller
     public function edit($id)
     {
         $user = User::where('user_rol', 'user')
-                    ->where('company_id', Auth::user()->company_id)
-                    ->findOrFail($id); // Solo usuarios normales de la misma compañía
+            ->where('company_id', Auth::user()->company_id)
+            ->findOrFail($id); // Solo usuarios normales de la misma compañía
         $roles = [UserRole::USER]; // Solo mostramos el rol 'user'
         return view('_admin.users.users-form', compact('user', 'roles'));
     }
@@ -94,8 +94,8 @@ class SellerController extends Controller
     {
         try {
             $user = User::where('user_rol', 'user')
-                        ->where('company_id', Auth::user()->company_id)
-                        ->findOrFail($id); // Solo usuarios normales de la misma compañía
+                ->where('company_id', Auth::user()->company_id)
+                ->findOrFail($id); // Solo usuarios normales de la misma compañía
 
             $rules = $this->getValidationRules($id);
             // Si no se proporciona contraseña, eliminamos la regla de validación
@@ -138,8 +138,8 @@ class SellerController extends Controller
     public function soft_destroy(string $id)
     {
         $user = User::where('user_rol', 'user')
-                    ->where('company_id', Auth::user()->company_id)
-                    ->findOrFail($id); // Solo usuarios normales de la misma compañía
+            ->where('company_id', Auth::user()->company_id)
+            ->findOrFail($id); // Solo usuarios normales de la misma compañía
         $user->update(['user_status' => !$user->user_status]);
 
         return back()->with('success', $user->user_status ? 'Vendedor activado' : 'Vendedor desactivado');
@@ -148,8 +148,8 @@ class SellerController extends Controller
     public function destroy(string $id)
     {
         $user = User::where('user_rol', 'user')
-                    ->where('company_id', Auth::user()->company_id)
-                    ->findOrFail($id); // Solo usuarios normales de la misma compañía
+            ->where('company_id', Auth::user()->company_id)
+            ->findOrFail($id); // Solo usuarios normales de la misma compañía
         $user->delete();
         return redirect()->route('sellers')->with('success', 'Vendedor eliminado');
     }

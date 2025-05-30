@@ -116,9 +116,9 @@
                             <span>${{ number_format($product->product_price, 2) }}</span>
                         </div>
                         <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:tag-20-solid"></span>
-                                <span>{{ ucfirst($product->product_type->value) }}</span>
-                            </div>
+                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:tag-20-solid"></span>
+                            <span>{{ ucfirst($product->product_type->value) }}</span>
+                        </div>
                     </div>
                 </summary>
 
@@ -148,7 +148,7 @@
                                 </button>
                             </form>
 
-                            @if(auth()->user()->isAdmin())
+                            @if (auth()->user()->isAdmin())
                                 <!-- Botón Eliminar (solo admin) -->
                                 <form id="deleteForm-{{ $product->id }}"
                                     action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">

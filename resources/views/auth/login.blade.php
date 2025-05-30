@@ -8,14 +8,13 @@
     <div
         class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <div class="absolute top-4 right-4 flex items-center">
-            <x-theme-switcher/>
+            <x-theme-switcher />
             <span class="sr-only">Cambiar tema</span>
         </div>
 
         <div class="mb-6 text-center">
             <img class="mx-auto h-20 w-auto" src="{{ $company->getLogoUrlAttribute() }}" alt="{{ $company->company_name }}">
-            <span
-                class="block mt-2 text-2xl font-semibold text-gray-900 dark:text-white">{{ $company->company_name }}</span>
+            <span class="block mt-2 text-2xl font-semibold text-gray-900 dark:text-white">{{ $company->company_name }}</span>
         </div>
         <div
             class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 transition-colors duration-300">

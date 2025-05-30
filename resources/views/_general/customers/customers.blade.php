@@ -157,11 +157,10 @@
                                 </button>
                             </form>
 
-                            @if(auth()->user()->isAdmin())
+                            @if (auth()->user()->isAdmin())
                                 <!-- Botón Eliminar (solo admin) -->
                                 <form id="deleteForm-{{ $customer->id }}"
-                                    action="{{ route('customers.destroy', $customer->id) }}" method="POST"
-                                    class="inline">
+                                    action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="confirmDelete('{{ $customer->id }}')"

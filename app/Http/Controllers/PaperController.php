@@ -41,8 +41,8 @@ class PaperController extends Controller
                     $q2->where('customer_name', 'like', "%{$search}%")
                         ->orWhere('customer_lastname', 'like', "%{$search}%");
                 })
-                ->orWhere('paper_total_price', 'like', "%{$search}%")
-                ->orWhere('paper_days', 'like', "%{$search}%");
+                    ->orWhere('paper_total_price', 'like', "%{$search}%")
+                    ->orWhere('paper_days', 'like', "%{$search}%");
             });
         }
 
@@ -106,20 +106,9 @@ class PaperController extends Controller
     {
         $user = Auth::user();
         try {
-            $rules = [
-                'paper_days' => 'required|integer|min:1',
-                'products' => 'required|array|min:1',
-                'products.*.id' => 'required|exists:products,id',
-                'products.*.quantity' => 'required|integer|min:1',
-                'products.*.unit_price' => 'required|numeric|min:0',
-                'paper_date' => 'required|date', // Cambia la validación a la nueva columna
-            ];
-            if (!$request->has('save_draft')) {
-                $rules['customer_id'] = 'required|exists:customers,id';
-            } else {
-                $rules['customer_id'] = 'nullable|exists:customers,id';
-            }
-            $validated = $request->validate($rules);
+            $rules = $this->getValidationRules();
+            $rules['customer_id'] = !$request->has('save_draft') ? 'required|exists:customers,id' : 'nullable|exists:customers,id';
+            $validated = $request->validate($rules, $this->getValidationMessages());
 
             // Si no es borrador y no hay cliente, forzar error manualmente
             if (!$request->has('save_draft') && empty($validated['customer_id'])) {
@@ -200,20 +189,13 @@ class PaperController extends Controller
             }
 
             // Validación de datos (igual que en store)
-            $rules = [
-                'paper_days' => 'required|integer|min:1',
-                'products' => 'required|array|min:1',
-                'products.*.id' => 'required|exists:products,id',
-                'products.*.quantity' => 'required|integer|min:1',
-                'products.*.unit_price' => 'required|numeric|min:0',
-                'paper_date' => 'required|date', // Cambia la validación a la nueva columna
-            ];
+            $rules = $this->getValidationRules($paper->id);
             if (!$request->has('save_draft')) {
                 $rules['customer_id'] = 'required|exists:customers,id';
             } else {
                 $rules['customer_id'] = 'nullable|exists:customers,id';
             }
-            $validated = $request->validate($rules);
+            $validated = $request->validate($rules, $this->getValidationMessages());
 
             // Calcular total
             $total = collect($validated['products'])->sum(function ($product) {
@@ -265,5 +247,47 @@ class PaperController extends Controller
         $paper->delete();
 
         return redirect()->route('papers')->with('success', 'Documento eliminado correctamente');
+    }
+
+    /**
+     * Mensajes de validación para Paper
+     */
+    private function getValidationMessages()
+    {
+        return [
+            'paper_days.required' => 'Los días de validez son obligatorios',
+            'paper_days.integer' => 'Los días de validez deben ser un número entero',
+            'paper_days.min' => 'Debe haber al menos 1 día de validez',
+            'products.required' => 'Debe agregar al menos un producto',
+            'products.array' => 'El formato de productos no es válido',
+            'products.*.id.required' => 'Debe seleccionar un producto',
+            'products.*.id.exists' => 'El producto seleccionado no existe',
+            'products.*.quantity.required' => 'La cantidad es obligatoria',
+            'products.*.quantity.integer' => 'La cantidad debe ser un número entero',
+            'products.*.quantity.min' => 'La cantidad debe ser al menos 1',
+            'products.*.unit_price.required' => 'El precio unitario es obligatorio',
+            'products.*.unit_price.numeric' => 'El precio unitario debe ser un número',
+            'products.*.unit_price.min' => 'El precio unitario no puede ser negativo',
+            'paper_date.required' => 'La fecha es obligatoria',
+            'paper_date.date' => 'La fecha no es válida',
+            'customer_id.required' => 'El cliente es obligatorio',
+            'customer_id.exists' => 'El cliente seleccionado no existe',
+        ];
+    }
+
+    /**
+     * Reglas de validación para Paper
+     */
+    private function getValidationRules($id = null)
+    {
+        $rules = [
+            'paper_days' => 'required|integer|min:1',
+            'products' => 'required|array|min:1',
+            'products.*.id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.unit_price' => 'required|numeric|min:0',
+            'paper_date' => 'required|date',
+        ];
+        return $rules;
     }
 }

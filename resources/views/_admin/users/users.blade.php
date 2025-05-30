@@ -135,7 +135,7 @@
                     <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
                     <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
 
-                       
+
                         <!-- Botones de acción -->
                         <div class="flex justify-center gap-3 p-1">
                             <!-- Botón Editar -->

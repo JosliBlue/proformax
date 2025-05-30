@@ -33,7 +33,7 @@
 
             <!-- Switch de tema -->
             <div class="hover:bg-gray-100 dark:hover:bg-gray-700">
-                <x-theme-switcher/>
+                <x-theme-switcher />
             </div>
 
             <!-- Opción de perfil -->

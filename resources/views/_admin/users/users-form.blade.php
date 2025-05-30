@@ -13,8 +13,8 @@
     </div>
 
     <div class="max-w-md mx-auto">
-        <form action="{{ isset($user) ? route('sellers.update', $user->id) : route('sellers.store') }}"
-            method="POST" class="space-y-4" autocomplete="on" spellcheck="true">
+        <form action="{{ isset($user) ? route('sellers.update', $user->id) : route('sellers.store') }}" method="POST"
+            class="space-y-4" autocomplete="on" spellcheck="true">
             @csrf
             @if (isset($user))
                 @method('PUT')
@@ -28,8 +28,8 @@
                 <label for="user_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Nombre *
                 </label>
-                <input type="text" name="user_name" id="user_name"
-                    value="{{ old('user_name', $user->user_name ?? '') }}" required
+                <input type="text" name="user_name" id="user_name" value="{{ old('user_name', $user->user_name ?? '') }}"
+                    required
                     class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md"
                     autocomplete="given-name">
                 @error('user_name')
@@ -73,7 +73,8 @@
 
             {{-- Confirmar Contraseña --}}
             <div>
-                <label for="user_password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label for="user_password_confirmation"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ isset($user) ? 'Confirmar Nueva Contraseña' : 'Confirmar Contraseña *' }}
                 </label>
                 <input type="password" name="user_password_confirmation" id="user_password_confirmation"

@@ -45,7 +45,6 @@
 ## ✨ Características
 
 -   ✅ Gestión completa de proformas y borradores
--   📦 Catálogo de productos con imágenes
 -   👥 Base de datos de clientes organizada
 -   📄 Generación de PDFs profesionales
 -   🔍 Búsqueda avanzada con filtros

@@ -62,7 +62,8 @@
                         Días de validez *
                     </label>
                     <input type="number" name="paper_days" id="paper_days" min="1"
-                        value="{{ isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7') }}" required
+                        value="{{ isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7') }}"
+                        required
                         class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                 </div>
             </div>
@@ -102,15 +103,23 @@
                         Cancelar
                     </a>
                     <button type="submit" name="save_draft" value="1"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
-                    <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
-                    Guardar como borrador
-                </button>
-                <button type="submit" id="submit-btn"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
-                    <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
-                    {{ isset($paper) ? 'Actualizar Documento' : 'Guardar Documento' }}
-                </button>
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
+                        <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
+                        @if (isset($paper) && $paper->is_draft)
+                            Actualizar borrador
+                        @else
+                            Guardar como borrador
+                        @endif
+                    </button>
+                    <button type="submit" id="submit-btn"
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
+                        <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
+                        @if (isset($paper) && !$paper->is_draft)
+                            Actualizar Proforma
+                        @else
+                            Guardar Proforma
+                        @endif
+                    </button>
                 </div>
             </div>
         </div>

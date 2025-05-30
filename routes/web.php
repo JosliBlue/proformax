@@ -11,6 +11,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Middleware\checkSession;
 use App\Http\Middleware\checkAdmin;
 use App\Http\Middleware\companyStyles;
+use App\Http\Middleware\CheckActiveUser;
 use Illuminate\Support\Facades\Route;
 
 // LOGIN LINK
@@ -20,7 +21,12 @@ Route::middleware([checkSession::class])->group(function () {
 });
 
 // DESPUES DE INICIAR SESION LINKS
-Route::middleware(['auth', companyStyles::class])->group(function () {
+Route::middleware(['auth', companyStyles::class, CheckActiveUser::class])->group(function () {
+    // Ruta para usuarios desactivados
+    Route::get('/desactivado', function () {
+        return view('auth.deactivated');
+    })->name('deactivated');
+
     Route::get('/', function () {
         return view('_general.home');
     })->name('home');
@@ -69,6 +75,8 @@ Route::middleware(['auth', companyStyles::class])->group(function () {
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     });
 });
+
+
 
 Route::fallback(function () {
     return redirect()->route('login');

@@ -99,7 +99,7 @@
                 setTimeout(() => {
                     card.classList.remove('opacity-0', 'translate-y-4');
                     card.classList.add('opacity-100', 'translate-y-0');
-                }, 200 * index);
+                }, 50 * index);
             });
         });
     </script>

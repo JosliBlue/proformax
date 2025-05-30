@@ -65,10 +65,14 @@
                     <div
                         class="flex flex-col md:flex-row md:items-center md:justify-between bg-yellow-50 dark:bg-yellow-800/60 rounded-lg py-2 px-3 border border-yellow-200 dark:border-yellow-700 shadow-sm gap-2 md:gap-0">
                         <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full">
-                            <div class="flex flex-row items-center gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-start">
-                                <span class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
-                                <span class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
-                                <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total: ${{ number_format($paper->paper_total_price, 2) }}</span>
+                            <div
+                                class="flex flex-row items-center gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-start">
+                                <span
+                                    class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
+                                <span
+                                    class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
+                                <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total:
+                                    ${{ number_format($paper->paper_total_price, 2) }}</span>
                             </div>
                         </div>
                         <div class="flex flex-row gap-2 w-full md:w-auto justify-center">
@@ -104,14 +108,16 @@
                     class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
                     {{ $sortField === $column['field']
                         ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
-                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800'}}">
+                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     {{ $column['name'] }}
                     @if ($sortField === $column['field'])
                         <span class="ml-1">
                             @if ($sortDirection === 'asc')
-                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold" data-icon="oui:arrow-up"></span>
+                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                    data-icon="oui:arrow-up"></span>
                             @else
-                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold" data-icon="oui:arrow-down"></span>
+                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                    data-icon="oui:arrow-down"></span>
                             @endif
                         </span>
                     @endif
@@ -212,7 +218,7 @@
                             <!-- Botones de acción -->
                             <div class="flex justify-center gap-3 p-1">
                                 <!-- Botón Copiar -->
-                                <a href="{{ route('papers.edit', ['paper' => $paper->id, 'copy' => true]) }}"
+                                <a href="{{ route('papers.create', ['copy_from' => $paper->id]) }}"
                                     class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 flex items-center justify-center"
                                     title="Copiar documento">
                                     <span class="iconify w-5 h-5" data-icon="iconamoon:copy-bold"></span>

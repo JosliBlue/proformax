@@ -8,6 +8,7 @@
     <title>{{ $company->company_name }}</title>
     <meta name="theme-color" content="{{ $company->company_primary_color }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="{{ $company->company_name }}: Sistema de gestión de proformas, clientes y productos para tu empresa.">
 
     <link rel="icon" href="{{ $company->getLogoUrlAttribute() }}" type="image/webp">
 

@@ -93,13 +93,45 @@ class PaperController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $user = Auth::user();
         $customers = Customer::forCompany($user->company_id)->active()->get();
         $products = Product::forCompany($user->company_id)->active()->get();
 
-        return view('_general.papers.papers-create', compact('customers', 'products'));
+        $selectedProducts = [];
+        $copyPaper = null;
+        $copyCustomerId = null;
+        $copyPaperDays = null;
+        $copyPaperDate = null;
+
+        if ($request->has('copy_from')) {
+            $copyPaper = Paper::where('company_id', $user->company_id)
+                ->where('id', $request->input('copy_from'))
+                ->with('products')
+                ->first();
+            if ($copyPaper) {
+                $copyCustomerId = $copyPaper->customer_id;
+                $copyPaperDays = $copyPaper->paper_days;
+                $copyPaperDate = $copyPaper->paper_date; // Fecha actual para el nuevo documento
+                $selectedProducts = $copyPaper->products->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'quantity' => $product->pivot->quantity,
+                        'unit_price' => $product->pivot->unit_price
+                    ];
+                })->toArray();
+            }
+        }
+
+        return view('_general.papers.papers-create', [
+            'customers' => $customers,
+            'products' => $products,
+            'selectedProducts' => $selectedProducts,
+            'copyCustomerId' => $copyCustomerId,
+            'copyPaperDays' => $copyPaperDays,
+            'copyPaperDate' => $copyPaperDate
+        ]);
     }
 
     public function store(Request $request)

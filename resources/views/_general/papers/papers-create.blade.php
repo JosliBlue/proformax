@@ -38,7 +38,7 @@
                         <option value="">Seleccione un cliente</option>
                         @foreach ($customers as $customer)
                             <option value="{{ $customer->id }}"
-                                {{ isset($paper) && $paper->customer_id == $customer->id ? 'selected' : '' }}>
+                                {{ (isset($paper) && $paper->customer_id == $customer->id) || (isset($copyCustomerId) && $copyCustomerId == $customer->id) ? 'selected' : '' }}>
                                 {{ $customer->customer_name }} {{ $customer->customer_lastname }}
                             </option>
                         @endforeach
@@ -51,7 +51,7 @@
                         Fecha *
                     </label>
                     <input type="date" name="paper_date" id="paper_date"
-                        value="{{ old('paper_date', isset($paper) ? $paper->paper_date : now()->format('Y-m-d')) }}"
+                        value="{{ old('paper_date', isset($paper) ? $paper->paper_date : (isset($copyPaperDate) ? $copyPaperDate : now()->format('Y-m-d'))) }}"
                         required
                         class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                 </div>
@@ -62,7 +62,7 @@
                         Días de validez *
                     </label>
                     <input type="number" name="paper_days" id="paper_days" min="1"
-                        value="{{ isset($paper) ? $paper->paper_days : '7' }}" required
+                        value="{{ isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7') }}" required
                         class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
                 </div>
             </div>

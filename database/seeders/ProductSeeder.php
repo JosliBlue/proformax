@@ -10,90 +10,79 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-            // Productos físicos
+            // Productos y servicios Giga compañia (empresa 1)
             [
-                'product_name' => 'Mouse inalámbrico',
+                'product_name' => 'Laptop Ultra X',
                 'product_type' => 'producto',
-                'product_price' => 25.50,
-                'company_id' => '1',
+                'product_price' => 1450.00,
+                'company_id' => 1,
+                'product_status' => true
             ],
             [
-                'product_name' => 'Laptop HP',
+                'product_name' => 'Monitor 27" 4K',
                 'product_type' => 'producto',
-                'product_price' => 1200.00,
-                'company_id' => '1',
+                'product_price' => 320.00,
+                'company_id' => 1,
+                'product_status' => true
             ],
             [
-                'product_name' => 'Teclado mecánico',
+                'product_name' => 'Teclado RGB Pro',
                 'product_type' => 'producto',
-                'product_price' => 75.00,
-                'company_id' => '1',
+                'product_price' => 95.00,
+                'company_id' => 1,
+                'product_status' => true
             ],
             [
-                'product_name' => 'Monitor 24"',
-                'product_type' => 'producto',
-                'product_price' => 180.00,
-                'company_id' => '1',
-            ],
-            [
-                'product_name' => 'Impresora láser',
-                'product_type' => 'producto',
-                'product_price' => 200.00,
-                'company_id' => '1',
-            ],
-            [
-                'product_name' => 'Disco SSD 500GB',
-                'product_type' => 'producto',
+                'product_name' => 'Soporte técnico remoto',
+                'product_type' => 'servicio',
                 'product_price' => 60.00,
-                'company_id' => '1',
+                'company_id' => 1,
+                'product_status' => true
             ],
             [
-                'product_name' => 'Memoria RAM 8GB',
-                'product_type' => 'producto',
-                'product_price' => 35.00,
-                'company_id' => '1',
-            ],
-            [
-                'product_name' => 'Webcam HD',
-                'product_type' => 'producto',
-                'product_price' => 45.00,
-                'company_id' => '1',
-            ],
-            [
-                'product_name' => 'Router WiFi',
-                'product_type' => 'producto',
-                'product_price' => 80.00,
-                'company_id' => '1',
-            ],
-            [
-                'product_name' => 'Altavoces Bluetooth',
-                'product_type' => 'producto',
-                'product_price' => 55.00,
-                'company_id' => '1',
-            ],
-
-            // Servicios
-            [
-                'product_name' => 'Mantenimiento mensual',
+                'product_name' => 'Instalación de redes',
                 'product_type' => 'servicio',
-                'product_price' => 150.00,
-                'company_id' => '1',
+                'product_price' => 180.00,
+                'company_id' => 1,
+                'product_status' => true
+            ],
+            // Productos y servicios ArseAccesorios (empresa 2)
+            [
+                'product_name' => 'Cemento Portland 50kg',
+                'product_type' => 'producto',
+                'product_price' => 12.50,
+                'company_id' => 2,
+                'product_status' => true
             ],
             [
-                'product_name' => 'Instalación de software',
-                'product_type' => 'servicio',
-                'product_price' => 50.00,
-                'company_id' => '1',
+                'product_name' => 'Ladrillo hueco',
+                'product_type' => 'producto',
+                'product_price' => 0.45,
+                'company_id' => 2,
+                'product_status' => true
             ],
             [
-                'product_name' => 'Configuración de red',
+                'product_name' => 'Arena fina m3',
+                'product_type' => 'producto',
+                'product_price' => 18.00,
+                'company_id' => 2,
+                'product_status' => true
+            ],
+            [
+                'product_name' => 'Mano de obra albañilería',
                 'product_type' => 'servicio',
-                'product_price' => 80.00,
-                'company_id' => '1',
+                'product_price' => 250.00,
+                'company_id' => 2,
+                'product_status' => true
+            ],
+            [
+                'product_name' => 'Supervisión de obra',
+                'product_type' => 'servicio',
+                'product_price' => 400.00,
+                'company_id' => 2,
+                'product_status' => true
             ]
-
         ];
-
         foreach ($products as $product) {
             Product::create($product);
         }

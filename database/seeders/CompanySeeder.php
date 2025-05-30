@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CompanySeeder extends Seeder
@@ -13,21 +12,23 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        $company = Company::create([
+        // Empresa 1: Giga compania
+        Company::create([
             'company_name' => 'Giga Compania',
             'company_primary_color' => '#8a090c',
             'company_secondary_color' => '#53abc1',
             'company_logo_path' => 'companies/giga_compania.webp',
             'company_primary_text_color' => '#FFFFFF',
-            'company_secondary_text_color' => '#000000'
+            'company_secondary_text_color' => '#212121'
         ]);
-        $company2 = Company::create([
-            'company_name' => 'Giga Companiassssss',
-            'company_primary_color' => '#8a095c',
-            'company_secondary_color' => '#53abc1',
-            'company_logo_path' => 'companies/giga_compania.webp',
+        // Empresa 2: Cositas
+        Company::create([
+            'company_name' => 'ArseAccesorios',
+            'company_primary_color' => '#bf360c',
+            'company_secondary_color' => '#ffd600',
+            'company_logo_path' => 'companies/construred_logo.webp',
             'company_primary_text_color' => '#FFFFFF',
-            'company_secondary_text_color' => '#000000'
+            'company_secondary_text_color' => '#263238'
         ]);
     }
 }

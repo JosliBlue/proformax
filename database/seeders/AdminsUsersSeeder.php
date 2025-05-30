@@ -14,29 +14,61 @@ class AdminsUsersSeeder extends Seeder
     public function run(): void
     {
         $users = [
+            // Giga compañia (empresa 1)
             [
-                'user_name' => 'Administrador',
+                'user_name' => 'Jose Muyulema',
                 'user_email' => 'admin@proformax.com',
                 'user_password' => Hash::make('admin123'),
                 'user_rol' => 'admin',
-                'company_id' => '1',
-                'is_superuser' => true, // El primer usuario es superusuario
+                'company_id' => 1,
+                'is_superuser' => true,
+                'user_status' => true
             ],
             [
-                'user_name' => 'Usuario',
-                'user_email' => 'user@proformax.com',
-                'user_password' => Hash::make('user123'),
-                'user_rol' => 'user',
-                'company_id' => '1',
+                'user_name' => 'Lucas Méndez',
+                'user_email' => 'lucas.mendez@proformax.com',
+                'user_password' => Hash::make('lucas2025'),
+                'user_rol' => 'admin',
+                'company_id' => 1,
                 'is_superuser' => false,
+                'user_status' => true
             ],
             [
-                'user_name' => 'Nulito',
-                'user_email' => 'nulo@proformax.com',
-                'user_password' => Hash::make('nulo123'),
+                'user_name' => 'Valentina Ruiz',
+                'user_email' => 'valentina.ruiz@proformax.com',
+                'user_password' => Hash::make('valen2025'),
                 'user_rol' => 'user',
-                'company_id' => null,
+                'company_id' => 1,
                 'is_superuser' => false,
+                'user_status' => true
+            ],
+            // ArseAccesorios (empresa 2)
+            [
+                'user_name' => 'Aracelly Guangasi',
+                'user_email' => 'aracelly@arse.com',
+                'user_password' => Hash::make('martin2025'),
+                'user_rol' => 'admin',
+                'company_id' => 2,
+                'is_superuser' => true,
+                'user_status' => true
+            ],
+            [
+                'user_name' => 'Camila Paredes',
+                'user_email' => 'camila.paredes@arse.com',
+                'user_password' => Hash::make('camila2025'),
+                'user_rol' => 'user',
+                'company_id' => 2,
+                'is_superuser' => false,
+                'user_status' => true
+            ],
+            [
+                'user_name' => 'Jorge Salinas',
+                'user_email' => 'jorge.salinas@arse.com',
+                'user_password' => Hash::make('jorge2025'),
+                'user_rol' => 'user',
+                'company_id' => 2,
+                'is_superuser' => false,
+                'user_status' => true
             ]
         ];
 

@@ -30,6 +30,19 @@ class Company extends Model
 
     public function getLogoUrlAttribute(): string
     {
-        return $this->company_logo_path ? Storage::url($this->company_logo_path) : asset('companies/_01_proformax.webp');
+        // Si no hay ruta en la BD o el archivo no existe en el storage, retorna la predeterminada
+        if (!$this->company_logo_path) {
+            return '/storage/companies/_01_proformax.webp';
+        }
+        // Si la ruta ya contiene '/storage/', devuélvela tal cual
+        if (str_starts_with($this->company_logo_path, '/storage/')) {
+            return $this->company_logo_path;
+        }
+        // Si el archivo existe en el storage público, retorna la ruta /storage/...
+        if (Storage::disk('public')->exists($this->company_logo_path)) {
+            return '/storage/' . ltrim($this->company_logo_path, '/');
+        }
+        // Si no existe, retorna la predeterminada
+        return '/storage/companies/_01_proformax.webp';
     }
 }

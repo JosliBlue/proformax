@@ -158,7 +158,8 @@
                                 </button>
                             </form>
 
-                            <!-- Botón Eliminar -->
+                            {{-- Botón Eliminar solo para superusuario --}}
+                            @if(auth()->check() && auth()->user()->isSuperUser())
                             <form id="deleteForm-{{ $seller->id }}" action="{{ route('sellers.destroy', $seller->id) }}"
                                 method="POST" class="inline">
                                 @csrf
@@ -169,6 +170,7 @@
                                     <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </div>
                 </div>

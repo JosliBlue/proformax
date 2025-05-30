@@ -24,17 +24,20 @@ class SellerController extends Controller
 
         $user = Auth::user();
 
-        // Construir la consulta base con filtro de compañía y rol
-        $query = User::where('user_rol', 'user')
-            ->where('company_id', $user->company_id);
-
+        // Construir la consulta base con filtro de compañía
+        $query = User::where('company_id', $user->company_id);
+        // Si no es superusuario, no mostrar a otros superusuarios
+        if (!$user->isSuperUser()) {
+            $query = $query->where('is_superuser', false);
+        }
+        // No filtrar el usuario actual
+        $query = $query->where('id', '!=', $user->id);
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('user_name', 'like', "%{$search}%")
                     ->orWhere('user_email', 'like', "%{$search}%");
             });
         }
-
         $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
         return view("_admin.users.users", [
@@ -61,14 +64,21 @@ class SellerController extends Controller
                 $this->getValidationMessages()
             );
 
-            // Forzamos el rol a 'user', asignamos la compañía y hasheamos la contraseña
-            $validated['user_rol'] = 'user';
+            // Permitir elegir rol solo si es admin
+            if (Auth::user()->isAdmin() && isset($request->user_rol)) {
+                $validated['user_rol'] = $request->user_rol;
+            } else {
+                $validated['user_rol'] = 'user';
+            }
             $validated['company_id'] = Auth::user()->company_id;
             $validated['user_password'] = bcrypt($validated['user_password']);
 
+            // Permitir marcar como superusuario solo si el que crea es superusuario
+            $validated['is_superuser'] = (Auth::user()->isSuperUser() && $request->has('is_superuser') && $request->is_superuser == 1) ? true : false;
+
             User::create($validated);
             return redirect()->route('sellers')
-                ->with('success', 'Vendedor creado correctamente.');
+                ->with('success', 'Usuario creado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
                 ->withInput()
@@ -83,43 +93,49 @@ class SellerController extends Controller
 
     public function edit($id)
     {
-        $user = User::where('user_rol', 'user')
-            ->where('company_id', Auth::user()->company_id)
-            ->findOrFail($id); // Solo usuarios normales de la misma compañía
-        $roles = [UserRole::USER]; // Solo mostramos el rol 'user'
+        $user = User::where('company_id', Auth::user()->company_id)
+            ->findOrFail($id); // Permite editar cualquier usuario de la compañía
+        $roles = UserRole::cases(); // Permite elegir cualquier rol
         return view('_admin.users.users-form', compact('user', 'roles'));
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $user = User::where('user_rol', 'user')
-                ->where('company_id', Auth::user()->company_id)
-                ->findOrFail($id); // Solo usuarios normales de la misma compañía
+            $user = User::where('company_id', Auth::user()->company_id)
+                ->findOrFail($id); // Permite editar cualquier usuario de la compañía
 
             $rules = $this->getValidationRules($id);
-            // Si no se proporciona contraseña, eliminamos la regla de validación
             if (empty($request->user_password)) {
                 unset($rules['user_password']);
             }
 
             $validated = $request->validate($rules, $this->getValidationMessages());
 
-            // Actualizamos solo los campos proporcionados
             $updateData = [
                 'user_name' => $validated['user_name'],
                 'user_email' => $validated['user_email'],
             ];
+
+            // Permitir cambiar el rol si es admin
+            if (Auth::user()->isAdmin() && isset($request->user_rol)) {
+                $updateData['user_rol'] = $request->user_rol;
+            }
 
             // Solo actualizamos la contraseña si se proporcionó una nueva
             if (!empty($validated['user_password'])) {
                 $updateData['user_password'] = bcrypt($validated['user_password']);
             }
 
+            // Permitir marcar como superusuario solo si el que edita es superusuario
+            if (Auth::user()->isSuperUser() && $request->has('is_superuser')) {
+                $updateData['is_superuser'] = $request->is_superuser == 1 ? true : false;
+            }
+
             $user->update($updateData);
 
             return redirect()->route('sellers')
-                ->with('success', 'Vendedor actualizado correctamente.');
+                ->with('success', 'Usuario actualizado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
                 ->withInput()
@@ -127,7 +143,7 @@ class SellerController extends Controller
                 ->withErrors($e->validator);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('sellers')
-                ->with('error', 'El vendedor que intentas actualizar no existe.');
+                ->with('error', 'El usuario que intentas actualizar no existe.');
         } catch (\Exception $e) {
             return back()
                 ->withInput()
@@ -137,21 +153,39 @@ class SellerController extends Controller
 
     public function soft_destroy(string $id)
     {
-        $user = User::where('user_rol', 'user')
-            ->where('company_id', Auth::user()->company_id)
-            ->findOrFail($id); // Solo usuarios normales de la misma compañía
+        $current = Auth::user();
+        // Permitir desactivar/activar solo si es admin o superuser
+        if (!$current->isAdmin() && !$current->isSuperUser()) {
+            abort(403, 'No tienes permisos para desactivar usuarios.');
+        }
+        $user = User::where('company_id', $current->company_id)
+            ->findOrFail($id);
+        // No permitir desactivar superusuarios si no eres superuser
+        if ($user->isSuperUser() && !$current->isSuperUser()) {
+            abort(403, 'No puedes desactivar un superusuario.');
+        }
+        // No permitir desactivar a sí mismo
+        if ($user->id == $current->id) {
+            abort(403, 'No puedes desactivarte a ti mismo.');
+        }
         $user->update(['user_status' => !$user->user_status]);
-
-        return back()->with('success', $user->user_status ? 'Vendedor activado' : 'Vendedor desactivado');
+        return back()->with('success', $user->user_status ? 'Usuario activado' : 'Usuario desactivado');
     }
 
     public function destroy(string $id)
     {
-        $user = User::where('user_rol', 'user')
-            ->where('company_id', Auth::user()->company_id)
-            ->findOrFail($id); // Solo usuarios normales de la misma compañía
+        $current = Auth::user();
+        // Solo el superusuario puede eliminar usuarios y administradores
+        if (!$current->isSuperUser()) {
+            abort(403, 'Solo el superusuario puede eliminar usuarios.');
+        }
+        $user = User::findOrFail($id);
+        // No permitir eliminar al propio superusuario
+        if ($user->isSuperUser()) {
+            abort(403, 'No puedes eliminar al superusuario.');
+        }
         $user->delete();
-        return redirect()->route('sellers')->with('success', 'Vendedor eliminado');
+        return redirect()->route('sellers')->with('success', 'Usuario eliminado');
     }
 
     private function getValidationMessages()

@@ -20,20 +20,23 @@ class AdminsUsersSeeder extends Seeder
                 'user_password' => Hash::make('admin123'),
                 'user_rol' => 'admin',
                 'company_id' => '1',
+                'is_superuser' => true, // El primer usuario es superusuario
             ],
             [
                 'user_name' => 'Usuario',
                 'user_email' => 'user@proformax.com',
                 'user_password' => Hash::make('user123'),
                 'user_rol' => 'user',
-                'company_id' => '1'
+                'company_id' => '1',
+                'is_superuser' => false,
             ],
             [
                 'user_name' => 'Nulito',
                 'user_email' => 'nulo@proformax.com',
                 'user_password' => Hash::make('nulo123'),
                 'user_rol' => 'user',
-                'company_id' => null // para que al iniciar sesion con este se vean los datos por default :3 y pruebas en entornos sin nada
+                'company_id' => null,
+                'is_superuser' => false,
             ]
         ];
 

@@ -34,7 +34,8 @@ class User extends Authenticatable
         'user_password', // Contraseña hasheada
         'user_rol',     // Rol del usuario (admin/user)
         'user_status',   // Estado del usuario (activo/inactivo)
-        'company_id'
+        'company_id',
+        'is_superuser', // Nuevo campo
     ];
 
     /**
@@ -108,5 +109,15 @@ class User extends Authenticatable
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    /**
+     * Verifica si el usuario es un superusuario.
+     *
+     * @return bool
+     */
+    public function isSuperUser(): bool
+    {
+        return (bool) $this->is_superuser;
     }
 }

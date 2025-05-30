@@ -93,7 +93,7 @@
                         class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
                         @foreach ($roles as $role)
                             <option value="{{ $role->value }}"
-                                {{ old('user_rol', $user->user_rol ?? '') == $role->value ? 'selected' : '' }}>
+                                {{ old('user_rol', isset($user) ? ($user->user_rol instanceof \App\Enums\UserRole ? $user->user_rol->value : $user->user_rol) : '') == $role->value ? 'selected' : '' }}>
                                 @switch(strtolower($role->value))
                                     @case(App\Enums\UserRole::ADMIN->value)
                                         Administrador

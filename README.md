@@ -18,7 +18,7 @@
   </tr>
 </table>
 
-<div align="center" style="margin: 20px 0;">
+<div align="center" style="margin: 18px 0;">
   <img src="https://img.shields.io/badge/Laravel-11.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel">
   <img src="https://img.shields.io/badge/PHP-8.2.18-777BB4?logo=php&logoColor=white" alt="PHP">
   <img src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss&logoColor=white" alt="TailwindCSS">
@@ -31,61 +31,68 @@
 
 ---
 
-## 📚 Índice
+[TOCM]
 
--   [Características](#-características)
--   [Instalación rápida](#-instalación-rápida)
--   [Comandos útiles](#-comandos-útiles)
--   [Configuración recomendada](#-configuración-recomendada)
--   [Estructura del proyecto](#-estructura-del-proyecto)
--   [Notas finales](#-notas-finales)
+[TOC]
 
 ---
 
 ## ✨ Características
 
 -   ✅ Gestión completa de proformas y borradores
--   👥 Base de datos de clientes organizada
 -   📄 Generación de PDFs profesionales
--   🔍 Búsqueda avanzada con filtros
 -   📱 Interfaz responsive optimizada
 -   👨‍💻 Sistema multi-usuario
+-   📝 Gestion rápida de proformas
+-   🎨 Personalización visual y branding
+
+---
+
+## 🗄️ Creación de la base de datos
+
+> 🏗️ **¡Un paso y listo!**
+>
+> Crea una base de datos llamada **proformax** con cotejamiento **utf8mb4_unicode_ci** antes de migrar 🚦. Así tendrás soporte para todos los caracteres y emojis que necesites.
 
 ---
 
 ## 🚀 Instalación rápida
 
-1. **Clona el repositorio:**
-    ```sh
-    git clone <url-del-repo>
-    cd proformax
-    ```
-2. **Instala dependencias PHP:**
-    ```sh
-    composer install
-    ```
-3. **Configura tu entorno:**
-    ```sh
-    cp .env.example .env
-    # Edita .env con tus credenciales
-    ```
-4. **Genera clave, migra y llena la base de datos:**
-    ```sh
-    php artisan key:generate
-    php artisan migrate --seed
-    ```
-5. **Haz público el almacenamiento para los logos:**
-    ```sh
-    php artisan storage:link
-    ```
-6. **(Opcional) Publica la paginación con Tailwind:**
-    ```sh
-    php artisan vendor:publish --tag=laravel-pagination
-    ```
-7. **Instala DomPDF para PDFs:**
-    ```sh
-    composer require barryvdh/laravel-dompdf
-    ```
+```bash
+# 1. Clona el repositorio
+$ git clone <url-del-repo>
+$ cd proformax
+
+# 2. Instala dependencias PHP
+$ composer install
+
+# 3. Configura tu entorno
+$ cp .env.example .env
+# Edita .env con tus credenciales de la bd creada
+
+# 4. Genera clave, migra y llena la base de datos
+$ php artisan key:generate
+$ php artisan migrate --seed
+
+# 5. Haz público el almacenamiento para los logos
+$ php artisan storage:link
+
+# 6. (Opcional) Publica la paginación con Tailwind
+$ php artisan vendor:publish --tag=laravel-pagination
+
+# 7. Instala DomPDF para PDFs
+$ composer require barryvdh/laravel-dompdf
+```
+
+<div align="center">
+  <strong>¡ARRANCA EL PROYECTO EN TU NAVEGADOR!</strong>
+</div>
+
+```sh
+php artisan serve
+```
+
+<span style="font-size:1.1em; color:#549bf5;">Accede a <b>http://127.0.0.1:8000</b> para ver la app en acción 🚀</span>
 
 ---
 
@@ -106,7 +113,7 @@
 
 Aumenta los límites para subir archivos y memoria:
 
-```
+```ini
 upload_max_filesize = 20M
 post_max_size = 25M
 max_file_uploads = 20
@@ -138,7 +145,7 @@ memory_limit = 256M
 
 ## 📦 Estructura del proyecto
 
-```
+```text
 proformax/
 ├── app/
 │   ├── Models/           # Modelos Eloquent (Company, Customer, Product, Paper, User)

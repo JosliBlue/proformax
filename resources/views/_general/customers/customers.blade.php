@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <!-- Filtros de ordenamiento con efecto hover -->
+        <!-- Filtros de ordenamiento -->
         <div class="flex flex-wrap items-center gap-2 overflow-x-auto py-1">
             <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
 
@@ -64,10 +64,10 @@
                     'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
                     'search' => request('search'),
                 ]) }}"
-                    class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
-                {{ $sortField === $column['field']
-                    ? 'border-transparent bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm hover:shadow-md'
-                    : 'text-gray-900 dark:text-gray-300 border-[var(--primary-color)] hover:shadow-md bg-white dark:bg-gray-900' }}">
+                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
+                    {{ $sortField === $column['field']
+                        ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
+                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800'}}">
                     {{ $column['name'] }}
                     @if ($sortField === $column['field'])
                         <span class="ml-1">

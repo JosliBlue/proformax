@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Título con flecha de retroceso -->
-    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm mb-6">
+    <div class="flex items-center gap-3 bg-white rounded-lg p-2 md:p-3 dark:bg-gray-800 shadow-sm mt-2 mb-4">
         <a href="{{ route('papers') }}" class="flex items-center text-[var(--primary-color)] group focus:outline">
             <span class="iconify h-6 w-6 group-hover:-translate-x-1 transition-transform duration-200"
                 data-icon="heroicons:arrow-left-20-solid"></span>
@@ -19,7 +19,7 @@
             @method('PUT')
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2 mb-4">
             <!-- Columna izquierda - Información del Cliente -->
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
@@ -96,21 +96,21 @@
                 </div>
 
                 <!-- Botones de acción -->
-                <div class="flex justify-end gap-3 pt-4">
+                <div class="flex flex-col md:flex-row justify-end gap-3 pt-4 mt-2 mb-2">
                     <a href="{{ route('papers') }}"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-gray-500 text-white hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-gray-500 text-white hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
                         Cancelar
                     </a>
-                    <button type="submit" id="submit-btn"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
-                        <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
-                        {{ isset($paper) ? 'Actualizar Documento' : 'Guardar Documento' }}
-                    </button>
                     <button type="submit" name="save_draft" value="1"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                        <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
-                        Guardar como borrador
-                    </button>
+                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
+                    <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
+                    Guardar como borrador
+                </button>
+                <button type="submit" id="submit-btn"
+                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md w-full md:w-auto">
+                    <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
+                    {{ isset($paper) ? 'Actualizar Documento' : 'Guardar Documento' }}
+                </button>
                 </div>
             </div>
         </div>

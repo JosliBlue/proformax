@@ -56,25 +56,24 @@
 
         <!-- Bloque de borradores mejorado -->
         @if (isset($drafts) && $drafts->count())
-            <div class="flex items-center gap-2">
+            <div class="flex items-center">
                 <span class="iconify h-6 w-6 text-yellow-600 dark:text-yellow-300" data-icon="mdi:note-edit-outline"></span>
                 <span class="font-semibold text-yellow-800 dark:text-yellow-200 text-lg">Borradores pendientes</span>
             </div>
             <div class="flex flex-col gap-2">
                 @foreach ($drafts as $paper)
                     <div
-                        class="flex flex-col md:flex-row md:items-center md:justify-between bg-yellow-50 dark:bg-yellow-800/60 rounded-lg p-3 border border-yellow-200 dark:border-yellow-700 shadow-sm">
-                        <div class="flex flex-col md:flex-row md:items-center gap-4">
-                            <span
-                                class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
-                            <span
-                                class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
-                            <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total:
-                                ${{ number_format($paper->paper_total_price, 2) }}</span>
+                        class="flex flex-col md:flex-row md:items-center md:justify-between bg-yellow-50 dark:bg-yellow-800/60 rounded-lg py-2 px-3 border border-yellow-200 dark:border-yellow-700 shadow-sm gap-2 md:gap-0">
+                        <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full">
+                            <div class="flex flex-row items-center gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-start">
+                                <span class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
+                                <span class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
+                                <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total: ${{ number_format($paper->paper_total_price, 2) }}</span>
+                            </div>
                         </div>
-                        <div class="flex gap-2 mt-2 md:mt-0">
+                        <div class="flex flex-row gap-2 w-full md:w-auto justify-center">
                             <a href="{{ route('papers.edit', $paper->id) }}"
-                                class="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 font-semibold flex items-center gap-1 shadow">
+                                class="px-3 py-1 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 font-semibold flex items-center gap-1 shadow">
                                 <span class="iconify h-4 w-4" data-icon="mdi:pencil"></span> Editar
                             </a>
                             <form id="deleteForm-draft-{{ $paper->id }}"
@@ -82,7 +81,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" onclick="confirmDeleteDraft('draft-{{ $paper->id }}')"
-                                    class="px-3 py-1 bg-red-200 text-red-800 rounded hover:bg-red-300 font-semibold flex items-center gap-1 shadow">
+                                    class="px-3 py-1 bg-red-200 text-red-800 rounded-lg hover:bg-red-300 font-semibold flex items-center gap-1 shadow">
                                     <span class="iconify h-4 w-4" data-icon="mdi:trash-can"></span> Eliminar
                                 </button>
                             </form>
@@ -92,8 +91,8 @@
             </div>
         @endif
 
-        <!-- Filtros de ordenamiento con efecto hover -->
-        <div class="flex flex-wrap items-center gap-2 overflow-x-auto">
+        <!-- Filtros de ordenamiento -->
+        <div class="flex flex-wrap items-center gap-2 overflow-x-auto py-1">
             <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
 
             @foreach ($columns as $column)
@@ -102,17 +101,17 @@
                     'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
                     'search' => request('search'),
                 ]) }}"
-                    class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
+                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
                     {{ $sortField === $column['field']
-                        ? 'border-transparent bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm hover:shadow-md'
-                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] dark:hover:text-[var(--primary-color)]' }}">
+                        ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
+                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800'}}">
                     {{ $column['name'] }}
                     @if ($sortField === $column['field'])
                         <span class="ml-1">
                             @if ($sortDirection === 'asc')
-                                <span class="iconify h-3.5 w-3.5" data-icon="oui:arrow-up"></span>
+                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold" data-icon="oui:arrow-up"></span>
                             @else
-                                <span class="iconify h-3.5 w-3.5" data-icon="oui:arrow-down"></span>
+                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold" data-icon="oui:arrow-down"></span>
                             @endif
                         </span>
                     @endif

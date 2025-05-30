@@ -31,9 +31,16 @@
 
 ---
 
-[TOCM]
+## 📚 Índice
 
-[TOC]
+- [Características](#-características)
+- [Creación de la base de datos](#-creación-de-la-base-de-datos)
+- [Instalación rápida](#-instalación-rápida)
+- [Comandos útiles](#-comandos-útiles)
+- [Configuración recomendada](#-configuración-recomendada-phpini)
+- [Tips y personalización](#-tips-y-personalización)
+- [Estructura del proyecto](#-estructura-del-proyecto)
+- [Notas finales](#-notas-finales)
 
 ---
 

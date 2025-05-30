@@ -1,66 +1,167 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<table align="center" border="0" style="border:none;">
+  <tr>
+    <td align="center" valign="middle">
+      <img src="./storage/app/public/companies/_01_proformax.webp" width="100" alt="Proformax" />
+    </td>
+    <td align="center" valign="middle">
+      <span style="font-size: 24px; font-weight: bold; color: #549bf5;">PROFORMAX</span>
+    </td>
+    <td align="center" valign="middle">
+      <span style="font-size: 50px; color: #555;">×</span>
+    </td>
+    <td align="center" valign="middle">
+      <span style="font-size: 24px; font-weight: bold; color: #FF2D20;">LARAVEL</span>
+    </td>
+    <td align="center" valign="middle">
+      <img src="./storage/app/public/laravel_icon.png" width="100" alt="Laravel" />
+    </td>
+  </tr>
+</table>
+
+<div align="center" style="margin: 20px 0;">
+  <img src="https://img.shields.io/badge/Laravel-11.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel">
+  <img src="https://img.shields.io/badge/PHP-8.2.18-777BB4?logo=php&logoColor=white" alt="PHP">
+  <img src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss&logoColor=white" alt="TailwindCSS">
+  <img src="https://img.shields.io/badge/DomPDF-3.x-EC1C24?logo=adobeacrobatreader&logoColor=white" alt="DomPDF">
+</div>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <b>Gestión moderna y eficiente de proformas, clientes y productos para empresas.</b>
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📚 Índice
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   [Características](#-características)
+-   [Instalación rápida](#-instalación-rápida)
+-   [Comandos útiles](#-comandos-útiles)
+-   [Configuración recomendada](#-configuración-recomendada)
+-   [Estructura del proyecto](#-estructura-del-proyecto)
+-   [Notas finales](#-notas-finales)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ✨ Características
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+-   ✅ Gestión completa de proformas y borradores
+-   📦 Catálogo de productos con imágenes
+-   👥 Base de datos de clientes organizada
+-   📄 Generación de PDFs profesionales
+-   🔍 Búsqueda avanzada con filtros
+-   📱 Interfaz responsive optimizada
+-   👨‍💻 Sistema multi-usuario
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Instalación rápida
 
-## Laravel Sponsors
+1. **Clona el repositorio:**
+    ```sh
+    git clone <url-del-repo>
+    cd proformax
+    ```
+2. **Instala dependencias PHP:**
+    ```sh
+    composer install
+    ```
+3. **Configura tu entorno:**
+    ```sh
+    cp .env.example .env
+    # Edita .env con tus credenciales
+    ```
+4. **Genera clave, migra y llena la base de datos:**
+    ```sh
+    php artisan key:generate
+    php artisan migrate --seed
+    ```
+5. **Haz público el almacenamiento para los logos:**
+    ```sh
+    php artisan storage:link
+    ```
+6. **(Opcional) Publica la paginación con Tailwind:**
+    ```sh
+    php artisan vendor:publish --tag=laravel-pagination
+    ```
+7. **Instala DomPDF para PDFs:**
+    ```sh
+    composer require barryvdh/laravel-dompdf
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🧹 Comandos útiles
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+-   Limpiar cachés de Laravel:
+    ```sh
+    php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan config:cache
+    ```
+-   Limpiar caché de Composer:
+    ```sh
+    composer dump-autoload
+    ```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## ⚙️ Configuración recomendada (`php.ini`)
 
-## Code of Conduct
+Aumenta los límites para subir archivos y memoria:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+upload_max_filesize = 20M
+post_max_size = 25M
+max_file_uploads = 20
+memory_limit = 256M
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🛠️ Tips y personalización
 
-## License
+-   **Autenticación personalizada:**
+    -   Para forzar redirección a login, edita:
+        `vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php`
+        ```php
+        protected function unauthenticated($request, array $guards)
+        {
+            throw new AuthenticationException(
+                'Unauthenticated.',
+                $guards,
+                $request->expectsJson() ? null : route('login'),
+            );
+        }
+        // Y comenta el método redirectTo()
+        ```
+-   **Personaliza los colores y el branding** en `resources/views/appsita.blade.php` y los assets de Tailwind.
+-   **Agrega tus propios campos** en los modelos y migraciones según las necesidades de tu empresa.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📦 Estructura del proyecto
+
+```
+proformax/
+├── app/
+│   ├── Models/           # Modelos Eloquent (Company, Customer, Product, Paper, User)
+│   └── Http/Controllers/ # Lógica de negocio y endpoints
+├── database/
+│   ├── migrations/       # Migraciones de tablas
+│   └── seeders/          # Datos de ejemplo
+├── resources/views/      # Vistas Blade (UI)
+├── public/storage/       # Archivos subidos (logos, etc)
+└── ...
+```
+
+---
+
+## 💡 Notas finales
+
+-   Sistema optimizado para empresas multiusuario.
+-   UI moderna con TailwindCSS y generación de PDFs con DomPDF.
+-   Si tienes problemas, limpia cachés y revisa permisos de `storage/` y `.env`.
+
+---
+
+<p align="center">
+  <b>¡Listo para usar y personalizar! 🚀</b>
+</p>

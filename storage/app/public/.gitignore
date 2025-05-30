@@ -4,3 +4,4 @@
 companies/*
 !companies/_01_proformax.webp
 !companies/giga_compania.webp
+!laravel_icon.png

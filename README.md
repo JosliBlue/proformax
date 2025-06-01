@@ -47,7 +47,7 @@
 ## ✨ Características
 
 -   ✅ Gestión completa de proformas y borradores
--   📄 Generación de PDFs profesionales
+-   📄 Generación de PDFs profesionales (con barryvdh/laravel-dompdf)
 -   📱 Interfaz responsive optimizada
 -   👨‍💻 Sistema multi-usuario
 -   📝 Gestion rápida de proformas
@@ -86,9 +86,6 @@ $ php artisan storage:link
 
 # 6. (Opcional) Publica la paginación con Tailwind
 $ php artisan vendor:publish --tag=laravel-pagination
-
-# 7. Instala DomPDF para PDFs
-$ composer require barryvdh/laravel-dompdf
 ```
 
 <div align="center">

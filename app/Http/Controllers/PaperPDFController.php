@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Paper;
-use Illuminate\Http\Request;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Http\Response;
 
 
 class PaperPDFController extends Controller
@@ -29,8 +29,16 @@ class PaperPDFController extends Controller
 
         $now = $paper->created_at->format('d-m-Y');
         $filename = str_replace(['/', '\\', ' '], '-', "{$now}_{$paper->customer->getFullNameAttribute()}_proforma-{$paper->id}.pdf");
-        return $dompdf->stream($filename, [
-            "Attachment" => false
-        ]);
+
+        // Solución: Usar response() con los headers adecuados
+        return new Response(
+            $dompdf->output(),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                'Cache-Control' => 'public, max-age=0'
+            ]
+        );
     }
 }

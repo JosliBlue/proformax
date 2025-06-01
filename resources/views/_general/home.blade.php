@@ -26,13 +26,13 @@
     // Opciones de gerente
     if (auth()->check() && (auth()->user()->isGerente() || auth()->user()->isVendedor())) {
         $items[] = [
-            'icono' => 'line-md:account-box',
+            'icono' => 'line-md:emoji-neutral-filled',
             'titulo' => 'Usuarios',
             'texto' => 'Gestión de usuarios',
             'ruta' => 'sellers',
         ];
         $items[] = [
-            'icono' => 'line-md:cog',
+            'icono' => 'line-md:cog-filled-loop',
             'titulo' => 'Configuración',
             'texto' => 'Ajustes de la empresa',
             'ruta' => 'settings',

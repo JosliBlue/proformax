@@ -61,7 +61,7 @@ Route::middleware(['auth', companyStyles::class, CheckActiveUser::class])->group
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::patch('/products/soft_destroy/{id}', [ProductController::class, 'soft_destroy'])->name('products.soft_destroy');
 
-    // ADMIN LINKS
+    // GERENTE y VENDEDOR LINKS
     Route::middleware([checkAdmin::class])->group(function () {
         Route::get('/sellers', [SellerController::class, 'index'])->name('sellers');
         Route::get('/sellers/create', [SellerController::class, 'create'])->name('sellers.create');

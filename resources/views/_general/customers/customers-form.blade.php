@@ -73,9 +73,9 @@
                 </label>
                 <input type="email" name="customer_email" id="customer_email"
                     value="{{ old('customer_email', $customer->customer_email ?? '') }}" required
-                    @if (isset($customer) && !auth()->user()->isAdmin()) readonly @endif
+                    @if (isset($customer) && !auth()->user()->isGerente()) readonly @endif
                     class="w-full px-4 py-3 text-base border rounded-lg transition-all duration-200 shadow-sm hover:shadow-md
-                           @if (!isset($customer) || auth()->user()->isAdmin()) border-[var(--primary-color)] dark:border-[var(--secondary-color)]
+                           @if (!isset($customer) || auth()->user()->isGerente()) border-[var(--primary-color)] dark:border-[var(--secondary-color)]
                                bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200
                                focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)]
                            @else

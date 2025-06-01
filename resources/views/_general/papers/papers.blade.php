@@ -238,8 +238,8 @@
                                     <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
                                 </a>
 
-                                @if (auth()->user()->isAdmin())
-                                    <!-- Botón Eliminar (solo admin) -->
+                                @if (auth()->user()->isGerente())
+                                    <!-- Botón Eliminar (solo gerente) -->
                                     <form id="deleteForm-{{ $paper->id }}"
                                         action="{{ route('papers.destroy', $paper->id) }}" method="POST"
                                         class="inline">

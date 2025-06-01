@@ -17,8 +17,8 @@ class CheckActiveUser
             return $next($request);
         }
 
-        // Si es admin, dejar pasar
-        if (method_exists($user, 'isAdmin') ? $user->isAdmin() : ($user->role === 'admin')) {
+        // Si es gerente, dejar pasar
+        if (method_exists($user, 'isGerente') ? $user->isGerente() : ($user->role === 'gerente')) {
             return $next($request);
         }
 

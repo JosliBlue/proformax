@@ -23,18 +23,18 @@
         'ruta' => 'products',
     ];
 
-    // Opciones de administrador
-    if (auth()->check() && auth()->user()->isAdmin()) {
+    // Opciones de gerente
+    if (auth()->check() && (auth()->user()->isGerente() || auth()->user()->isVendedor())) {
         $items[] = [
-            'icono' => 'line-md:emoji-neutral-filled',
-            'titulo' => 'Vendedores',
-            'texto' => 'Mis vendedores',
+            'icono' => 'line-md:account-box',
+            'titulo' => 'Usuarios',
+            'texto' => 'Gestión de usuarios',
             'ruta' => 'sellers',
         ];
         $items[] = [
-            'icono' => 'line-md:cog-filled-loop',
-            'titulo' => 'Preferencias',
-            'texto' => 'Configurar mi app',
+            'icono' => 'line-md:cog',
+            'titulo' => 'Configuración',
+            'texto' => 'Ajustes de la empresa',
             'ruta' => 'settings',
         ];
     }

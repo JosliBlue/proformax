@@ -117,12 +117,14 @@
                             <span class="iconify h-3.5 w-3.5" data-icon="heroicons:shield-check-20-solid"></span>
                             <span>
                                 @switch(strtolower($seller->user_rol->value))
-                                    @case(App\Enums\UserRole::ADMIN->value)
-                                        Administrador
+                                    @case(App\Enums\UserRole::GERENTE->value)
+                                        Gerente
                                     @break
-
-                                    @case(App\Enums\UserRole::USER->value)
+                                    @case(App\Enums\UserRole::VENDEDOR->value)
                                         Vendedor
+                                    @break
+                                    @case(App\Enums\UserRole::PASANTE->value)
+                                        Pasante
                                     @break
                                 @endswitch
                             </span>
@@ -158,8 +160,8 @@
                                 </button>
                             </form>
 
-                            {{-- Botón Eliminar solo para superusuario --}}
-                            @if(auth()->check() && auth()->user()->isSuperUser())
+                            {{-- Botón Eliminar solo para gerente --}}
+                            @if(auth()->check() && auth()->user()->isGerente())
                             <form id="deleteForm-{{ $seller->id }}" action="{{ route('sellers.destroy', $seller->id) }}"
                                 method="POST" class="inline">
                                 @csrf

@@ -15,8 +15,8 @@ class CustomerController extends Controller
         $columns[] = ['name' => 'Telefono', 'field' => 'customer_phone'];
         $columns[] = ['name' => 'Correo', 'field' => 'customer_email'];
 
-        // Solo admin ve la columna de estado
-        if (Auth::check() && Auth::user()->isAdmin()) {
+        // Solo gerente ve la columna de estado
+        if (Auth::check() && Auth::user()->isGerente()) {
             $columns[] = ['name' => 'Estado', 'field' => 'customer_status'];
         }
 
@@ -26,10 +26,10 @@ class CustomerController extends Controller
 
         $query = Customer::query();
 
-        // Filtrar por compañía del usuario (excepto para admins)
+        // Filtrar por compañía del usuario
         $query->where('company_id', Auth::user()->company_id);
 
-        if (Auth::check() && !Auth::user()->isAdmin()) {
+        if (Auth::check() && !Auth::user()->isGerente()) {
             $query->where('customer_status', true);
         }
 
@@ -93,8 +93,7 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
-            $isAdmin = Auth::user()->isAdmin();
-
+            $isGerente = Auth::user()->isGerente();
             // Guardar el email original
             $originalEmail = $customer->customer_email;
 
@@ -102,13 +101,12 @@ class CustomerController extends Controller
                 $this->getValidationRules($id),
                 $this->getValidationMessages()
             );
-            // Si no es admin, remover el campo del request
-            if (!$isAdmin) {
+            // Si no es gerente, remover el campo del request
+            if (!$isGerente) {
                 $request->request->remove('customer_email');
             }
-
-            // Si no es admin, restaurar el valor original
-            if (!$isAdmin) {
+            // Si no es gerente, restaurar el valor original
+            if (!$isGerente) {
                 $validated['customer_email'] = $originalEmail;
             }
 

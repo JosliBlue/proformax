@@ -32,10 +32,9 @@ class User extends Authenticatable
         'user_name',    // Nombre del usuario
         'user_email',   // Email único del usuario
         'user_password', // Contraseña hasheada
-        'user_rol',     // Rol del usuario (admin/user)
+        'user_rol',     // Rol del usuario (gerente/vendedor/pasante)
         'user_status',   // Estado del usuario (activo/inactivo)
         'company_id',
-        'is_superuser', // Nuevo campo
     ];
 
     /**
@@ -88,13 +87,33 @@ class User extends Authenticatable
     }
 
     /**
-     * Verifica si el usuario tiene el rol de administrador.
+     * Verifica si el usuario tiene el rol de gerente.
      *
      * @return bool
      */
-    public function isAdmin()
+    public function isGerente()
     {
-        return $this->user_rol === UserRole::ADMIN;
+        return $this->user_rol === UserRole::GERENTE;
+    }
+
+    /**
+     * Verifica si el usuario tiene el rol de vendedor.
+     *
+     * @return bool
+     */
+    public function isVendedor()
+    {
+        return $this->user_rol === UserRole::VENDEDOR;
+    }
+
+    /**
+     * Verifica si el usuario tiene el rol de pasante.
+     *
+     * @return bool
+     */
+    public function isPasante()
+    {
+        return $this->user_rol === UserRole::PASANTE;
     }
 
     /**
@@ -109,15 +128,5 @@ class User extends Authenticatable
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
-    }
-
-    /**
-     * Verifica si el usuario es un superusuario.
-     *
-     * @return bool
-     */
-    public function isSuperUser(): bool
-    {
-        return (bool) $this->is_superuser;
     }
 }

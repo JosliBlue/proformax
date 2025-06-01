@@ -24,14 +24,10 @@ class SellerController extends Controller
 
         $user = Auth::user();
 
-        // Construir la consulta base con filtro de compañía
-        $query = User::where('company_id', $user->company_id);
-        // Si no es superusuario, no mostrar a otros superusuarios
-        if (!$user->isSuperUser()) {
-            $query = $query->where('is_superuser', false);
-        }
-        // No filtrar el usuario actual
-        $query = $query->where('id', '!=', $user->id);
+        // Solo mostrar usuarios de la misma compañía, excepto el usuario actual y los gerentes
+        $query = User::where('company_id', $user->company_id)
+            ->where('id', '!=', $user->id)
+            ->where('user_rol', '!=', UserRole::GERENTE->value);
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('user_name', 'like', "%{$search}%")
@@ -51,7 +47,6 @@ class SellerController extends Controller
 
     public function create()
     {
-        // Solo mostramos el rol 'user' en el formulario
         $roles = UserRole::cases();
         return view('_admin.users.users-form', compact('roles'));
     }
@@ -64,17 +59,14 @@ class SellerController extends Controller
                 $this->getValidationMessages()
             );
 
-            // Permitir elegir rol solo si es admin
-            if (Auth::user()->isAdmin() && isset($request->user_rol)) {
+            // Permitir elegir rol solo si es gerente
+            if (Auth::user()->isGerente() && isset($request->user_rol)) {
                 $validated['user_rol'] = $request->user_rol;
             } else {
-                $validated['user_rol'] = 'user';
+                $validated['user_rol'] = UserRole::VENDEDOR->value;
             }
             $validated['company_id'] = Auth::user()->company_id;
             $validated['user_password'] = bcrypt($validated['user_password']);
-
-            // Permitir marcar como superusuario solo si el que crea es superusuario
-            $validated['is_superuser'] = (Auth::user()->isSuperUser() && $request->has('is_superuser') && $request->is_superuser == 1) ? true : false;
 
             User::create($validated);
             return redirect()->route('sellers')
@@ -94,8 +86,8 @@ class SellerController extends Controller
     public function edit($id)
     {
         $user = User::where('company_id', Auth::user()->company_id)
-            ->findOrFail($id); // Permite editar cualquier usuario de la compañía
-        $roles = UserRole::cases(); // Permite elegir cualquier rol
+            ->findOrFail($id);
+        $roles = UserRole::cases();
         return view('_admin.users.users-form', compact('user', 'roles'));
     }
 
@@ -103,7 +95,7 @@ class SellerController extends Controller
     {
         try {
             $user = User::where('company_id', Auth::user()->company_id)
-                ->findOrFail($id); // Permite editar cualquier usuario de la compañía
+                ->findOrFail($id);
 
             $rules = $this->getValidationRules($id);
             if (empty($request->user_password)) {
@@ -117,19 +109,14 @@ class SellerController extends Controller
                 'user_email' => $validated['user_email'],
             ];
 
-            // Permitir cambiar el rol si es admin
-            if (Auth::user()->isAdmin() && isset($request->user_rol)) {
+            // Permitir cambiar el rol si es gerente
+            if (Auth::user()->isGerente() && isset($request->user_rol)) {
                 $updateData['user_rol'] = $request->user_rol;
             }
 
             // Solo actualizamos la contraseña si se proporcionó una nueva
             if (!empty($validated['user_password'])) {
                 $updateData['user_password'] = bcrypt($validated['user_password']);
-            }
-
-            // Permitir marcar como superusuario solo si el que edita es superusuario
-            if (Auth::user()->isSuperUser() && $request->has('is_superuser')) {
-                $updateData['is_superuser'] = $request->is_superuser == 1 ? true : false;
             }
 
             $user->update($updateData);
@@ -154,16 +141,12 @@ class SellerController extends Controller
     public function soft_destroy(string $id)
     {
         $current = Auth::user();
-        // Permitir desactivar/activar solo si es admin o superuser
-        if (!$current->isAdmin() && !$current->isSuperUser()) {
+        // Permitir desactivar/activar solo si es gerente
+        if (!$current->isGerente()) {
             abort(403, 'No tienes permisos para desactivar usuarios.');
         }
         $user = User::where('company_id', $current->company_id)
             ->findOrFail($id);
-        // No permitir desactivar superusuarios si no eres superuser
-        if ($user->isSuperUser() && !$current->isSuperUser()) {
-            abort(403, 'No puedes desactivar un superusuario.');
-        }
         // No permitir desactivar a sí mismo
         if ($user->id == $current->id) {
             abort(403, 'No puedes desactivarte a ti mismo.');
@@ -175,14 +158,14 @@ class SellerController extends Controller
     public function destroy(string $id)
     {
         $current = Auth::user();
-        // Solo el superusuario puede eliminar usuarios y administradores
-        if (!$current->isSuperUser()) {
-            abort(403, 'Solo el superusuario puede eliminar usuarios.');
+        // Solo el gerente puede eliminar usuarios
+        if (!$current->isGerente()) {
+            abort(403, 'Solo el gerente puede eliminar usuarios.');
         }
         $user = User::findOrFail($id);
-        // No permitir eliminar al propio superusuario
-        if ($user->isSuperUser()) {
-            abort(403, 'No puedes eliminar al superusuario.');
+        // No permitir eliminarse a sí mismo
+        if ($user->id == $current->id) {
+            abort(403, 'No puedes eliminarte a ti mismo.');
         }
         $user->delete();
         return redirect()->route('sellers')->with('success', 'Usuario eliminado');

@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case ADMIN = 'admin';
-    case USER = 'user';
+    case GERENTE = 'gerente';
+    case VENDEDOR = 'vendedor';
+    case PASANTE = 'pasante';
 }

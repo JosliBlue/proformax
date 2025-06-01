@@ -48,12 +48,14 @@
                     </p>
                     <p class="font-medium text-gray-800 dark:text-white">
                         @switch(strtolower($user->user_rol->value))
-                            @case(App\Enums\UserRole::ADMIN->value)
-                                Administrador
+                            @case(App\Enums\UserRole::GERENTE->value)
+                                Gerente
                             @break
-
-                            @case(App\Enums\UserRole::USER->value)
+                            @case(App\Enums\UserRole::VENDEDOR->value)
                                 Vendedor
+                            @break
+                            @case(App\Enums\UserRole::PASANTE->value)
+                                Pasante
                             @break
                         @endswitch
                     </p>

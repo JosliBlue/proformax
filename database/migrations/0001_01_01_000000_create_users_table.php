@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('user_name', 100);
             $table->string('user_email', 100)->unique();
             $table->string('user_password');
-            $table->enum('user_rol', ['admin', 'user'])->default('user');
+            $table->enum('user_rol', ['gerente', 'vendedor', 'pasante'])->default('vendedor');
             $table->boolean('user_status')->default(true);
-            $table->boolean('is_superuser')->default(false); // Nuevo campo para superusuario
             $table->unsignedBigInteger('company_id')->nullable();
             $table->timestamps();
 

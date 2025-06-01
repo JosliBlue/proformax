@@ -75,8 +75,8 @@
                     autocomplete="new-password">
             </div>
 
-            {{-- Rol (solo para administradores) --}}
-            @if (auth()->check() && auth()->user()->isAdmin())
+            {{-- Rol (solo para gerentes y vendedores, pero solo pueden asignar vendedor o pasante) --}}
+            @if (auth()->check() && (auth()->user()->isGerente() || auth()->user()->isVendedor()))
                 <div>
                     <label for="user_rol" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Rol *
@@ -84,18 +84,19 @@
                     <select name="user_rol" id="user_rol" required
                         class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
                         @foreach ($roles as $role)
-                            <option value="{{ $role->value }}"
-                                {{ old('user_rol', isset($user) ? ($user->user_rol instanceof \App\Enums\UserRole ? $user->user_rol->value : $user->user_rol) : '') == $role->value ? 'selected' : '' }}>
-                                @switch(strtolower($role->value))
-                                    @case(App\Enums\UserRole::ADMIN->value)
-                                        Administrador
-                                    @break
-
-                                    @case(App\Enums\UserRole::USER->value)
-                                        Vendedor
-                                    @break
-                                @endswitch
-                            </option>
+                            @if (in_array($role->value, [\App\Enums\UserRole::VENDEDOR->value, \App\Enums\UserRole::PASANTE->value]))
+                                <option value="{{ $role->value }}"
+                                    {{ old('user_rol', isset($user) ? ($user->user_rol instanceof \App\Enums\UserRole ? $user->user_rol->value : $user->user_rol) : '') == $role->value ? 'selected' : '' }}>
+                                    @switch(strtolower($role->value))
+                                        @case(\App\Enums\UserRole::VENDEDOR->value)
+                                            Vendedor
+                                        @break
+                                        @case(\App\Enums\UserRole::PASANTE->value)
+                                            Pasante
+                                        @break
+                                    @endswitch
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                     @error('user_rol')

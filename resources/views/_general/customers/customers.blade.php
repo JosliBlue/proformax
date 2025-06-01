@@ -157,8 +157,8 @@
                                 </button>
                             </form>
 
-                            @if (auth()->user()->isAdmin())
-                                <!-- Botón Eliminar (solo admin) -->
+                            @if (auth()->user()->isGerente())
+                                <!-- Botón Eliminar (solo gerente) -->
                                 <form id="deleteForm-{{ $customer->id }}"
                                     action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
                                     @csrf

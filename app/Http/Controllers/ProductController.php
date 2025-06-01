@@ -25,8 +25,8 @@ class ProductController extends Controller
         $user = Auth::user();
         $query = Product::where('company_id', $user->company_id);
 
-        // Solo productos activos para usuarios normales
-        if (Auth::check() && !Auth::user()->isAdmin()) {
+        // Solo productos activos para vendedores y pasantes
+        if (Auth::check() && !Auth::user()->isGerente()) {
             $query->where('product_status', true);
         }
 

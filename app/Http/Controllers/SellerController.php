@@ -71,28 +71,26 @@ class SellerController extends Controller
             ];
 
             // Asignar rol basado en permisos
-            $userData['user_rol'] = (Auth::user()->isGerente() && $request->filled('user_rol')) 
-                ? $validated['user_rol'] 
+            $userData['user_rol'] = (Auth::user()->isGerente() && $request->filled('user_rol'))
+                ? $validated['user_rol']
                 : UserRole::VENDEDOR->value;
 
             // Crear usuario
             $user = User::create($userData);
-            
+
             return redirect()->route('sellers')
                 ->with('success', '✅ Usuario "' . $user->user_name . '" creado correctamente. Ya puede iniciar sesión.');
-                
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Manejo específico de errores de validación
             $errors = $e->validator->errors();
-            $errorMessage = $errors->count() === 1 
+            $errorMessage = $errors->count() === 1
                 ? $errors->first()
                 : "Se encontraron {$errors->count()} errores en el formulario";
-            
+
             return back()
                 ->withInput($request->except('user_password', 'user_password_confirmation'))
                 ->with('error', '⚠️ ' . $errorMessage)
                 ->withErrors($e->validator);
-                
         } catch (\Illuminate\Database\QueryException $e) {
             // Manejo específico de errores de base de datos
             Log::error('Error de base de datos al crear usuario: ' . $e->getMessage(), [
@@ -100,15 +98,14 @@ class SellerController extends Controller
                 'company_id' => Auth::user()->company_id,
                 'email' => $request->user_email
             ]);
-            
-            $errorMessage = str_contains($e->getMessage(), 'Duplicate entry') 
+
+            $errorMessage = str_contains($e->getMessage(), 'Duplicate entry')
                 ? 'El correo electrónico ya está registrado'
                 : 'Error en la base de datos. Intenta nuevamente';
-            
+
             return back()
                 ->withInput($request->except('user_password', 'user_password_confirmation'))
                 ->with('error', '❌ ' . $errorMessage);
-                
         } catch (\Exception $e) {
             // Manejo general de errores
             Log::error('Error inesperado al crear usuario: ' . $e->getMessage(), [
@@ -116,103 +113,12 @@ class SellerController extends Controller
                 'company_id' => Auth::user()->company_id,
                 'request_data' => $request->except('user_password', 'user_password_confirmation')
             ]);
-            
+
             return back()
                 ->withInput($request->except('user_password', 'user_password_confirmation'))
                 ->with('error', '❌ Error del servidor. Intenta nuevamente en unos minutos.');
         }
     }
-
-    public function edit($id)
-    {
-        $user = User::where('company_id', Auth::user()->company_id)
-            ->findOrFail($id);
-        $roles = UserRole::cases();
-        return view('_admin.users.users-form', compact('user', 'roles'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        try {
-            $user = User::where('company_id', Auth::user()->company_id)
-                ->findOrFail($id);
-
-            $rules = $this->getValidationRules($id);
-            
-            // Si no se proporciona contraseña, no la validamos
-            if (empty($request->user_password)) {
-                unset($rules['user_password']);
-            }
-
-            $validated = $request->validate($rules, $this->getValidationMessages());
-
-            // Preparar datos para actualización
-            $updateData = [
-                'user_name' => $validated['user_name'],
-                'user_email' => $validated['user_email'],
-            ];
-
-            // Permitir cambiar el rol si es gerente
-            if (Auth::user()->isGerente() && $request->filled('user_rol')) {
-                $updateData['user_rol'] = $validated['user_rol'];
-            }
-
-            // Solo actualizamos la contraseña si se proporcionó una nueva
-            if (!empty($validated['user_password'])) {
-                $updateData['user_password'] = bcrypt($validated['user_password']);
-            }
-
-            $user->update($updateData);
-
-            return redirect()->route('sellers')
-                ->with('success', '✅ Usuario "' . $user->user_name . '" actualizado correctamente.');
-                
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Manejo específico de errores de validación
-            $errorCount = $e->validator->errors()->count();
-            $errorMessage = $errorCount === 1 
-                ? $e->validator->errors()->first()
-                : "Se encontraron {$errorCount} errores en el formulario";
-            
-            return back()
-                ->withInput($request->except('user_password', 'user_password_confirmation'))
-                ->with('error', '⚠️ ' . $errorMessage)
-                ->withErrors($e->validator);
-                
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('sellers')
-                ->with('error', '❌ El usuario no existe o no tienes permisos para editarlo.');
-                
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Manejo específico de errores de base de datos
-            Log::error('Error de base de datos al actualizar usuario: ' . $e->getMessage(), [
-                'user_id' => Auth::id(),
-                'target_user_id' => $id,
-                'company_id' => Auth::user()->company_id
-            ]);
-            
-            $errorMessage = str_contains($e->getMessage(), 'Duplicate entry') 
-                ? 'El correo electrónico ya está en uso por otro usuario'
-                : 'Error en la base de datos. Intenta nuevamente';
-            
-            return back()
-                ->withInput($request->except('user_password', 'user_password_confirmation'))
-                ->with('error', '❌ ' . $errorMessage);
-                
-        } catch (\Exception $e) {
-            Log::error('Error inesperado al actualizar usuario: ' . $e->getMessage(), [
-                'user_id' => Auth::id(),
-                'target_user_id' => $id,
-                'company_id' => Auth::user()->company_id,
-                'request_data' => $request->except('user_password', 'user_password_confirmation')
-            ]);
-            
-            return back()
-                ->withInput($request->except('user_password', 'user_password_confirmation'))
-                ->with('error', '❌ Error del servidor. Intenta nuevamente en unos minutos.');
-        }
-    }
-
     public function soft_destroy(string $id)
     {
         $current = Auth::user();
@@ -270,32 +176,20 @@ class SellerController extends Controller
         ];
     }
 
-    private function getValidationRules($id = null)
+    private function getValidationRules()
     {
-        $rules = [
+        return [
             'user_name' => 'required|string|min:2|max:100|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
-            'user_email' => 'required|email|max:100|unique:users,user_email,' . $id,
+            'user_email' => 'required|email|max:100|unique:users,user_email',
             'user_rol' => 'nullable|in:' . implode(',', [UserRole::VENDEDOR->value, UserRole::PASANTE->value]),
+            'user_password' => [
+                'required',
+                'string',
+                'min:8',
+                'max:100',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'
+            ]
         ];
-
-        // Reglas de contraseña más específicas
-        $passwordRules = [
-            'required',
-            'string',
-            'min:8',
-            'max:100',
-            'confirmed',
-            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'
-        ];
-
-        if (is_null($id)) {
-            // Crear: contraseña obligatoria
-            $rules['user_password'] = $passwordRules;
-        } else {
-            // Actualizar: contraseña opcional
-            $rules['user_password'] = array_merge(['nullable'], array_slice($passwordRules, 1));
-        }
-
-        return $rules;
     }
 }

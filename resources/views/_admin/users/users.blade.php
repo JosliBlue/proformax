@@ -140,13 +140,6 @@
 
                         <!-- Botones de acción -->
                         <div class="flex justify-center gap-3 p-1">
-                            <!-- Botón Editar -->
-                            <a href="{{ route('sellers.edit', $seller->id) }}"
-                                class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                title="Editar">
-                                <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
-                            </a>
-
                             <!-- Botón Desactivar/Activar -->
                             <form id="deactivateForm-{{ $seller->id }}"
                                 action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST" class="inline">

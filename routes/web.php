@@ -66,8 +66,6 @@ Route::middleware(['auth', companyStyles::class, CheckActiveUser::class])->group
         Route::get('/sellers', [SellerController::class, 'index'])->name('sellers');
         Route::get('/sellers/create', [SellerController::class, 'create'])->name('sellers.create');
         Route::post('/sellers', [SellerController::class, 'store'])->name('sellers.store');
-        Route::get('/sellers/{id}/edit', [SellerController::class, 'edit'])->name('sellers.edit');
-        Route::put('/sellers/{id}', [SellerController::class, 'update'])->name('sellers.update');
         Route::delete('/sellers/{id}', [SellerController::class, 'destroy'])->name('sellers.destroy');
         Route::patch('/sellers/soft_destroy/{id}', [SellerController::class, 'soft_destroy'])->name('sellers.soft_destroy');
 

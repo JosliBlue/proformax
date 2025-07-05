@@ -44,13 +44,29 @@
                 </form>
             </div>
 
-            <!-- Botón Nueva Proforma -->
+            <!-- Botones de Acceso Directo -->
             <div class="w-full sm:w-auto">
-                <a href="{{ route('papers.create') }}"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
-                    <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
-                    Nueva proforma
-                </a>
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <!-- Botón Clientes -->
+                    <a href="{{ route('customers') }}"
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                        <span class="iconify h-5 w-5" data-icon="heroicons:users-20-solid"></span>
+                        Clientes
+                    </a>
+
+                    <!-- Botón Productos -->
+                    <a href="{{ route('products') }}"
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-green-600 text-white hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                        <span class="iconify h-5 w-5" data-icon="heroicons:shopping-bag-20-solid"></span>
+                        Productos
+                    </a>
+                    <!-- Botón Nueva Proforma -->
+                    <a href="{{ route('papers.create') }}"
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                        <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
+                        Nueva proforma
+                    </a>
+                </div>
             </div>
         </div>
 

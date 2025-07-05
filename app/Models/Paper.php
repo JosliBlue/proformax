@@ -15,7 +15,6 @@ class Paper extends Model
         'customer_id',
         'paper_total_price',
         'paper_days',
-        'paper_status',
         'company_id',
         'is_draft', // <-- permitir asignación masiva
         'paper_date', // <-- nueva columna editable por el usuario
@@ -23,7 +22,6 @@ class Paper extends Model
 
     protected $casts = [
         'paper_total_price' => 'decimal:2',
-        'paper_status' => 'boolean',
         'is_draft' => 'boolean' // <-- casteo booleano
     ];
 

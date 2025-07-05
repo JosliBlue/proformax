@@ -295,7 +295,10 @@
                 if (select.value) {
                     search.value = select.options[select.selectedIndex].dataset.name;
                     const priceInput = productItem.querySelector('input[name*="unit_price"]');
-                    priceInput.value = select.options[select.selectedIndex].dataset.price;
+                    // Solo establecer el precio por defecto si no hay un precio personalizado ya establecido
+                    if (!priceInput.value || priceInput.value === '') {
+                        priceInput.value = select.options[select.selectedIndex].dataset.price;
+                    }
                     calculateSubtotal(productItem);
                 }
 

@@ -112,8 +112,8 @@ class PaperController extends Controller
                 ->first();
             if ($copyPaper) {
                 $copyCustomerId = $copyPaper->customer_id;
-                $copyPaperDays = $copyPaper->paper_days;
-                $copyPaperDate = $copyPaper->paper_date; // Fecha actual para el nuevo documento
+                $copyPaperDays = 7; // Siempre 7 días para copias
+                $copyPaperDate = now()->format('Y-m-d'); // Fecha actual para copias
                 $selectedProducts = $copyPaper->products->map(function ($product) {
                     return [
                         'id' => $product->id,
@@ -208,7 +208,13 @@ class PaperController extends Controller
             ];
         })->toArray();
 
-        return view('_general.papers.papers-create', compact('paper', 'customers', 'products', 'selectedProducts'));
+        // Calcular la fecha límite basándose en los días de validez
+        $paperValidUntil = null;
+        if ($paper->paper_date && $paper->paper_days) {
+            $paperValidUntil = \Carbon\Carbon::parse($paper->paper_date)->addDays($paper->paper_days)->format('Y-m-d');
+        }
+
+        return view('_general.papers.papers-create', compact('paper', 'customers', 'products', 'selectedProducts', 'paperValidUntil'));
     }
 
     public function update(Request $request, Paper $paper)

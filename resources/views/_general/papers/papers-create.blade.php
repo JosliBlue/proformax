@@ -66,14 +66,21 @@
                         class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
                 </div>
 
-                <!-- Validity Days -->
+                <!-- Validity Date -->
                 <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <label for="paper_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Días de
-                        validez *</label>
-                    <input type="number" name="paper_days" id="paper_days" min="1" step="1"
-                        value="{{ old('paper_days', isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7')) }}"
-                        required oninput="this.value = Math.max(1, Math.floor(this.value))"
+                    <label for="paper_valid_until" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fecha válida hasta *</label>
+                    <input type="date" name="paper_valid_until" id="paper_valid_until"
+                        value="{{ old('paper_valid_until', isset($paperValidUntil) ? $paperValidUntil : (isset($copyPaperDays) ? now()->addDays($copyPaperDays)->format('Y-m-d') : now()->addDays(7)->format('Y-m-d'))) }}"
+                        min="{{ isset($paper) ? $paper->paper_date : now()->format('Y-m-d') }}"
+                        max="{{ now()->addDays(365)->format('Y-m-d') }}"
+                        required
                         class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
+                    <!-- Hidden input for days calculation -->
+                    <input type="hidden" name="paper_days" id="paper_days" value="{{ old('paper_days', isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7')) }}">
+                    <!-- Days display -->
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        <span id="days-info">Días de validez: <span id="days-count" class="font-medium">{{ isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7') }}</span></span>
+                    </div>
                 </div>
             </div>
 
@@ -399,6 +406,57 @@
 
             // Initialize customer search
             initializeCustomerSearch();
+
+            // Calculate days between dates
+            function calculateDays() {
+                const startDate = document.getElementById('paper_date').value;
+                const endDate = document.getElementById('paper_valid_until').value;
+                const daysInput = document.getElementById('paper_days');
+                const daysCount = document.getElementById('days-count');
+                
+                if (startDate && endDate) {
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    daysInput.value = diffDays;
+                    daysCount.textContent = diffDays;
+                } else {
+                    daysInput.value = 7;
+                    daysCount.textContent = 7;
+                }
+            }
+
+            // Initialize date calculation
+            function initializeDateCalculation() {
+                const paperDate = document.getElementById('paper_date');
+                const validUntilDate = document.getElementById('paper_valid_until');
+                
+                // Calculate initial days
+                calculateDays();
+                
+                // Update days when paper date changes
+                paperDate.addEventListener('change', () => {
+                    // Update min date for valid until
+                    validUntilDate.min = paperDate.value;
+                    // If valid until is before paper date, reset it
+                    if (validUntilDate.value < paperDate.value) {
+                        const nextWeek = new Date(paperDate.value);
+                        nextWeek.setDate(nextWeek.getDate() + 7);
+                        validUntilDate.value = nextWeek.toISOString().split('T')[0];
+                    }
+                    calculateDays();
+                });
+                
+                // Update days when valid until date changes
+                validUntilDate.addEventListener('change', () => {
+                    calculateDays();
+                });
+            }
+
+            // Initialize date calculation
+            initializeDateCalculation();
         });
     </script>
 @endpush

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int $id
  * @property string $customer_name
  * @property string $customer_lastname
+ * @property string $customer_cedula
  * @property string $customer_phone
  * @property string $customer_email
  * @property bool $customer_status
@@ -30,9 +31,10 @@ class Customer extends Model
     protected $fillable = [
         'customer_name',      // Nombre del cliente
         'customer_lastname',  // Apellido del cliente
+        'customer_cedula',    // Cédula/DNI del cliente
         'customer_phone',     // Teléfono del cliente
         'customer_email',     // Email del cliente
-        'customer_status',     // Estado del cliente (activo/inactivo)
+        'customer_status',    // Estado del cliente (activo/inactivo)
         'company_id'
     ];
 

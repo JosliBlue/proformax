@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->string('customer_cedula',10)->nullable();
             $table->string('customer_name', 100);
             $table->string('customer_lastname', 100);
             $table->string('customer_phone', 20);

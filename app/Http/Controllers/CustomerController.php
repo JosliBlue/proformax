@@ -12,7 +12,8 @@ class CustomerController extends Controller
     {
         $columns = [];
         $columns[] = ['name' => 'Nombre', 'field' => 'customer_name'];
-        $columns[] = ['name' => 'Telefono', 'field' => 'customer_phone'];
+        $columns[] = ['name' => 'Cédula', 'field' => 'customer_cedula'];
+        $columns[] = ['name' => 'Teléfono', 'field' => 'customer_phone'];
         $columns[] = ['name' => 'Correo', 'field' => 'customer_email'];
 
         // Solo gerente ve la columna de estado
@@ -37,6 +38,7 @@ class CustomerController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('customer_name', 'like', "%{$search}%")
                     ->orWhere('customer_lastname', 'like', "%{$search}%")
+                    ->orWhere('customer_cedula', 'like', "%{$search}%")
                     ->orWhere('customer_phone', 'like', "%{$search}%")
                     ->orWhere('customer_email', 'like', "%{$search}%");
             });
@@ -65,6 +67,14 @@ class CustomerController extends Controller
                 $this->getValidationRules(),
                 $this->getValidationMessages()
             );
+
+            // Validar cédula si fue proporcionada
+            if (!empty($validated['customer_cedula']) && !$this->validarCedula($validated['customer_cedula'])) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'La cédula ingresada no es válida')
+                    ->withErrors(['customer_cedula' => 'La cédula ingresada no es válida']);
+            }
 
             $validated['company_id'] = Auth::user()->company_id;
 
@@ -101,6 +111,15 @@ class CustomerController extends Controller
                 $this->getValidationRules($id),
                 $this->getValidationMessages()
             );
+
+            // Validar cédula si fue proporcionada
+            if (!empty($validated['customer_cedula']) && !$this->validarCedula($validated['customer_cedula'])) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'La cédula ingresada no es válida')
+                    ->withErrors(['customer_cedula' => 'La cédula ingresada no es válida']);
+            }
+
             // Si no es gerente, remover el campo del request
             if (!$isGerente) {
                 $request->request->remove('customer_email');
@@ -128,6 +147,7 @@ class CustomerController extends Controller
                 ->with('error', 'Ocurrió un error al actualizar el cliente: ' . $e->getMessage());
         }
     }
+
     public function soft_destroy(string $id)
     {
         $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
@@ -157,6 +177,10 @@ class CustomerController extends Controller
             'customer_lastname.string' => 'El apellido debe ser texto válido',
             'customer_lastname.max' => 'El apellido no debe exceder 255 caracteres',
 
+            'customer_cedula.string' => 'La cédula debe ser texto válido',
+            'customer_cedula.unique' => 'Esta cédula ya está registrada',
+            'customer_cedula.digits' => 'La cédula debe tener exactamente 10 dígitos',
+
             'customer_phone.required' => 'El teléfono es obligatorio',
             'customer_phone.numeric' => 'El teléfono debe contener solo números',
             'customer_phone.digits' => 'El teléfono debe tener exactamente 10 dígitos',
@@ -175,14 +199,86 @@ class CustomerController extends Controller
         $rules = [
             'customer_name' => 'required|string|max:255',
             'customer_lastname' => 'required|string|max:255',
+            'customer_cedula' => 'nullable|string|digits:10|unique:customers,customer_cedula',
             'customer_phone' => 'required|numeric|digits:10',
             'customer_email' => 'required|email|unique:customers,customer_email',
         ];
 
         if ($id) {
+            $rules['customer_cedula'] .= ',' . $id;
             $rules['customer_email'] .= ',' . $id;
         }
 
         return $rules;
+    }
+
+    /**
+     * Valida una cédula ecuatoriana usando el algoritmo de validación oficial
+     * 
+     * @param string $cedula
+     * @return bool
+     */
+    private function validarCedula($cedula)
+    {
+        // Limpiar espacios y validar longitud
+        $cedula = trim($cedula);
+
+        if (strlen($cedula) != 10) {
+            return false;
+        }
+
+        // Validar que todos los caracteres sean números
+        if (!is_numeric($cedula)) {
+            return false;
+        }
+
+        // Extraer partes de la cédula
+        $a = intval(substr($cedula, 0, 2));  // Primeros 2 dígitos (provincia)
+        $e = intval(substr($cedula, 2, 1));  // Tercer dígito
+        $i = intval(substr($cedula, 3, 6));  // Dígitos 4-9
+        $o = intval(substr($cedula, 9, 1));  // Dígito verificador
+
+        // Validar provincia (0-24)
+        if ($a < 0 || $a > 24) {
+            return false;
+        }
+
+        // Validar tercer dígito (0-5)
+        if ($e < 0 || $e > 5) {
+            return false;
+        }
+
+        // Aplicar algoritmo de validación
+        $r = 0;
+        $ced1 = substr($cedula, 0, 9);
+        $cont = strlen($ced1);
+
+        for ($j = 0; $j < $cont; $j++) {
+            $y = ($j % 2 == 0) ? 2 : 1;
+            $z = intval(substr($ced1, $j, 1));
+            $u = $z * $y;
+
+            if ($u >= 10) {
+                $u = $u - 9;
+            }
+
+            $r = $r + $u;
+        }
+
+        $s = $r;
+
+        // Calcular dígito verificador
+        while ($s % 10 != 0) {
+            $s = $s + 1;
+        }
+
+        $r = $s - $r;
+
+        if ($r == 10) {
+            $r = 0;
+        }
+
+        // Comparar con el dígito verificador
+        return $r == $o;
     }
 }

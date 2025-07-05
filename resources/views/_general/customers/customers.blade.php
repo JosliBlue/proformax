@@ -67,7 +67,7 @@
                     class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
                     {{ $sortField === $column['field']
                         ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
-                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800'}}">
+                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     {{ $column['name'] }}
                     @if ($sortField === $column['field'])
                         <span class="ml-1">
@@ -124,6 +124,12 @@
                     <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
                     <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
                         <div class="mt-auto space-y-1.5 text-sm">
+                            @if ($customer->customer_cedula)
+                                <div class="flex items-center gap-2">
+                                    <span class="iconify h-3.5 w-3.5" data-icon="heroicons:identification-20-solid"></span>
+                                    <span>{{ $customer->customer_cedula }}</span>
+                                </div>
+                            @endif
                             <div class="flex items-center gap-2">
                                 <span class="iconify h-3.5 w-3.5" data-icon="heroicons:envelope-20-solid"></span>
                                 <span class="truncate">{{ strtolower($customer->customer_email) }}</span>

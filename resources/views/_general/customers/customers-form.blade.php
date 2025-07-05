@@ -30,6 +30,7 @@
                 </label>
                 <input type="text" name="customer_name" id="customer_name"
                     value="{{ old('customer_name', $customer->customer_name ?? '') }}" required
+                    placeholder="Ej: Juan Carlos"
                     class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md"
                     autocomplete="given-name">
                 @error('customer_name')
@@ -44,9 +45,25 @@
                 </label>
                 <input type="text" name="customer_lastname" id="customer_lastname"
                     value="{{ old('customer_lastname', $customer->customer_lastname ?? '') }}" required
+                    placeholder="Ej: Pérez González"
                     class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md"
                     autocomplete="family-name">
                 @error('customer_lastname')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Cédula --}}
+            <div>
+                <label for="customer_cedula" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Cédula/DNI (opcional)
+                </label>
+                <input type="text" name="customer_cedula" id="customer_cedula"
+                    value="{{ old('customer_cedula', $customer->customer_cedula ?? '') }}"
+                    placeholder="Ej: 1805209095" minlength="10" maxlength="10"
+                    class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md"
+                    autocomplete="off">
+                @error('customer_cedula')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
             </div>
@@ -59,6 +76,7 @@
                 <input type="tel" name="customer_phone" id="customer_phone"
                     value="{{ old('customer_phone', $customer->customer_phone ?? '') }}" required pattern="[0-9]*"
                     inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    placeholder="Ej: 1234567890"
                     class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md"
                     autocomplete="tel">
                 @error('customer_phone')
@@ -73,7 +91,7 @@
                 </label>
                 <input type="email" name="customer_email" id="customer_email"
                     value="{{ old('customer_email', $customer->customer_email ?? '') }}" required
-                    @if (isset($customer) && !auth()->user()->isGerente()) readonly @endif
+                    placeholder="Ej: juan.perez@email.com" @if (isset($customer) && !auth()->user()->isGerente()) readonly @endif
                     class="w-full px-4 py-3 text-base border rounded-lg transition-all duration-200 shadow-sm hover:shadow-md
                            @if (!isset($customer) || auth()->user()->isGerente()) border-[var(--primary-color)] dark:border-[var(--secondary-color)]
                                bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200

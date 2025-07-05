@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class Paper extends Model
 {
@@ -23,6 +24,10 @@ class Paper extends Model
     protected $casts = [
         'paper_total_price' => 'decimal:2',
         'is_draft' => 'boolean' // <-- casteo booleano
+    ];
+
+    protected $dates = [
+        'paper_date'
     ];
 
     public function user()

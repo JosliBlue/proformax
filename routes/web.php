@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaperController;
 use App\Http\Controllers\PaperPDFController;
 use App\Http\Controllers\ProductController;
@@ -27,9 +28,7 @@ Route::middleware(['auth', companyStyles::class, CheckActiveUser::class])->group
         return view('auth.deactivated');
     })->name('deactivated');
 
-    Route::get('/', function () {
-        return view('_general.home');
-    })->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     // HEADER LINKS
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');

@@ -70,7 +70,7 @@
                                 <span
                                     class="font-medium text-yellow-900 dark:text-yellow-100 text-base">{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}</span>
                                 <span
-                                    class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->customer_name ?? 'Sin cliente' }}</span>
+                                    class="text-sm text-yellow-800 dark:text-yellow-200">{{ $paper->customer->getFullName() ?? 'Sin cliente' }}</span>
                                 <span class="text-sm font-semibold text-yellow-900 dark:text-yellow-100">Total:
                                     ${{ number_format($paper->paper_total_price, 2) }}</span>
                             </div>

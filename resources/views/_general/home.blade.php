@@ -51,11 +51,11 @@
     </div>
 
     {{-- Cuadros de estadísticas --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 select-none">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 select-none">
         {{-- Clientes totales --}}
         <div
             class="bg-white dark:bg-gray-900 rounded-xl py-4 px-6 shadow-xl border border-gray-100 dark:border-gray-800 hover:shadow-2xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
                     <div class="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/20 rounded-xl flex items-center justify-center">
                         <span class="iconify w-7 h-7 text-blue-600 dark:text-blue-400"
@@ -74,7 +74,7 @@
         {{-- Proformas totales --}}
         <div
             class="bg-white dark:bg-gray-900 rounded-xl py-4 px-6 shadow-xl border border-gray-100 dark:border-gray-800 hover:shadow-2xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
                     <div class="w-14 h-14 bg-green-500/10 dark:bg-green-400/20 rounded-xl flex items-center justify-center">
                         <span class="iconify w-7 h-7 text-green-600 dark:text-green-400"
@@ -108,7 +108,7 @@
         {{-- Productos totales --}}
         <div
             class="bg-white dark:bg-gray-900 rounded-xl py-4 px-6 shadow-xl border border-gray-100 dark:border-gray-800 hover:shadow-2xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
                     <div
                         class="w-14 h-14 bg-purple-500/10 dark:bg-purple-400/20 rounded-xl flex items-center justify-center">
@@ -140,7 +140,7 @@
         {{-- Usuarios totales --}}
         <div
             class="bg-white dark:bg-gray-900 rounded-xl py-4 px-6 shadow-xl border border-gray-100 dark:border-gray-800 hover:shadow-2xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
                     <div
                         class="w-14 h-14 bg-orange-500/10 dark:bg-orange-400/20 rounded-xl flex items-center justify-center">

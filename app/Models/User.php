@@ -112,7 +112,7 @@ class User extends Authenticatable
      */
     public function isActive()
     {
-        return $this->user_status === true;
+        return $this->user_status;
     }
     public function company()
     {

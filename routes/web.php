@@ -13,7 +13,13 @@ use App\Http\Middleware\checkSession;
 use App\Http\Middleware\checkAdmin;
 use App\Http\Middleware\companyStyles;
 use App\Http\Middleware\CheckActiveUser;
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+
+Artisan::command('inspiresito', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Muestra por comandos una cita inspiradora');
 
 // LOGIN LINK
 Route::middleware([checkSession::class])->group(function () {
@@ -67,6 +73,7 @@ Route::middleware(['auth', companyStyles::class, CheckActiveUser::class])->group
         Route::post('/sellers', [SellerController::class, 'store'])->name('sellers.store');
         Route::delete('/sellers/{id}', [SellerController::class, 'destroy'])->name('sellers.destroy');
         Route::patch('/sellers/soft_destroy/{id}', [SellerController::class, 'soft_destroy'])->name('sellers.soft_destroy');
+        Route::post('/sellers/{id}/switch-role', [SellerController::class, 'switchRole'])->name('sellers.switchRole');
 
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
         Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');

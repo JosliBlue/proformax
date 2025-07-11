@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class SellerController extends Controller
 {
@@ -22,28 +21,18 @@ class SellerController extends Controller
         $sortField = request('sort', 'user_name');
         $sortDirection = request('direction', 'asc');
         $search = request('search');
-
         $user = Auth::user();
 
-        // Solo mostrar usuarios de la misma compañía, excepto el usuario actual y los gerentes
-        $query = User::where('company_id', $user->company_id)
+        $data = User::where('company_id', $user->company_id)
             ->where('id', '!=', $user->id)
-            ->where('user_rol', '!=', UserRole::GERENTE->value);
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('user_name', 'like', "%{$search}%")
-                    ->orWhere('user_email', 'like', "%{$search}%");
-            });
-        }
-        $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
+            ->where('user_rol', '!=', UserRole::GERENTE->value)
+            ->when($search, fn($q) =>
+            $q->where(fn($query) => $query->where('user_name', 'like', "%{$search}%")
+                ->orWhere('user_email', 'like', "%{$search}%")))
+            ->orderBy($sortField, $sortDirection)
+            ->paginate(10);
 
-        return view("_admin.users.users", [
-            'columns' => $columns,
-            'data' => $data,
-            'sortField' => $sortField,
-            'sortDirection' => $sortDirection,
-            'searchTerm' => $search
-        ]);
+        return view("_admin.users.users", compact('columns', 'data', 'sortField', 'sortDirection') + ['searchTerm' => $search]);
     }
 
     public function create()
@@ -55,99 +44,70 @@ class SellerController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validar datos de entrada
-            $validated = $request->validate(
-                $this->getValidationRules(),
-                $this->getValidationMessages()
-            );
+            $validated = $request->validate($this->getValidationRules(), $this->getValidationMessages());
 
-            // Preparar datos para creación
             $userData = [
                 'user_name' => $validated['user_name'],
                 'user_email' => $validated['user_email'],
                 'user_password' => bcrypt($validated['user_password']),
                 'company_id' => Auth::user()->company_id,
-                'user_status' => true
+                'user_status' => true,
+                'user_rol' => (Auth::user()->isGerente() && $request->filled('user_rol'))
+                    ? $validated['user_rol'] : UserRole::VENDEDOR->value
             ];
 
-            // Asignar rol basado en permisos
-            $userData['user_rol'] = (Auth::user()->isGerente() && $request->filled('user_rol'))
-                ? $validated['user_rol']
-                : UserRole::VENDEDOR->value;
-
-            // Crear usuario
-            $user = User::create($userData);
-
-            return redirect()->route('sellers')
-                ->with('success', '✅ Usuario "' . $user->user_name . '" creado correctamente. Ya puede iniciar sesión.');
+            User::create($userData);
+            return redirect()->route('sellers')->with('success', 'Usuario creado correctamente');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Manejo específico de errores de validación
             $errors = $e->validator->errors();
-            $errorMessage = $errors->count() === 1
-                ? $errors->first()
-                : "Se encontraron {$errors->count()} errores en el formulario";
-
-            return back()
-                ->withInput($request->except('user_password', 'user_password_confirmation'))
-                ->with('error', '⚠️ ' . $errorMessage)
-                ->withErrors($e->validator);
+            $errorMessage = $errors->count() === 1 ? $errors->first() : "Se encontraron {$errors->count()} errores en el formulario";
+            return back()->withInput($request->except('user_password', 'user_password_confirmation'))
+                ->with('error', $errorMessage)->withErrors($e->validator);
         } catch (\Illuminate\Database\QueryException $e) {
-            // Manejo específico de errores de base de datos
-            Log::error('Error de base de datos al crear usuario: ' . $e->getMessage(), [
-                'user_id' => Auth::id(),
-                'company_id' => Auth::user()->company_id,
-                'email' => $request->user_email
-            ]);
-
             $errorMessage = str_contains($e->getMessage(), 'Duplicate entry')
-                ? 'El correo electrónico ya está registrado'
-                : 'Error en la base de datos. Intenta nuevamente';
-
-            return back()
-                ->withInput($request->except('user_password', 'user_password_confirmation'))
-                ->with('error', '❌ ' . $errorMessage);
+                ? 'El correo electrónico ya está registrado' : 'Error en la base de datos. Intenta nuevamente';
+            return back()->withInput($request->except('user_password', 'user_password_confirmation'))
+                ->with('error', $errorMessage);
         } catch (\Exception $e) {
-            // Manejo general de errores
-            Log::error('Error inesperado al crear usuario: ' . $e->getMessage(), [
-                'user_id' => Auth::id(),
-                'company_id' => Auth::user()->company_id,
-                'request_data' => $request->except('user_password', 'user_password_confirmation')
-            ]);
-
-            return back()
-                ->withInput($request->except('user_password', 'user_password_confirmation'))
-                ->with('error', '❌ Error del servidor. Intenta nuevamente en unos minutos.');
+            return back()->withInput($request->except('user_password', 'user_password_confirmation'))
+                ->with('error', 'Error del servidor. Intenta nuevamente en unos minutos.');
         }
     }
     public function soft_destroy(string $id)
     {
         $current = Auth::user();
-        // Permitir desactivar/activar solo si es gerente
-        if (!$current->isGerente()) {
-            abort(403, 'No tienes permisos para desactivar usuarios.');
-        }
-        $user = User::where('company_id', $current->company_id)
-            ->findOrFail($id);
-        // No permitir desactivar a sí mismo
-        if ($user->id == $current->id) {
-            abort(403, 'No puedes desactivarte a ti mismo.');
-        }
+        if (!$current->isGerente()) abort(403, 'No tienes permisos para desactivar usuarios.');
+
+        $user = User::where('company_id', $current->company_id)->findOrFail($id);
+        if ($user->id == $current->id) abort(403, 'No puedes desactivarte a ti mismo.');
+
         $user->update(['user_status' => !$user->user_status]);
         return back()->with('success', $user->user_status ? 'Usuario activado' : 'Usuario desactivado');
+    }
+
+    public function switchRole(string $id)
+    {
+        $current = Auth::user();
+        $user = User::where('company_id', $current->company_id)->findOrFail($id);
+
+        if ($user->id == $current->id) return back()->with('error', 'No puedes cambiar tu propio rol.');
+        if ($user->isGerente()) return back()->with('error', 'No puedes cambiar el rol de un gerente.');
+
+        $newRole = $user->isVendedor() ? UserRole::PASANTE : UserRole::VENDEDOR;
+        $user->update(['user_rol' => $newRole->value]);
+
+        $message = $newRole === UserRole::PASANTE ? 'Rol cambiado a Pasante.' : 'Rol cambiado a Vendedor.';
+        return back()->with('success', $message);
     }
 
     public function destroy(string $id)
     {
         $current = Auth::user();
-        // Solo el gerente puede eliminar usuarios
-        if (!$current->isGerente()) {
-            abort(403, 'Solo el gerente puede eliminar usuarios.');
-        }
+        if (!$current->isGerente()) abort(403, 'Solo el gerente puede eliminar usuarios.');
+
         $user = User::findOrFail($id);
-        // No permitir eliminarse a sí mismo
-        if ($user->id == $current->id) {
-            abort(403, 'No puedes eliminarte a ti mismo.');
-        }
+        if ($user->id == $current->id) abort(403, 'No puedes eliminarte a ti mismo.');
+
         $user->delete();
         return redirect()->route('sellers')->with('success', 'Usuario eliminado');
     }
@@ -179,7 +139,7 @@ class SellerController extends Controller
     private function getValidationRules()
     {
         return [
-            'user_name' => 'required|string|min:2|max:100|regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
+            'user_name' => 'required|string|min:2|max:100',
             'user_email' => 'required|email|max:100|unique:users,user_email',
             'user_rol' => 'nullable|in:' . implode(',', [UserRole::VENDEDOR->value, UserRole::PASANTE->value]),
             'user_password' => [
@@ -188,7 +148,6 @@ class SellerController extends Controller
                 'min:8',
                 'max:100',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'
             ]
         ];
     }

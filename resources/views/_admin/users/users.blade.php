@@ -127,10 +127,11 @@
                         <!-- Botones de acción -->
                         <div class="flex justify-center gap-3">
                             @if (auth()->check() && auth()->user()->isGerente())
-                                <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST">
+                                <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST"
+                                    class="role-form">
                                     @csrf
                                     <button type="submit"
-                                        class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
+                                        class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
                                         title="Cambiar rol">
                                         <span class="iconify w-5 h-5" data-icon="heroicons:arrow-path-20-solid"></span>
                                     </button>
@@ -194,6 +195,17 @@
                     } else {
                         arrow.style.transform = 'rotate(0deg)';
                     }
+                });
+            });
+
+            // Indicadores de carga para botones de cambiar rol
+            document.querySelectorAll('.role-form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.innerHTML = `
+                        <span class="iconify w-5 h-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                    `;
                 });
             });
         });

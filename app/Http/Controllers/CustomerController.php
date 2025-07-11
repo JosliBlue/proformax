@@ -10,13 +10,13 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $columns = [];
-        $columns[] = ['name' => 'Nombre', 'field' => 'customer_name'];
-        $columns[] = ['name' => 'Cédula', 'field' => 'customer_cedula'];
-        $columns[] = ['name' => 'Teléfono', 'field' => 'customer_phone'];
-        $columns[] = ['name' => 'Correo', 'field' => 'customer_email'];
+        $columns = [
+            ['name' => 'Nombre', 'field' => 'customer_name'],
+            ['name' => 'Cédula', 'field' => 'customer_cedula'],
+            ['name' => 'Teléfono', 'field' => 'customer_phone'],
+            ['name' => 'Correo', 'field' => 'customer_email']
+        ];
 
-        // Solo gerente ve la columna de estado
         if (Auth::check() && Auth::user()->isGerente()) {
             $columns[] = ['name' => 'Estado', 'field' => 'customer_status'];
         }
@@ -25,12 +25,9 @@ class CustomerController extends Controller
         $sortDirection = request('direction', 'asc');
         $search = request('search');
 
-        $query = Customer::query();
+        $query = Customer::where('company_id', Auth::user()->company_id);
 
-        // Filtrar por compañía del usuario
-        $query->where('company_id', Auth::user()->company_id);
-
-        if (Auth::check() && !Auth::user()->isGerente()) {
+        if (!Auth::user()->isGerente()) {
             $query->where('customer_status', true);
         }
 
@@ -46,13 +43,7 @@ class CustomerController extends Controller
 
         $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
-        return view("_general.customers.customers", [
-            'columns' => $columns,
-            'data' => $data,
-            'sortField' => $sortField,
-            'sortDirection' => $sortDirection,
-            'searchTerm' => $search
-        ]);
+        return view("_general.customers.customers", compact('columns', 'data', 'sortField', 'sortDirection') + ['searchTerm' => $search]);
     }
 
     public function create()
@@ -63,33 +54,20 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate(
-                $this->getValidationRules(),
-                $this->getValidationMessages()
-            );
+            $validated = $request->validate($this->getValidationRules(), $this->getValidationMessages());
 
-            // Validar cédula si fue proporcionada
             if (!empty($validated['customer_cedula']) && !$this->validarCedula($validated['customer_cedula'])) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'La cédula ingresada no es válida')
-                    ->withErrors(['customer_cedula' => 'La cédula ingresada no es válida']);
+                return back()->withInput()->with('error', 'La cédula ingresada no es válida')->withErrors(['customer_cedula' => 'La cédula ingresada no es válida']);
             }
 
             $validated['company_id'] = Auth::user()->company_id;
-
             Customer::create($validated);
-            return redirect()->route('customers')
-                ->with('success', 'Cliente creado correctamente.');
+
+            return redirect()->route('customers')->with('success', 'Cliente creado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Por favor corrige los errores en el formulario')
-                ->withErrors($e->validator);
+            return back()->withInput()->with('error', 'Por favor corrige los errores en el formulario')->withErrors($e->validator);
         } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
         }
     }
 
@@ -103,48 +81,25 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
-            $isGerente = Auth::user()->isGerente();
-            // Guardar el email original
             $originalEmail = $customer->customer_email;
+            $validated = $request->validate($this->getValidationRules($id), $this->getValidationMessages());
 
-            $validated = $request->validate(
-                $this->getValidationRules($id),
-                $this->getValidationMessages()
-            );
-
-            // Validar cédula si fue proporcionada
             if (!empty($validated['customer_cedula']) && !$this->validarCedula($validated['customer_cedula'])) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'La cédula ingresada no es válida')
-                    ->withErrors(['customer_cedula' => 'La cédula ingresada no es válida']);
+                return back()->withInput()->with('error', 'La cédula ingresada no es válida')->withErrors(['customer_cedula' => 'La cédula ingresada no es válida']);
             }
 
-            // Si no es gerente, remover el campo del request
-            if (!$isGerente) {
-                $request->request->remove('customer_email');
-            }
-            // Si no es gerente, restaurar el valor original
-            if (!$isGerente) {
+            if (!Auth::user()->isGerente()) {
                 $validated['customer_email'] = $originalEmail;
             }
 
             $customer->update($validated);
-
-            return redirect()->route('customers')
-                ->with('success', 'Cliente actualizado correctamente.');
+            return redirect()->route('customers')->with('success', 'Cliente actualizado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Por favor corrige los errores en el formulario')
-                ->withErrors($e->validator);
+            return back()->withInput()->with('error', 'Por favor corrige los errores en el formulario')->withErrors($e->validator);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('customers')
-                ->with('error', 'El cliente que intentas actualizar no existe.');
+            return redirect()->route('customers')->with('error', 'El cliente que intentas actualizar no existe.');
         } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al actualizar el cliente: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Ocurrió un error al actualizar el cliente: ' . $e->getMessage());
         }
     }
 
@@ -152,7 +107,6 @@ class CustomerController extends Controller
     {
         $customer = Customer::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $customer->update(['customer_status' => !$customer->customer_status]);
-
         return back()->with('success', $customer->customer_status ? 'Cliente activado' : 'Cliente desactivado');
     }
 
@@ -163,37 +117,26 @@ class CustomerController extends Controller
         return redirect()->route('customers')->with('success', 'Cliente eliminado');
     }
 
-    /**
-     * Obtiene los mensajes de validación comunes para Customer
-     */
     private function getValidationMessages()
     {
         return [
             'customer_name.required' => 'El nombre del cliente es obligatorio',
             'customer_name.string' => 'El nombre debe ser texto válido',
             'customer_name.max' => 'El nombre no debe exceder 255 caracteres',
-
             'customer_lastname.required' => 'El apellido del cliente es obligatorio',
             'customer_lastname.string' => 'El apellido debe ser texto válido',
             'customer_lastname.max' => 'El apellido no debe exceder 255 caracteres',
-
             'customer_cedula.string' => 'La cédula debe ser texto válido',
             'customer_cedula.unique' => 'Esta cédula ya está registrada',
             'customer_cedula.digits' => 'La cédula debe tener exactamente 10 dígitos',
-
             'customer_phone.required' => 'El teléfono es obligatorio',
             'customer_phone.numeric' => 'El teléfono debe contener solo números',
             'customer_phone.digits' => 'El teléfono debe tener exactamente 10 dígitos',
-
-            'customer_email.required' => 'El correo electrónico es obligatorio',
             'customer_email.email' => 'Ingresa un correo electrónico válido',
             'customer_email.unique' => 'Este correo electrónico ya está registrado',
         ];
     }
 
-    /**
-     * Obtiene las reglas de validación comunes para Customer
-     */
     private function getValidationRules($id = null)
     {
         $rules = [
@@ -201,7 +144,7 @@ class CustomerController extends Controller
             'customer_lastname' => 'required|string|max:255',
             'customer_cedula' => 'nullable|string|digits:10|unique:customers,customer_cedula',
             'customer_phone' => 'required|numeric|digits:10',
-            'customer_email' => 'required|email|unique:customers,customer_email',
+            'customer_email' => 'nullable|email|unique:customers,customer_email',
         ];
 
         if ($id) {

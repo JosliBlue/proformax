@@ -14,14 +14,11 @@
 
     <div class="max-w-md mx-auto">
         <form action="{{ isset($product) ? route('products.update', $product->id) : route('products.store') }}" method="POST"
-            class="space-y-4" autocomplete="on" spellcheck="true">
+            class="space-y-4" autocomplete="on" spellcheck="true" id="productsForm">
             @csrf
             @if (isset($product))
                 @method('PUT')
             @endif
-
-            {{-- Token de seguridad adicional --}}
-            <input type="hidden" name="form_token" value="{{ Str::random(40) }}">
 
             {{-- Nombre --}}
             <div>
@@ -90,8 +87,8 @@
 
             {{-- Botones --}}
             <div class="pt-4 flex justify-center gap-3">
-                <button type="submit"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                <button type="submit" id="productsBtn"
+                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
                     <span class="iconify h-5 w-5" data-icon="fluent:save-20-filled"></span>
                     {{ isset($product) ? 'Actualizar producto' : 'Guardar producto' }}
                 </button>
@@ -245,6 +242,19 @@
 
                     // Asegurar que el valor final esté en el campo oculto
                     priceHidden.value = parseFloat(cleanValue).toFixed(2);
+                });
+
+                // Indicador de carga al guardar producto
+                const form = document.getElementById('productsForm');
+                const productsBtn = document.getElementById('productsBtn');
+
+                form.addEventListener('submit', function() {
+                    productsBtn.disabled = true;
+                    const isUpdate = {{ isset($product) ? 'true' : 'false' }};
+                    productsBtn.innerHTML = `
+                        <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                        ${isUpdate ? 'Actualizando...' : 'Guardando...'}
+                    `;
                 });
             }
         });

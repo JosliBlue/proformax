@@ -13,7 +13,7 @@
     </div>
 
     <form action="{{ isset($paper) ? route('papers.update', $paper->id) : route('papers.store') }}" method="POST"
-        class="space-y-6" autocomplete="on" spellcheck="true">
+        class="space-y-6" autocomplete="on" spellcheck="true" id="papersForm">
         @csrf
         @isset($paper)
             @method('PUT')
@@ -114,13 +114,13 @@
                 <div class="flex flex-col md:flex-row justify-end gap-3 pt-4">
                     <a href="{{ route('papers') }}"
                         class="flex items-center justify-center gap-2 bg-gray-500 text-white hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto">Cancelar</a>
-                    <button type="submit" name="save_draft" value="1"
-                        class="flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto">
+                    <button type="submit" name="save_draft" value="1" id="draftBtn"
+                        class="flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto disabled:bg-gray-400 disabled:cursor-not-allowed">
                         <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
                         {{ isset($paper) && $paper->is_draft ? 'Actualizar borrador' : 'Guardar como borrador' }}
                     </button>
-                    <button type="submit" id="submit-btn"
-                        class="flex items-center justify-center gap-2 bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto">
+                    <button type="submit" id="submitBtn"
+                        class="flex items-center justify-center gap-2 bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto disabled:bg-gray-400 disabled:cursor-not-allowed">
                         <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
                         {{ isset($paper) && !$paper->is_draft ? 'Actualizar Proforma' : 'Guardar Proforma' }}
                     </button>
@@ -457,6 +457,29 @@
 
             // Initialize date calculation
             initializeDateCalculation();
+
+            // Indicadores de carga para los botones de submit
+            const form = document.getElementById('papersForm');
+            const draftBtn = document.getElementById('draftBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.addEventListener('submit', function(e) {
+                const isDraft = e.submitter?.name === 'save_draft';
+                
+                if (isDraft) {
+                    draftBtn.disabled = true;
+                    draftBtn.innerHTML = `
+                        <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                        Guardando borrador...
+                    `;
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                        Guardando...
+                    `;
+                }
+            });
         });
     </script>
 @endpush

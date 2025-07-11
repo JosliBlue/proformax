@@ -51,9 +51,11 @@
                             @case(App\Enums\UserRole::GERENTE->value)
                                 Gerente
                             @break
+
                             @case(App\Enums\UserRole::VENDEDOR->value)
                                 Vendedor
                             @break
+
                             @case(App\Enums\UserRole::PASANTE->value)
                                 Pasante
                             @break
@@ -85,7 +87,7 @@
                 Cambiar contraseña
             </h3>
 
-            <form action="{{ route('profile.update') }}" method="POST" class="space-y-4">
+            <form action="{{ route('profile.update') }}" method="POST" class="space-y-4" id="profileForm">
                 @csrf
                 @method('PUT')
 
@@ -97,10 +99,14 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="current_password" id="current_password" required
-                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 pr-12"
                                 placeholder="••••••••">
-                            <span class="iconify absolute right-3 top-3.5 text-gray-400"
-                                data-icon="heroicons:lock-closed-20-solid"></span>
+                            <button type="button" id="toggleCurrentPassword"
+                                class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
+                                <span id="currentPasswordIcon" class="iconify h-5 w-5"
+                                    data-icon="heroicons:eye-20-solid"></span>
+                                <span class="sr-only">Mostrar/Ocultar contraseña actual</span>
+                            </button>
                         </div>
                         @error('current_password')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -117,10 +123,14 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="user_password" id="user_password" required
-                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 pr-12"
                                 placeholder="••••••••">
-                            <span class="iconify absolute right-3 top-3.5 text-gray-400"
-                                data-icon="heroicons:key-20-solid"></span>
+                            <button type="button" id="toggleNewPassword"
+                                class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
+                                <span id="newPasswordIcon" class="iconify h-5 w-5"
+                                    data-icon="heroicons:eye-20-solid"></span>
+                                <span class="sr-only">Mostrar/Ocultar nueva contraseña</span>
+                            </button>
                         </div>
                         @error('user_password')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -136,18 +146,22 @@
                         <div class="relative">
                             <input type="password" name="user_password_confirmation" id="user_password_confirmation"
                                 required
-                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 pr-12"
                                 placeholder="••••••••">
-                            <span class="iconify absolute right-3 top-3.5 text-gray-400"
-                                data-icon="heroicons:check-circle-20-solid"></span>
+                            <button type="button" id="toggleConfirmPassword"
+                                class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
+                                <span id="confirmPasswordIcon" class="iconify h-5 w-5"
+                                    data-icon="heroicons:eye-20-solid"></span>
+                                <span class="sr-only">Mostrar/Ocultar confirmación de contraseña</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Botón Guardar -->
                 <div class="pt-2 flex justify-end">
-                    <button type="submit"
-                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200">
+                    <button type="submit" id="profileBtn"
+                        class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
                         <span class="iconify h-5 w-5" data-icon="heroicons:arrow-path-20-solid"></span>
                         Actualizar contraseña
                     </button>
@@ -156,3 +170,42 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Función para toggle de contraseñas
+            function setupPasswordToggle(toggleButtonId, passwordInputId, iconId) {
+                const toggleButton = document.getElementById(toggleButtonId);
+                const passwordInput = document.getElementById(passwordInputId);
+                const icon = document.getElementById(iconId);
+
+                if (toggleButton && passwordInput && icon) {
+                    toggleButton.addEventListener('click', function() {
+                        const isPasswordVisible = passwordInput.type === 'text';
+                        passwordInput.type = isPasswordVisible ? 'password' : 'text';
+                        icon.setAttribute('data-icon', isPasswordVisible ? 'heroicons:eye-20-solid' :
+                            'heroicons:eye-slash-20-solid');
+                    });
+                }
+            }
+
+            // Configurar toggle para los tres campos de contraseña
+            setupPasswordToggle('toggleCurrentPassword', 'current_password', 'currentPasswordIcon');
+            setupPasswordToggle('toggleNewPassword', 'user_password', 'newPasswordIcon');
+            setupPasswordToggle('toggleConfirmPassword', 'user_password_confirmation', 'confirmPasswordIcon');
+
+            // Indicador de carga al actualizar perfil
+            const form = document.getElementById('profileForm');
+            const profileBtn = document.getElementById('profileBtn');
+
+            form.addEventListener('submit', function() {
+                profileBtn.disabled = true;
+                profileBtn.innerHTML = `
+                    <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                    Actualizando...
+                `;
+            });
+        });
+    </script>
+@endpush

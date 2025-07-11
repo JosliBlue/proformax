@@ -41,7 +41,7 @@ class ProfileController extends Controller
                 'user_password' => Hash::make($validated['user_password']),
             ]);
 
-            return redirect()->route('profile')
+            return redirect()->route('home')
                 ->with('success', 'Contraseña actualizada correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()

@@ -179,7 +179,9 @@ class PaperController extends Controller
             if ($request->has('save_draft')) {
                 return redirect()->route('papers')->with('success', 'Borrador guardado correctamente');
             } else {
-                return redirect()->route('papers.pdf', $paper->id)->with('success', 'Proforma creada correctamente');
+                return redirect()->route('papers')
+                    ->with('success', 'Proforma creada correctamente')
+                    ->with('open_pdf', route('papers.pdf', $paper->id));
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()
@@ -269,7 +271,9 @@ class PaperController extends Controller
             if ($request->has('save_draft')) {
                 return redirect()->route('papers')->with('success', 'Borrador actualizado correctamente');
             } else {
-                return redirect()->route('papers.pdf', $paper->id)->with('success', 'Documento actualizado correctamente');
+                return redirect()->route('papers')
+                    ->with('success', 'Documento actualizado correctamente')
+                    ->with('open_pdf', route('papers.pdf', $paper->id));
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()

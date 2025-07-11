@@ -4,14 +4,9 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }} -
-        {{ $paper->customer->getFullNameAttribute() }} - Proforma
-        {{ $paper->id }} - {{ $company->company_name }}</title>
+        {{ $paper->customer->getFullName() }} - Proforma {{ $paper->id }} - {{ $company->company_name }}
+    </title>
     <style>
-        :root {
-            --primary-color: {{ $company->company_primary_color }};
-            --primary-text-color: {{ $company->company_primary_text_color }};
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -32,11 +27,11 @@
         }
 
         .document-header {
-            padding: 20px;
-            background-color: var(--primary-color);
+            padding: 15px 20px;
+            background-color: {{ $company->company_primary_color }};
             color: white;
             border-radius: 8px;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
         }
 
         .header-table {
@@ -52,7 +47,7 @@
         .company-name {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--primary-text-color);
+            color: {{ $company->company_primary_text_color }};
         }
 
         .company-logo-container {
@@ -70,22 +65,22 @@
         .document-details {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 10px 20px;
+            margin: 20px 0;
         }
 
         .info-group h3 {
-            color: var(--primary-color);
+            color: {{ $company->company_primary_color }};
             font-size: 1.2rem;
             margin-bottom: 15px;
-            border-bottom: 2px solid var(--primary-color);
+            border-bottom: 2px solid {{ $company->company_primary_color }};
             padding-bottom: 5px;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 4px 0;
             border-bottom: 1px solid #eee;
         }
 
@@ -103,11 +98,11 @@
         }
 
         .products-section {
-            margin-top: 30px;
+            margin-top: 10px;
         }
 
         .products-section h3 {
-            color: var(--primary-color);
+            color: {{ $company->company_primary_color }};
             margin-bottom: 15px;
             font-size: 1.2rem;
         }
@@ -123,13 +118,13 @@
 
         .products-table th,
         .products-table td {
-            padding: 12px 15px;
+            padding: 10px 15px;
             font-size: 0.9rem;
         }
 
         .products-table th {
-            background-color: var(--primary-color);
-            color: var(--primary-text-color);
+            background-color: {{ $company->company_primary_color }};
+            color: {{ $company->company_primary_text_color }};
             text-align: left;
         }
 
@@ -149,6 +144,44 @@
         .text-right {
             text-align: right;
         }
+
+        .signature-section {
+            margin-top: 100px;
+            padding: 20px 0;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 300px;
+            margin: 0 auto;
+            padding-top: 5px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            margin-top: 30px;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .footer td {
+            border: none;
+            padding: 0;
+            vertical-align: baseline;
+        }
+
+        .footer-left {
+            text-align: left;
+            width: 50%;
+        }
+
+        .footer-right {
+            text-align: right;
+            width: 50%;
+        }
     </style>
 </head>
 
@@ -159,7 +192,6 @@
                 <tr>
                     <td class="company-info">
                         <div class="company-name">{{ $company->company_name }}</div>
-                        <!-- Puedes agregar más info aquí -->
                     </td>
                     <td class="company-logo-container">
                         <img src="{{ $company->getLogoUrlAttribute() }}" alt="Logo" class="company-logo">
@@ -171,17 +203,22 @@
         <div class="document-details">
             <div class="info-group">
                 <h3>Detalles</h3>
-                {{--
-                <div class="info-row">
-                    <span class="label">Proforma:</span>
-                    <span class="value">{{ $paper->id }}</span>
-                </div>
-                --}}
-
                 <div class="info-row">
                     <span class="label">Cliente:</span>
-                    <span class="value">{{ $paper->customer->getFullNameAttribute() }}</span>
+                    <span class="value">{{ $paper->customer->getFullName() }}</span>
                 </div>
+                @if ($paper->customer->customer_cedula)
+                    <div class="info-row">
+                        <span class="label">Cédula:</span>
+                        <span class="value">{{ $paper->customer->customer_cedula }}</span>
+                    </div>
+                @endif
+                @if ($paper->customer->customer_email)
+                    <div class="info-row">
+                        <span class="label">Correo:</span>
+                        <span class="value">{{ $paper->customer->customer_email }}</span>
+                    </div>
+                @endif
                 <div class="info-row">
                     <span class="label">Fecha:</span>
                     <span
@@ -220,6 +257,34 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="signature-section">
+            <div class="signature-line">
+                @php
+                    $gerente = $company->getGerente();
+                @endphp
+                @if ($gerente)
+                    {{ $gerente->user_name }} @if ($gerente->user_cedula)
+                        - {{ $gerente->user_cedula }}
+                    @endif
+                    <br>
+                    <strong>Gerente</strong>
+                @else
+                    <strong>Firma del Gerente</strong>
+                @endif
+            </div>
+        </div>
+
+        <table class="footer">
+            <tr>
+                <td class="footer-left">
+                    *Los precios no incluyen IVA
+                </td>
+                <td class="footer-right">
+                    Generado por: {{ auth()->user()->user_name }}
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 

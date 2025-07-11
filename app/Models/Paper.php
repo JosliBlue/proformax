@@ -46,4 +46,17 @@ class Paper extends Model
             ->withPivot('quantity', 'unit_price', 'subtotal')
             ->withTimestamps();
     }
+
+    public function getIsActiveAttribute()
+    {
+        if (!$this->paper_date) {
+            return Carbon::now()->diffInDays($this->created_at->addDays($this->paper_days), false) >= 0;
+        }
+        return Carbon::now()->diffInDays(Carbon::parse($this->paper_date)->addDays($this->paper_days), false) >= 0;
+    }
+
+    public function scopeForCompany(Builder $query, $companyId): Builder
+    {
+        return $query->where('company_id', $companyId);
+    }
 }

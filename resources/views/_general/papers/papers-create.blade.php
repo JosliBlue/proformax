@@ -62,6 +62,8 @@
                         *</label>
                     <input type="date" name="paper_date" id="paper_date"
                         value="{{ old('paper_date', isset($paper) ? $paper->paper_date : (isset($copyPaperDate) ? $copyPaperDate : now()->format('Y-m-d'))) }}"
+                        min="{{ isset($paper) ? $paper->paper_date : now()->format('Y-m-d') }}"
+                        max="{{ now()->addDays(30)->format('Y-m-d') }}"
                         required
                         class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
                 </div>
@@ -436,12 +438,25 @@
             function initializeDateCalculation() {
                 const paperDate = document.getElementById('paper_date');
                 const validUntilDate = document.getElementById('paper_valid_until');
+                
+                // Determinar si estamos editando o creando
+                const isEditing = {{ isset($paper) ? 'true' : 'false' }};
+                const originalPaperDate = isEditing ? '{{ isset($paper) ? $paper->paper_date : '' }}' : null;
+                const today = '{{ now()->format('Y-m-d') }}';
 
                 // Calculate initial days
                 calculateDays();
 
                 // Update days when paper date changes
                 paperDate.addEventListener('change', () => {
+                    // Para nuevas proformas, la fecha no puede ser anterior a hoy
+                    // Para edición, la fecha no puede ser anterior a la fecha original
+                    const minDate = isEditing ? originalPaperDate : today;
+                    
+                    if (paperDate.value < minDate) {
+                        paperDate.value = minDate;
+                    }
+                    
                     // Update min date for valid until
                     validUntilDate.min = paperDate.value;
                     // If valid until is before paper date, reset it
@@ -457,6 +472,15 @@
                 validUntilDate.addEventListener('change', () => {
                     calculateDays();
                 });
+                
+                // Establecer la fecha mínima inicial según el contexto
+                if (!isEditing) {
+                    // Para nuevas proformas, la fecha mínima es hoy
+                    paperDate.min = today;
+                } else {
+                    // Para edición, la fecha mínima es la fecha original
+                    paperDate.min = originalPaperDate;
+                }
             }
 
             // Initialize date calculation

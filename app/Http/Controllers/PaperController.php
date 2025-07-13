@@ -7,7 +7,6 @@ use App\Models\Customer;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use \Illuminate\Pagination\LengthAwarePaginator;
 
 class PaperController extends Controller
@@ -141,11 +140,6 @@ class PaperController extends Controller
         try {
             // Debug: verificar si se está enviando save_draft
             $isDraft = $request->input('save_draft') == '1';
-            Log::info('REQUEST DEBUG:', [
-                'save_draft_value' => $request->input('save_draft'),
-                'is_draft_boolean' => $isDraft,
-                'all_request' => $request->all()
-            ]);
             
             $rules = $this->getValidationRules();
             $rules['customer_id'] = !$isDraft ? 'required|exists:customers,id' : 'nullable|exists:customers,id';
@@ -174,14 +168,6 @@ class PaperController extends Controller
                 'is_draft' => $isDraft,
                 'paper_date' => $validated['paper_date'],
             ]);
-
-            // Debug: verificar el paper creado
-            Log::info('PAPER CREATED:', [
-                'paper_id' => $paper->id,
-                'is_draft' => $paper->is_draft,
-                'is_draft_raw' => $paper->getRawOriginal('is_draft')
-            ]);
-
             // Adjuntar productos al paper
             foreach ($validated['products'] as $productData) {
                 $paper->products()->attach($productData['id'], [

@@ -19,6 +19,9 @@
             @method('PUT')
         @endisset
 
+        <!-- Hidden input para controlar si es borrador -->
+        <input type="hidden" name="save_draft" id="save_draft_hidden" value="0">
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <!-- Left Column: Customer Info -->
             <div class="space-y-4">
@@ -63,8 +66,7 @@
                     <input type="date" name="paper_date" id="paper_date"
                         value="{{ old('paper_date', isset($paper) ? $paper->paper_date : (isset($copyPaperDate) ? $copyPaperDate : now()->format('Y-m-d'))) }}"
                         min="{{ isset($paper) ? $paper->paper_date : now()->format('Y-m-d') }}"
-                        max="{{ now()->addDays(30)->format('Y-m-d') }}"
-                        required
+                        max="{{ now()->addDays(30)->format('Y-m-d') }}" required
                         class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
                 </div>
 
@@ -118,12 +120,12 @@
                 <div class="flex flex-col md:flex-row justify-end gap-3 pt-4">
                     <a href="{{ route('papers') }}"
                         class="flex items-center justify-center gap-2 bg-gray-500 text-white hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto">Cancelar</a>
-                    <button type="submit" name="save_draft" value="1" id="draftBtn"
+                    <button type="button" id="draftBtn"
                         class="flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 hover:bg-yellow-500 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto disabled:bg-gray-400 disabled:cursor-not-allowed">
                         <span class="iconify h-5 w-5" data-icon="mdi:content-save-edit"></span>
                         {{ isset($paper) && $paper->is_draft ? 'Actualizar borrador' : 'Guardar como borrador' }}
                     </button>
-                    <button type="submit" id="submitBtn"
+                    <button type="button" id="submitBtn"
                         class="flex items-center justify-center gap-2 bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all shadow-sm hover:shadow-md w-full md:w-auto disabled:bg-gray-400 disabled:cursor-not-allowed">
                         <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
                         {{ isset($paper) && !$paper->is_draft ? 'Actualizar Proforma' : 'Guardar Proforma' }}
@@ -438,7 +440,7 @@
             function initializeDateCalculation() {
                 const paperDate = document.getElementById('paper_date');
                 const validUntilDate = document.getElementById('paper_valid_until');
-                
+
                 // Determinar si estamos editando o creando
                 const isEditing = {{ isset($paper) ? 'true' : 'false' }};
                 const originalPaperDate = isEditing ? '{{ isset($paper) ? $paper->paper_date : '' }}' : null;
@@ -452,11 +454,11 @@
                     // Para nuevas proformas, la fecha no puede ser anterior a hoy
                     // Para edición, la fecha no puede ser anterior a la fecha original
                     const minDate = isEditing ? originalPaperDate : today;
-                    
+
                     if (paperDate.value < minDate) {
                         paperDate.value = minDate;
                     }
-                    
+
                     // Update min date for valid until
                     validUntilDate.min = paperDate.value;
                     // If valid until is before paper date, reset it
@@ -472,7 +474,7 @@
                 validUntilDate.addEventListener('change', () => {
                     calculateDays();
                 });
-                
+
                 // Establecer la fecha mínima inicial según el contexto
                 if (!isEditing) {
                     // Para nuevas proformas, la fecha mínima es hoy
@@ -490,23 +492,34 @@
             const form = document.getElementById('papersForm');
             const draftBtn = document.getElementById('draftBtn');
             const submitBtn = document.getElementById('submitBtn');
+            const saveDraftHidden = document.getElementById('save_draft_hidden');
 
-            form.addEventListener('submit', function(e) {
-                const isDraft = e.submitter?.name === 'save_draft';
+            // Event listener para el botón de borrador
+            draftBtn.addEventListener('click', function() {
+                console.log('Draft button clicked - setting save_draft to 1');
+                saveDraftHidden.value = '1';
 
-                if (isDraft) {
-                    draftBtn.disabled = true;
-                    draftBtn.innerHTML = `
-                        <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
-                        Guardando borrador...
-                    `;
-                } else {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = `
-                        <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
-                        Guardando...
-                    `;
-                }
+                draftBtn.disabled = true;
+                draftBtn.innerHTML = `
+                    <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                    Guardando borrador...
+                `;
+
+                form.submit();
+            });
+
+            // Event listener para el botón normal
+            submitBtn.addEventListener('click', function() {
+                console.log('Submit button clicked - setting save_draft to 0');
+                saveDraftHidden.value = '0';
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                    Guardando...
+                `;
+
+                form.submit();
             });
         });
     </script>

@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use \Illuminate\Pagination\LengthAwarePaginator;
 
 class PaperController extends Controller
@@ -138,12 +139,20 @@ class PaperController extends Controller
     {
         $user = Auth::user();
         try {
+            // Debug: verificar si se está enviando save_draft
+            $isDraft = $request->input('save_draft') == '1';
+            Log::info('REQUEST DEBUG:', [
+                'save_draft_value' => $request->input('save_draft'),
+                'is_draft_boolean' => $isDraft,
+                'all_request' => $request->all()
+            ]);
+            
             $rules = $this->getValidationRules();
-            $rules['customer_id'] = !$request->has('save_draft') ? 'required|exists:customers,id' : 'nullable|exists:customers,id';
+            $rules['customer_id'] = !$isDraft ? 'required|exists:customers,id' : 'nullable|exists:customers,id';
             $validated = $request->validate($rules, $this->getValidationMessages());
 
             // Si no es borrador y no hay cliente, forzar error manualmente
-            if (!$request->has('save_draft') && empty($validated['customer_id'])) {
+            if (!$isDraft && empty($validated['customer_id'])) {
                 return back()
                     ->withInput()
                     ->with('error', 'Por favor selecciona un cliente')
@@ -162,8 +171,15 @@ class PaperController extends Controller
                 'company_id' => $user->company_id,
                 'paper_days' => $validated['paper_days'],
                 'paper_total_price' => $total,
-                'is_draft' => $request->has('save_draft'),
+                'is_draft' => $isDraft,
                 'paper_date' => $validated['paper_date'],
+            ]);
+
+            // Debug: verificar el paper creado
+            Log::info('PAPER CREATED:', [
+                'paper_id' => $paper->id,
+                'is_draft' => $paper->is_draft,
+                'is_draft_raw' => $paper->getRawOriginal('is_draft')
             ]);
 
             // Adjuntar productos al paper
@@ -176,7 +192,7 @@ class PaperController extends Controller
             }
 
             // Redireccionar según si es borrador o no
-            if ($request->has('save_draft')) {
+            if ($isDraft) {
                 return redirect()->route('papers')->with('success', 'Borrador guardado correctamente');
             } else {
                 return redirect()->route('papers')
@@ -234,8 +250,9 @@ class PaperController extends Controller
             }
 
             // Validación de datos (igual que en store)
+            $isDraft = $request->input('save_draft') == '1';
             $rules = $this->getValidationRules($paper->id);
-            if (!$request->has('save_draft')) {
+            if (!$isDraft) {
                 $rules['customer_id'] = 'required|exists:customers,id';
             } else {
                 $rules['customer_id'] = 'nullable|exists:customers,id';
@@ -251,7 +268,7 @@ class PaperController extends Controller
                 'customer_id' => $validated['customer_id'] ?? null,
                 'paper_days' => $validated['paper_days'],
                 'paper_total_price' => $total,
-                'is_draft' => $request->has('save_draft'),
+                'is_draft' => $isDraft,
                 'paper_date' => $validated['paper_date'],
             ]);
 
@@ -268,7 +285,7 @@ class PaperController extends Controller
             $paper->products()->sync($productsData);
 
             // Redireccionar según si es borrador o no
-            if ($request->has('save_draft')) {
+            if ($isDraft) {
                 return redirect()->route('papers')->with('success', 'Borrador actualizado correctamente');
             } else {
                 return redirect()->route('papers')

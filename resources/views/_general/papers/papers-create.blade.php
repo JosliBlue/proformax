@@ -8,7 +8,7 @@
                 data-icon="heroicons:arrow-left-20-solid"></span>
         </a>
         <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            {{ isset($paper) ? 'Editar Documento' : 'Nuevo Documento' }}
+            {{ isset($paper) ? 'Editar Proforma' : 'Nuevo Proforma' }}
         </h1>
     </div>
 

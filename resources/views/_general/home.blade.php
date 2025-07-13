@@ -27,8 +27,8 @@
     if (auth()->check() && (auth()->user()->isGerente() || auth()->user()->isVendedor())) {
         $items[] = [
             'icono' => 'line-md:emoji-neutral-filled',
-            'titulo' => 'Usuarios',
-            'texto' => 'Gestión de usuarios',
+            'titulo' => 'Trabajadores',
+            'texto' => 'Gestión de trabajadores',
             'ruta' => 'sellers',
         ];
         $items[] = [

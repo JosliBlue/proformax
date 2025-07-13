@@ -68,18 +68,20 @@
 
                 <!-- Validity Date -->
                 <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <label for="paper_valid_until" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fecha válida hasta *</label>
+                    <label for="paper_valid_until"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fecha válida hasta *</label>
                     <input type="date" name="paper_valid_until" id="paper_valid_until"
                         value="{{ old('paper_valid_until', isset($paperValidUntil) ? $paperValidUntil : (isset($copyPaperDays) ? now()->addDays($copyPaperDays)->format('Y-m-d') : now()->addDays(7)->format('Y-m-d'))) }}"
                         min="{{ isset($paper) ? $paper->paper_date : now()->format('Y-m-d') }}"
-                        max="{{ now()->addDays(365)->format('Y-m-d') }}"
-                        required
+                        max="{{ now()->addDays(365)->format('Y-m-d') }}" required
                         class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
                     <!-- Hidden input for days calculation -->
-                    <input type="hidden" name="paper_days" id="paper_days" value="{{ old('paper_days', isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7')) }}">
+                    <input type="hidden" name="paper_days" id="paper_days"
+                        value="{{ old('paper_days', isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7')) }}">
                     <!-- Days display -->
                     <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        <span id="days-info">Días de validez: <span id="days-count" class="font-medium">{{ isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7') }}</span></span>
+                        <span id="days-info">Días de validez: <span id="days-count"
+                                class="font-medium">{{ isset($paper) ? $paper->paper_days : (isset($copyPaperDays) ? $copyPaperDays : '7') }}</span></span>
                     </div>
                 </div>
             </div>
@@ -145,41 +147,43 @@
             // Product template
             const productTemplate = (index, product = null) => `
                 <div class="product-item p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700" data-index="${index}">
-                    <div class="grid grid-cols-12 gap-3 items-end">
-                        <div class="col-span-12 md:col-span-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Producto *</label>
-                            <div class="relative">
-                                <input type="text" class="product-search w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all" placeholder="Buscar producto...">
-                                <select name="products[${index}][id]" required class="product-select hidden">
-                                    <option value="">Seleccione un producto</option>
-                                    @foreach ($products as $prod)
-                                        <option value="{{ $prod->id }}"
-                                            data-price="{{ $prod->product_price }}"
-                                            data-name="{{ $prod->product_name }}"
-                                            data-type="{{ $prod->product_type }}"
-                                            ${product && product.id == {{ $prod->id }} ? 'selected' : ''}>
-                                            {{ $prod->product_name }} - $${{ number_format($prod->product_price, 2) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="product-dropdown absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
+                    <div>
+                        <div class="flex flex-wrap gap-3 items-end">
+                            <div class="flex-1 min-w-[180px]">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Producto *</label>
+                                <div class="relative">
+                                    <input type="text" class="product-search w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all" placeholder="Buscar producto...">
+                                    <select name="products[${index}][id]" required class="product-select hidden">
+                                        <option value="">Seleccione un producto</option>
+                                        @foreach ($products as $prod)
+                                            <option value="{{ $prod->id }}"
+                                                data-price="{{ $prod->product_price }}"
+                                                data-name="{{ $prod->product_name }}"
+                                                data-type="{{ $prod->product_type }}"
+                                                ${product && product.id == {{ $prod->id }} ? 'selected' : ''}>
+                                                {{ $prod->product_name }} - $${{ number_format($prod->product_price, 2) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="product-dropdown absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
+                                </div>
+                            </div>
+                            <div class="w-24">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cantidad *</label>
+                                <input type="number" name="products[${index}][quantity]" min="1" step="1" value="${product ? product.quantity : 1}" required class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all" oninput="this.value = Math.max(1, Math.floor(this.value))">
+                            </div>
+                            <div class="w-28">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Precio *</label>
+                                <input type="number" step="0.01" min="0" name="products[${index}][unit_price]" value="${product ? product.unit_price : ''}" required class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
+                            </div>
+                            <div>
+                                <button type="button" class="remove-product h-10 w-10 flex items-center justify-center text-red-500 hover:text-red-700 border border-red-500 hover:border-red-700 rounded-lg transition-colors mt-6">
+                                    <span class="iconify h-5 w-5" data-icon="heroicons:trash-20-solid"></span>
+                                </button>
                             </div>
                         </div>
-                        <div class="col-span-4 md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cantidad *</label>
-                            <input type="number" name="products[${index}][quantity]" min="1" step="1" value="${product ? product.quantity : 1}" required class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all" oninput="this.value = Math.max(1, Math.floor(this.value))">
-                        </div>
-                        <div class="col-span-4 md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Precio *</label>
-                            <input type="number" step="0.01" min="0" name="products[${index}][unit_price]" value="${product ? product.unit_price : ''}" required class="w-full px-4 py-3 border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all">
-                        </div>
-                        <div class="col-span-2 md:col-span-1 flex justify-center items-end">
-                            <button type="button" class="remove-product h-10 w-10 flex items-center justify-center text-red-500 hover:text-red-700 border border-red-500 hover:border-red-700 rounded-lg transition-colors">
-                                <span class="iconify h-5 w-5" data-icon="heroicons:trash-20-solid"></span>
-                            </button>
-                        </div>
-                        <div class="col-span-2 md:col-span-1 flex justify-end items-center">
-                            <span class="product-subtotal text-sm font-medium text-gray-800 dark:text-gray-200">$0.00</span>
+                        <div class="flex justify-end items-center mt-2">
+                            <span class="product-subtotal w-full flex items-center justify-end text-base font-semibold text-gray-800 dark:text-gray-200">$0.00</span>
                         </div>
                     </div>
                 </div>
@@ -413,13 +417,13 @@
                 const endDate = document.getElementById('paper_valid_until').value;
                 const daysInput = document.getElementById('paper_days');
                 const daysCount = document.getElementById('days-count');
-                
+
                 if (startDate && endDate) {
                     const start = new Date(startDate);
                     const end = new Date(endDate);
                     const diffTime = Math.abs(end - start);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
+
                     daysInput.value = diffDays;
                     daysCount.textContent = diffDays;
                 } else {
@@ -432,10 +436,10 @@
             function initializeDateCalculation() {
                 const paperDate = document.getElementById('paper_date');
                 const validUntilDate = document.getElementById('paper_valid_until');
-                
+
                 // Calculate initial days
                 calculateDays();
-                
+
                 // Update days when paper date changes
                 paperDate.addEventListener('change', () => {
                     // Update min date for valid until
@@ -448,7 +452,7 @@
                     }
                     calculateDays();
                 });
-                
+
                 // Update days when valid until date changes
                 validUntilDate.addEventListener('change', () => {
                     calculateDays();
@@ -465,7 +469,7 @@
 
             form.addEventListener('submit', function(e) {
                 const isDraft = e.submitter?.name === 'save_draft';
-                
+
                 if (isDraft) {
                     draftBtn.disabled = true;
                     draftBtn.innerHTML = `

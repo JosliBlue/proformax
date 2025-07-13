@@ -8,7 +8,7 @@
                 data-icon="heroicons:arrow-left-20-solid"></span>
         </a>
         <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            Gestión de Vendedores
+            Gestión de Trabajadores
         </h1>
     </div>
 
@@ -49,7 +49,7 @@
                 <a href="{{ route('sellers.create') }}"
                     class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
                     <span class="iconify h-5 w-5 " data-icon="fluent:add-32-filled"></span>
-                    Nuevo vendedor
+                    Nuevo trabajador
                 </a>
             </div>
         </div>

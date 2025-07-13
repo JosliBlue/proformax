@@ -144,143 +144,180 @@
         <div class="flex md:hidden justify-center">
             {{ $papers->appends(request()->query())->links() }}
         </div>
-        <!-- Contenedor grid responsive para documentos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-            @foreach ($papers as $paper)
-                @php
-                    $expirationDate = $paper->paper_date
-                        ? \Carbon\Carbon::parse($paper->paper_date)->addDays($paper->paper_days)
-                        : $paper->created_at->addDays($paper->paper_days);
-                @endphp
 
-                <details
-                    class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full paper-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
-                    id="paper-{{ $paper->id }}">
+        @if ($papers->count() > 0)
+            <!-- Contenedor grid responsive para documentos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                @foreach ($papers as $paper)
+                    @php
+                        $expirationDate = $paper->paper_date
+                            ? \Carbon\Carbon::parse($paper->paper_date)->addDays($paper->paper_days)
+                            : $paper->created_at->addDays($paper->paper_days);
+                    @endphp
 
-                    <summary class="list-none p-4 cursor-pointer h-full">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                <!-- Icono de documento -->
-                                <span class="iconify h-5 w-5 text-[var(--primary-color)]"
-                                    data-icon="heroicons:document-text-20-solid"></span>
-                                {{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}
-                            </h3>
-                            <!-- Flecha indicadora -->
-                            <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
-                                data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $paper->id }}"></span>
-                        </div>
+                    <details
+                        class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full paper-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
+                        id="paper-{{ $paper->id }}">
 
-                        <!-- Información básica -->
-                        <div class="mt-auto space-y-1.5 text-sm">
-                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:user-20-solid"></span>
-                                <span>{{ $paper->customer->customer_name }}
-                                    {{ $paper->customer->customer_lastname }}</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-gray-800 dark:text-gray-200">
-                                    ${{ number_format($paper->paper_total_price, 2) }}
-                                </span>
+                        <summary class="list-none p-4 cursor-pointer h-full">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                    <!-- Icono de documento -->
+                                    <span class="iconify h-5 w-5 text-[var(--primary-color)]"
+                                        data-icon="heroicons:document-text-20-solid"></span>
+                                    {{ $paper->paper_date ? \Carbon\Carbon::parse($paper->paper_date)->format('d/m/Y') : '' }}
+                                </h3>
+                                <!-- Flecha indicadora -->
                                 <span
-                                    class="text-xs {{ $paper->is_active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                                    {{ $paper->paper_days }} días
-                                </span>
+                                    class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                                    data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $paper->id }}"></span>
                             </div>
-                        </div>
-                    </summary>
 
-                    <!-- Panel flotante con diseño integrado -->
-                    <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
-                        <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
-                        <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
-                            <!-- Lista de productos -->
-                            <div class="space-y-2 max-h-[200px] overflow-y-auto">
-                                @foreach ($paper->products as $product)
-                                    <div class="p-2 bg-white dark:bg-gray-600 rounded-lg text-sm">
-                                        <p class="font-medium text-gray-800 dark:text-gray-200">
-                                            {{ $product->product_name }}</p>
-                                        <div class="grid grid-cols-3 gap-2 text-xs mt-1">
-                                            <div>
-                                                <span class="text-gray-600 dark:text-gray-400">Cant:</span>
-                                                <span class="font-medium">{{ $product->pivot->quantity }}</span>
-                                            </div>
-                                            <div>
-                                                <span class="text-gray-600 dark:text-gray-400">P.Unit:</span>
-                                                <span
-                                                    class="font-medium">${{ number_format($product->pivot->unit_price, 2) }}</span>
-                                            </div>
-                                            <div>
-                                                <span class="text-gray-600 dark:text-gray-400">Subtotal:</span>
-                                                <span
-                                                    class="font-medium">${{ number_format($product->pivot->subtotal, 2) }}</span>
+                            <!-- Información básica -->
+                            <div class="mt-auto space-y-1.5 text-sm">
+                                <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                    <span class="iconify h-3.5 w-3.5" data-icon="heroicons:user-20-solid"></span>
+                                    <span>{{ $paper->customer->customer_name }}
+                                        {{ $paper->customer->customer_lastname }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-medium text-gray-800 dark:text-gray-200">
+                                        ${{ number_format($paper->paper_total_price, 2) }}
+                                    </span>
+                                    <span
+                                        class="text-xs {{ $paper->is_active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
+                                        {{ $paper->paper_days }} días
+                                    </span>
+                                </div>
+                            </div>
+                        </summary>
+
+                        <!-- Panel flotante con diseño integrado -->
+                        <div
+                            class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                            <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                            <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
+                                <!-- Lista de productos -->
+                                <div class="space-y-2 max-h-[200px] overflow-y-auto">
+                                    @foreach ($paper->products as $product)
+                                        <div class="p-2 bg-white dark:bg-gray-600 rounded-lg text-sm">
+                                            <p class="font-medium text-gray-800 dark:text-gray-200">
+                                                {{ $product->product_name }}</p>
+                                            <div class="grid grid-cols-3 gap-2 text-xs mt-1">
+                                                <div>
+                                                    <span class="text-gray-600 dark:text-gray-400">Cant:</span>
+                                                    <span class="font-medium">{{ $product->pivot->quantity }}</span>
+                                                </div>
+                                                <div>
+                                                    <span class="text-gray-600 dark:text-gray-400">P.Unit:</span>
+                                                    <span
+                                                        class="font-medium">${{ number_format($product->pivot->unit_price, 2) }}</span>
+                                                </div>
+                                                <div>
+                                                    <span class="text-gray-600 dark:text-gray-400">Subtotal:</span>
+                                                    <span
+                                                        class="font-medium">${{ number_format($product->pivot->subtotal, 2) }}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                                    @endforeach
+                                </div>
 
-                            <!-- Estado y vencimiento -->
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="flex items-center gap-2">
-                                    <span class="iconify h-4 w-4" data-icon="heroicons:clock-20-solid"></span>
-                                    {{ $expirationDate->diffForHumans() }}
-                                </span>
-                                <span
-                                    class="{{ $paper->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }} px-2 py-1 rounded-full text-xs">
-                                    {{ $paper->is_active ? 'Activo' : 'Inactivo' }}
-                                </span>
-                            </div>
+                                <!-- Estado y vencimiento -->
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="flex items-center gap-2">
+                                        <span class="iconify h-4 w-4" data-icon="heroicons:clock-20-solid"></span>
+                                        {{ $expirationDate->diffForHumans() }}
+                                    </span>
+                                    <span
+                                        class="{{ $paper->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' }} px-2 py-1 rounded-full text-xs">
+                                        {{ $paper->is_active ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </div>
 
-                            <!-- Botones de acción -->
-                            <div class="flex justify-center gap-3 p-1">
-                                <!-- Botón Copiar -->
-                                <a href="{{ route('papers.create', ['copy_from' => $paper->id]) }}"
-                                    class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Copiar documento">
-                                    <span class="iconify w-5 h-5" data-icon="iconamoon:copy-bold"></span>
-                                </a>
+                                <!-- Botones de acción -->
+                                <div class="flex justify-center gap-3 p-1">
+                                    <!-- Botón Copiar -->
+                                    <a href="{{ route('papers.create', ['copy_from' => $paper->id]) }}"
+                                        class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 flex items-center justify-center"
+                                        title="Copiar documento">
+                                        <span class="iconify w-5 h-5" data-icon="iconamoon:copy-bold"></span>
+                                    </a>
 
-                                <!-- Botón PDF descarga -->
-                                <a href="{{ route('papers.pdf', ['paper' => $paper->id, 'download' => 1]) }}"
-                                    class="p-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-700 transition-all duration-200 flex items-center justify-center"
-                                    title="Descargar PDF">
-                                    <span class="iconify w-5 h-5" data-icon="mdi:download"></span>
-                                </a>
+                                    <!-- Botón PDF descarga -->
+                                    <a href="{{ route('papers.pdf', ['paper' => $paper->id, 'download' => 1]) }}"
+                                        class="p-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-700 transition-all duration-200 flex items-center justify-center"
+                                        title="Descargar PDF">
+                                        <span class="iconify w-5 h-5" data-icon="mdi:download"></span>
+                                    </a>
 
-                                <!-- Botón PDF ver -->
-                                <a href="{{ route('papers.pdf', $paper) }}" target="_blank"
-                                    class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Ver PDF">
-                                    <span class="iconify w-5 h-5" data-icon="carbon:document-pdf"></span>
-                                </a>
+                                    <!-- Botón PDF ver -->
+                                    <a href="{{ route('papers.pdf', $paper) }}" target="_blank"
+                                        class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-center"
+                                        title="Ver PDF">
+                                        <span class="iconify w-5 h-5" data-icon="carbon:document-pdf"></span>
+                                    </a>
 
-                                <!-- Botón Editar -->
-                                <a href="{{ route('papers.edit', $paper->id) }}"
-                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Editar">
-                                    <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
-                                </a>
+                                    <!-- Botón Editar -->
+                                    <a href="{{ route('papers.edit', $paper->id) }}"
+                                        class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                        title="Editar">
+                                        <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
+                                    </a>
 
-                                @if (auth()->user()->isGerente())
-                                    <!-- Botón Eliminar (solo gerente) -->
-                                    <form id="deleteForm-{{ $paper->id }}"
-                                        action="{{ route('papers.destroy', $paper->id) }}" method="POST"
-                                        class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
-                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                            title="Eliminar">
-                                            <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
-                                        </button>
-                                    </form>
-                                @endif
+                                    @if (auth()->user()->isGerente())
+                                        <!-- Botón Eliminar (solo gerente) -->
+                                        <form id="deleteForm-{{ $paper->id }}"
+                                            action="{{ route('papers.destroy', $paper->id) }}" method="POST"
+                                            class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" onclick="confirmDelete('{{ $paper->id }}')"
+                                                class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                                title="Eliminar">
+                                                <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
+                    </details>
+                @endforeach
+            </div>
+        @else
+            <!-- Vista de estado vacío para proformas -->
+            <div class="flex flex-col items-center justify-center py-16 px-4">
+                <div class="text-center max-w-md mx-auto">
+                    <!-- Icono animado -->
+                    <div
+                        class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500"
+                            data-icon="heroicons:document-text"></span>
                     </div>
-                </details>
-            @endforeach
-        </div>
+
+                    <!-- Mensaje principal -->
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                        @if (request('search'))
+                            No se encontraron proformas
+                        @else
+                            No hay proformas disponibles
+                        @endif
+                    </h3>
+
+                    <!-- Mensaje secundario -->
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        @if (request('search'))
+                            No hay proformas que coincidan con "<strong>{{ request('search') }}</strong>".
+                            Intenta con otros términos de búsqueda.
+                        @else
+                            Aún no se han creado proformas en el sistema.
+                            Comienza creando tu primera proforma.
+                        @endif
+                    </p>
+                </div>
+            </div>
+        @endif
 
         <!-- Paginación -->
         <div class="flex justify-center">

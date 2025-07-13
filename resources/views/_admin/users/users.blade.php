@@ -87,87 +87,123 @@
     <div class="flex md:hidden justify-center mb-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
-    <!-- Contenedor grid responsive para vendedores -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-        @foreach ($data as $seller)
-            <details
-                class="relative bg-white dark:bg-gray-800 rounded-lg transition-transform duration-200 hover:-translate-y-1 h-full open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
-                id="seller-{{ $seller->id }}">
 
-                <summary class="list-none p-4 cursor-pointer h-full">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                            <!-- Icono de usuario con color de estado -->
-                            <span class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
-                                data-icon="heroicons:user-20-solid"></span>
-                            {{ $seller->user_name }}
-                        </h3>
-                        <!-- Flecha indicadora de estado -->
-                        <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
-                            data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $seller->id }}"></span>
-                    </div>
+    @if ($data->count() > 0)
+        <!-- Contenedor grid responsive para vendedores -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            @foreach ($data as $seller)
+                <details
+                    class="relative bg-white dark:bg-gray-800 rounded-lg transition-transform duration-200 hover:-translate-y-1 h-full open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
+                    id="seller-{{ $seller->id }}">
 
-                    <!-- Información básica -->
-                    <div class="mt-auto space-y-1.5 text-sm">
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:envelope-20-solid"></span>
-                            <span class="truncate">{{ strtolower($seller->user_email) }}</span>
+                    <summary class="list-none p-4 cursor-pointer h-full">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <!-- Icono de usuario con color de estado -->
+                                <span
+                                    class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
+                                    data-icon="heroicons:user-20-solid"></span>
+                                {{ $seller->user_name }}
+                            </h3>
+                            <!-- Flecha indicadora de estado -->
+                            <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                                data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $seller->id }}"></span>
                         </div>
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:shield-check-20-solid"></span>
-                            <span>{{ ucfirst($seller->user_rol->value) }}</span>
-                        </div>
-                    </div>
-                </summary>
 
-                <!-- Panel flotante con diseño integrado -->
-                <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
-                    <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
-                    <div class="py-3 px-4">
-                        <!-- Botones de acción -->
-                        <div class="flex justify-center gap-3">
-                            @if (auth()->check() && auth()->user()->isGerente())
-                                <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST"
-                                    class="role-form">
+                        <!-- Información básica -->
+                        <div class="mt-auto space-y-1.5 text-sm">
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:envelope-20-solid"></span>
+                                <span class="truncate">{{ strtolower($seller->user_email) }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:shield-check-20-solid"></span>
+                                <span>{{ ucfirst($seller->user_rol->value) }}</span>
+                            </div>
+                        </div>
+                    </summary>
+
+                    <!-- Panel flotante con diseño integrado -->
+                    <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                        <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                        <div class="py-3 px-4">
+                            <!-- Botones de acción -->
+                            <div class="flex justify-center gap-3">
+                                @if (auth()->check() && auth()->user()->isGerente())
+                                    <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST"
+                                        class="role-form">
+                                        @csrf
+                                        <button type="submit"
+                                            class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                            title="Cambiar rol">
+                                            <span class="iconify w-5 h-5" data-icon="heroicons:arrow-path-20-solid"></span>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                <form id="deactivateForm-{{ $seller->id }}"
+                                    action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit"
-                                        class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                        title="Cambiar rol">
-                                        <span class="iconify w-5 h-5" data-icon="heroicons:arrow-path-20-solid"></span>
+                                    @method('PATCH')
+                                    <button type="button" onclick="confirmDeactivate('{{ $seller->id }}')"
+                                        class="p-2 {{ $seller->user_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 transition-all duration-200"
+                                        title="{{ $seller->user_status ? 'Desactivar' : 'Activar' }}">
+                                        <span class="iconify w-5 h-5"
+                                            data-icon="{{ $seller->user_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
                                     </button>
                                 </form>
-                            @endif
 
-                            <form id="deactivateForm-{{ $seller->id }}"
-                                action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button type="button" onclick="confirmDeactivate('{{ $seller->id }}')"
-                                    class="p-2 {{ $seller->user_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 transition-all duration-200"
-                                    title="{{ $seller->user_status ? 'Desactivar' : 'Activar' }}">
-                                    <span class="iconify w-5 h-5"
-                                        data-icon="{{ $seller->user_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
-                                </button>
-                            </form>
-
-                            @if (auth()->check() && auth()->user()->isGerente())
-                                <form id="deleteForm-{{ $seller->id }}"
-                                    action="{{ route('sellers.destroy', $seller->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('{{ $seller->id }}')"
-                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200"
-                                        title="Eliminar">
-                                        <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
-                                    </button>
-                                </form>
-                            @endif
+                                @if (auth()->check() && auth()->user()->isGerente())
+                                    <form id="deleteForm-{{ $seller->id }}"
+                                        action="{{ route('sellers.destroy', $seller->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete('{{ $seller->id }}')"
+                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200"
+                                            title="Eliminar">
+                                            <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
+                </details>
+            @endforeach
+        </div>
+    @else
+        <!-- Vista de estado vacío para trabajadores -->
+        <div class="flex flex-col items-center justify-center py-16 px-4">
+            <div class="text-center max-w-md mx-auto">
+                <!-- Icono animado -->
+                <div
+                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500" data-icon="heroicons:users"></span>
                 </div>
-            </details>
-        @endforeach
-    </div>
+
+                <!-- Mensaje principal -->
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                    @if (request('search'))
+                        No se encontraron trabajadores
+                    @else
+                        No hay trabajadores disponibles
+                    @endif
+                </h3>
+
+                <!-- Mensaje secundario -->
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    @if (request('search'))
+                        No hay trabajadores que coincidan con "<strong>{{ request('search') }}</strong>".
+                        Intenta con otros términos de búsqueda.
+                    @else
+                        Aún no se han agregado trabajadores al sistema.
+                        Comienza agregando tu primer trabajador.
+                    @endif
+                </p>
+            </div>
+        </div>
+    @endif
+
     <div class="flex justify-center mt-4">
         {{ $data->appends(request()->query())->links() }}
     </div>

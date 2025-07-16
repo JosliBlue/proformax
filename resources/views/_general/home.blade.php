@@ -148,7 +148,7 @@
                             data-icon="line-md:emoji-neutral-filled"></span>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Usuarios</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Trabajadores</h3>
                     </div>
                 </div>
                 <div class="text-right">

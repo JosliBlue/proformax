@@ -59,7 +59,7 @@
 
 > 🏗️ **¡Un paso y listo!**
 >
-> Crea una base de datos llamada **proformax** con cotejamiento **utf8mb4_unicode_ci** antes de migrar 🚦. Así tendrás soporte para todos los caracteres y emojis que necesites.
+> Crea una base de datos llamada **proformax** con cotejamiento **utf8mb4_unicode_ci** antes de migrar 🚦. Así tendrás soporte para todos los caractéres y emojis que necesites.
 
 ---
 

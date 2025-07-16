@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->string('customer_cedula',10)->nullable();
             $table->string('customer_name', 100);
             $table->string('customer_lastname', 100);
             $table->string('customer_phone', 20);
-            $table->string('customer_email', 100);
+            $table->string('customer_email', 100)->nullable();
             $table->boolean('customer_status')->default(true);
             $table->unsignedBigInteger('company_id')->nullable(); // Campo para la relación
             $table->timestamps();

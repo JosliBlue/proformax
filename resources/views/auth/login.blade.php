@@ -23,7 +23,7 @@
                     class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white transition-colors duration-300">
                     Iniciar sesión
                 </h1>
-                <form method="POST" action="{{ route('login.submit') }}" class="space-y-4 md:space-y-6">
+                <form method="POST" action="{{ route('login.submit') }}" class="space-y-4 md:space-y-6" id="loginForm">
                     @csrf
                     <div>
                         <label for="user_email"
@@ -47,8 +47,10 @@
                             </button>
                         </div>
                     </div>
-                    <button type="submit"
-                        class="w-full bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center transition-colors duration-300 dark:focus:ring-blue-800">
+                    <button type="submit" id="loginBtn"
+                        class="w-full flex items-center justify-center gap-2 bg-[var(--primary-color)] text-[var(--primary-text-color)] hover:bg-opacity-90 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center transition-colors duration-300 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        <span class="iconify h-5 w-5 mr-2"
+                            data-icon="heroicons:arrow-right-end-on-rectangle-20-solid"></span>
                         Ingresar
                     </button>
                 </form>
@@ -64,10 +66,21 @@
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('user_password');
 
-            // Verificar que todos los elementos existan antes de añadir el listener
             togglePassword.addEventListener('click', function() {
                 const isPasswordVisible = passwordInput.type === 'text';
                 passwordInput.type = isPasswordVisible ? 'password' : 'text';
+            });
+
+            // Indicador de carga al hacer login
+            const form = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+
+            form.addEventListener('submit', function() {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = `
+                    <span class="iconify h-5 w-5 animate-spin mr-2" data-icon="heroicons:arrow-path-20-solid"></span>
+                    Ingresando...
+                `;
             });
         });
     </script>

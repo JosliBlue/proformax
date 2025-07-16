@@ -22,11 +22,9 @@ class ProductController extends Controller
         $sortDirection = request('direction', 'asc');
         $search = request('search');
 
-        $user = Auth::user();
-        $query = Product::where('company_id', $user->company_id);
+        $query = Product::where('company_id', Auth::user()->company_id);
 
-        // Solo productos activos para vendedores y pasantes
-        if (Auth::check() && !Auth::user()->isGerente()) {
+        if (!Auth::user()->isGerente()) {
             $query->where('product_status', true);
         }
 
@@ -39,13 +37,7 @@ class ProductController extends Controller
 
         $data = $query->orderBy($sortField, $sortDirection)->paginate(10);
 
-        return view("_admin.products.products", [
-            'columns' => $columns,
-            'data' => $data,
-            'sortField' => $sortField,
-            'sortDirection' => $sortDirection,
-            'searchTerm' => $search
-        ]);
+        return view("_admin.products.products", compact('columns', 'data', 'sortField', 'sortDirection') + ['searchTerm' => $search]);
     }
 
     public function create()
@@ -57,24 +49,14 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate(
-                $this->getValidationRules(),
-                $this->getValidationMessages()
-            );
-
+            $validated = $request->validate($this->getValidationRules(), $this->getValidationMessages());
             $validated['company_id'] = Auth::user()->company_id;
             Product::create($validated);
-            return redirect()->route('products')
-                ->with('success', 'Producto creado correctamente.');
+            return redirect()->route('products')->with('success', 'Producto creado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Por favor corrige los errores en el formulario')
-                ->withErrors($e->validator);
+            return back()->withInput()->withErrors($e->validator)->with('error', 'Por favor corrige los errores en el formulario');
         } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage());
         }
     }
 
@@ -89,28 +71,15 @@ class ProductController extends Controller
     {
         try {
             $product = Product::where('company_id', Auth::user()->company_id)->findOrFail($id);
-
-            $validated = $request->validate(
-                $this->getValidationRules($id),
-                $this->getValidationMessages()
-            );
-
+            $validated = $request->validate($this->getValidationRules($id), $this->getValidationMessages());
             $product->update($validated);
-
-            return redirect()->route('products')
-                ->with('success', 'Producto actualizado correctamente.');
+            return redirect()->route('products')->with('success', 'Producto actualizado correctamente.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Por favor corrige los errores en el formulario')
-                ->withErrors($e->validator);
+            return back()->withInput()->withErrors($e->validator)->with('error', 'Por favor corrige los errores en el formulario');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('products')
-                ->with('error', 'El producto que intentas actualizar no existe.');
+            return redirect()->route('products')->with('error', 'El producto que intentas actualizar no existe.');
         } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Ocurrió un error al actualizar el producto: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Ocurrió un error al actualizar el producto: ' . $e->getMessage());
         }
     }
 
@@ -118,7 +87,6 @@ class ProductController extends Controller
     {
         $product = Product::where('company_id', Auth::user()->company_id)->findOrFail($id);
         $product->update(['product_status' => !$product->product_status]);
-
         return back()->with('success', $product->product_status ? 'Producto activado' : 'Producto desactivado');
     }
 
@@ -129,28 +97,19 @@ class ProductController extends Controller
         return redirect()->route('products')->with('success', 'Producto eliminado');
     }
 
-    /**
-     * Mensajes de validación para Product
-     */
     private function getValidationMessages()
     {
         return [
             'product_name.required' => 'El nombre del producto es obligatorio',
-            'product_name.string' => 'El nombre debe ser texto válido',
             'product_name.max' => 'El nombre no debe exceder 100 caracteres',
-
             'product_type.required' => 'El tipo de producto es obligatorio',
             'product_type.in' => 'El tipo de producto no es válido',
-
             'product_price.required' => 'El precio es obligatorio',
             'product_price.numeric' => 'El precio debe ser un número válido',
             'product_price.min' => 'El precio no puede ser negativo',
         ];
     }
 
-    /**
-     * Reglas de validación para Product
-     */
     private function getValidationRules($id = null)
     {
         return [

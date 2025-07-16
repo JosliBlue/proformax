@@ -8,7 +8,7 @@
                 data-icon="heroicons:arrow-left-20-solid"></span>
         </a>
         <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            Gestión de Vendedores
+            Gestión de Trabajadores
         </h1>
     </div>
 
@@ -44,12 +44,12 @@
                 </form>
             </div>
 
-            <!-- Botón Nuevo Vendedor -->
+            <!-- Botones de acción -->
             <div class="w-full sm:w-auto">
                 <a href="{{ route('sellers.create') }}"
                     class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
                     <span class="iconify h-5 w-5 " data-icon="fluent:add-32-filled"></span>
-                    Nuevo vendedor
+                    Nuevo trabajador
                 </a>
             </div>
         </div>
@@ -87,98 +87,123 @@
     <div class="flex md:hidden justify-center mb-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
-    <!-- Contenedor grid responsive para vendedores -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-        @foreach ($data as $seller)
-            <details
-                class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full seller-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
-                id="seller-{{ $seller->id }}">
 
-                <summary class="list-none p-4 cursor-pointer h-full">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                            <!-- Icono de usuario con color de estado -->
-                            <span class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
-                                data-icon="heroicons:user-20-solid"></span>
-                            {{ $seller->user_name }}
-                        </h3>
-                        <!-- Flecha indicadora de estado -->
-                        <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
-                            data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $seller->id }}"></span>
-                    </div>
+    @if ($data->count() > 0)
+        <!-- Contenedor grid responsive para vendedores -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            @foreach ($data as $seller)
+                <details
+                    class="relative bg-white dark:bg-gray-800 rounded-lg transition-transform duration-200 hover:-translate-y-1 h-full open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
+                    id="seller-{{ $seller->id }}">
 
-                    <!-- Información básica -->
-                    <div class="mt-auto space-y-1.5 text-sm">
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:envelope-20-solid"></span>
-                            <span class="truncate">{{ strtolower($seller->user_email) }}</span>
+                    <summary class="list-none p-4 cursor-pointer h-full">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <!-- Icono de usuario con color de estado -->
+                                <span
+                                    class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
+                                    data-icon="heroicons:user-20-solid"></span>
+                                {{ $seller->user_name }}
+                            </h3>
+                            <!-- Flecha indicadora de estado -->
+                            <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                                data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $seller->id }}"></span>
                         </div>
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:shield-check-20-solid"></span>
-                            <span>
-                                @switch(strtolower($seller->user_rol->value))
-                                    @case(App\Enums\UserRole::GERENTE->value)
-                                        Gerente
-                                    @break
-                                    @case(App\Enums\UserRole::VENDEDOR->value)
-                                        Vendedor
-                                    @break
-                                    @case(App\Enums\UserRole::PASANTE->value)
-                                        Pasante
-                                    @break
-                                @endswitch
-                            </span>
+
+                        <!-- Información básica -->
+                        <div class="mt-auto space-y-1.5 text-sm">
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:envelope-20-solid"></span>
+                                <span class="truncate">{{ strtolower($seller->user_email) }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:shield-check-20-solid"></span>
+                                <span>{{ ucfirst($seller->user_rol->value) }}</span>
+                            </div>
                         </div>
-                    </div>
-                </summary>
+                    </summary>
 
-                <!-- Panel flotante con diseño integrado -->
-                <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
-                    <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
-                    <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
+                    <!-- Panel flotante con diseño integrado -->
+                    <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                        <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                        <div class="py-3 px-4">
+                            <!-- Botones de acción -->
+                            <div class="flex justify-center gap-3">
+                                @if (auth()->check() && auth()->user()->isGerente())
+                                    <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST"
+                                        class="role-form">
+                                        @csrf
+                                        <button type="submit"
+                                            class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                            title="Cambiar rol">
+                                            <span class="iconify w-5 h-5" data-icon="heroicons:arrow-path-20-solid"></span>
+                                        </button>
+                                    </form>
+                                @endif
 
+                                <form id="deactivateForm-{{ $seller->id }}"
+                                    action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="button" onclick="confirmDeactivate('{{ $seller->id }}')"
+                                        class="p-2 {{ $seller->user_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 transition-all duration-200"
+                                        title="{{ $seller->user_status ? 'Desactivar' : 'Activar' }}">
+                                        <span class="iconify w-5 h-5"
+                                            data-icon="{{ $seller->user_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
+                                    </button>
+                                </form>
 
-                        <!-- Botones de acción -->
-                        <div class="flex justify-center gap-3 p-1">
-                            <!-- Botón Editar -->
-                            <a href="{{ route('sellers.edit', $seller->id) }}"
-                                class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                title="Editar">
-                                <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
-                            </a>
-
-                            <!-- Botón Desactivar/Activar -->
-                            <form id="deactivateForm-{{ $seller->id }}"
-                                action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="button" onclick="confirmDeactivate('{{ $seller->id }}')"
-                                    class="p-2 {{ $seller->user_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                    title="{{ $seller->user_status ? 'Desactivar' : 'Activar' }}">
-                                    <span class="iconify w-5 h-5"
-                                        data-icon="{{ $seller->user_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
-                                </button>
-                            </form>
-
-                            {{-- Botón Eliminar solo para gerente --}}
-                            @if(auth()->check() && auth()->user()->isGerente())
-                            <form id="deleteForm-{{ $seller->id }}" action="{{ route('sellers.destroy', $seller->id) }}"
-                                method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" onclick="confirmDelete('{{ $seller->id }}')"
-                                    class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Eliminar">
-                                    <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
-                                </button>
-                            </form>
-                            @endif
+                                @if (auth()->check() && auth()->user()->isGerente())
+                                    <form id="deleteForm-{{ $seller->id }}"
+                                        action="{{ route('sellers.destroy', $seller->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete('{{ $seller->id }}')"
+                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200"
+                                            title="Eliminar">
+                                            <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
+                </details>
+            @endforeach
+        </div>
+    @else
+        <!-- Vista de estado vacío para trabajadores -->
+        <div class="flex flex-col items-center justify-center py-16 px-4">
+            <div class="text-center max-w-md mx-auto">
+                <!-- Icono animado -->
+                <div
+                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500" data-icon="heroicons:users"></span>
                 </div>
-            </details>
-        @endforeach
-    </div>
+
+                <!-- Mensaje principal -->
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                    @if (request('search'))
+                        No se encontraron trabajadores
+                    @else
+                        No hay trabajadores disponibles
+                    @endif
+                </h3>
+
+                <!-- Mensaje secundario -->
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    @if (request('search'))
+                        No hay trabajadores que coincidan con "<strong>{{ request('search') }}</strong>".
+                        Intenta con otros términos de búsqueda.
+                    @else
+                        Aún no se han agregado trabajadores al sistema.
+                        Comienza agregando tu primer trabajador.
+                    @endif
+                </p>
+            </div>
+        </div>
+    @endif
+
     <div class="flex justify-center mt-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
@@ -186,11 +211,10 @@
 
 @push('scripts')
     <script>
-        // Manejar las cards
         document.addEventListener('DOMContentLoaded', () => {
-            const allDetails = document.querySelectorAll('details.seller-card');
+            const allDetails = document.querySelectorAll('details');
             allDetails.forEach(detail => {
-                detail.addEventListener('toggle', (e) => {
+                detail.addEventListener('toggle', () => {
                     const sellerId = detail.id.split('-')[1];
                     const arrow = document.getElementById(`arrow-${sellerId}`);
 
@@ -200,9 +224,8 @@
                             if (otherDetail !== detail && otherDetail.open) {
                                 otherDetail.open = false;
                                 const otherSellerId = otherDetail.id.split('-')[1];
-                                const otherArrow = document.getElementById(
-                                    `arrow-${otherSellerId}`);
-                                otherArrow.style.transform = 'rotate(0deg)';
+                                document.getElementById(`arrow-${otherSellerId}`).style
+                                    .transform = 'rotate(0deg)';
                             }
                         });
                     } else {
@@ -210,19 +233,28 @@
                     }
                 });
             });
+
+            // Indicadores de carga para botones de cambiar rol
+            document.querySelectorAll('.role-form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.innerHTML = `
+                        <span class="iconify w-5 h-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                    `;
+                });
+            });
         });
 
-        // Funciones de confirmación
         function confirmDeactivate(sellerId) {
             const card = document.querySelector(`#seller-${sellerId}`);
             const isActive = card.querySelector('.text-green-500') !== null;
 
             confirmAction({
                 title: isActive ? '¿Desactivar vendedor?' : '¿Activar vendedor?',
-                text: isActive ?
-                    "El vendedor no podrá acceder al sistema" : "El vendedor volverá a tener acceso al sistema",
-                icon: 'question',
-                footer: '<span class="text-sm text-gray-500 dark:text-gray-400">Puedes cambiar este estado en cualquier momento</span>',
+                text: isActive ? "El vendedor no podrá acceder al sistema" :
+                    "El vendedor volverá a tener acceso al sistema",
+                icon: 'question'
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(`deactivateForm-${sellerId}`).submit();
@@ -231,7 +263,6 @@
         }
 
         function confirmDelete(sellerId) {
-            // Primera confirmación
             confirmAction({
                 title: '¿Estás seguro de eliminar este vendedor?',
                 html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción es irreversible y eliminará:<br>- Todos los datos del vendedor<br>- Su acceso al sistema</div>",
@@ -242,13 +273,9 @@
                 confirmButtonColor: '#ef4444',
             }).then((firstResult) => {
                 if (firstResult.isConfirmed) {
-                    // Segunda confirmación con input
                     confirmAction({
                         title: 'Confirmación final',
-                        html: `
-                        <div class='text-sm text-red-600 dark:text-red-400 mb-3'>
-                        Para confirmar, escribe <strong>ELIMINAR</strong> en el cuadro:
-                        </div>
+                        html: `<div class='text-sm text-red-600 dark:text-red-400 mb-3'>Para confirmar, escribe <strong>ELIMINAR</strong> en el cuadro:</div>
                         <input id="confirm-delete-input" type="text" class="swal2-input dark:text-white" placeholder="Escribe ELIMINAR aqui" required>`,
                         icon: 'warning',
                         showCancelButton: true,

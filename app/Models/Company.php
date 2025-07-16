@@ -16,6 +16,18 @@ class Company extends Model
         'company_secondary_text_color'
     ];
 
+    // Relaciones
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    // Métodos
+    public function getGerente()
+    {
+        return $this->users()->where('user_rol', 'gerente')->first();
+    }
+
     public static function default(): Company
     {
         return new self([

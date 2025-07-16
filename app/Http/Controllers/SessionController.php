@@ -31,14 +31,14 @@ class SessionController extends Controller
                 return redirect()->route('home');
             }
 
-            return back()->with('error', 'Credenciales incorrectas. Por favor, inténtalo de nuevo.');
+            return back()->withInput($request->only('user_email'))->with('error', 'Credenciales incorrectas. Por favor, inténtalo de nuevo.');
         } catch (ValidationException $e) {
             // Captura los errores de validación y los convierte en toast
             $errors = $e->errors();
             $firstError = reset($errors)[0];
-            return back()->with('error', $firstError);
+            return back()->withInput($request->only('user_email'))->with('error', $firstError);
         } catch (\Exception $e) {
-            return back()->with('error', 'Ocurrió un error inesperado. Por favor intente nuevamente.');
+            return back()->withInput($request->only('user_email'))->with('error', 'Ocurrió un error inesperado. Por favor intente nuevamente.');
         }
     }
 

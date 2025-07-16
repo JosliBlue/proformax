@@ -67,7 +67,7 @@
                     class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
                     {{ $sortField === $column['field']
                         ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
-                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800'}}">
+                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
                     {{ $column['name'] }}
                     @if ($sortField === $column['field'])
                         <span class="ml-1">
@@ -87,86 +87,115 @@
     <div class="flex md:hidden justify-center mb-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
-    <!-- Contenedor grid responsive para productos -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-        @foreach ($data as $product)
-            <details
-                class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full product-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
-                id="product-{{ $product->id }}">
 
-                <summary class="list-none p-4 cursor-pointer h-full">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                            <!-- Icono de producto con color de estado -->
-                            <span
-                                class="iconify h-5 w-5 {{ $product->product_status ? 'text-green-500' : 'text-red-500' }}"
-                                data-icon="heroicons:cube-20-solid"></span>
-                            {{ $product->product_name }}
-                        </h3>
-                        <!-- Flecha indicadora de estado -->
-                        <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
-                            data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $product->id }}"></span>
-                    </div>
+    @if ($data->count() > 0)
+        <!-- Contenedor grid responsive para productos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            @foreach ($data as $product)
+                <details
+                    class="relative bg-white dark:bg-gray-800 group rounded-lg transform transition-transform duration-200 hover:-translate-y-1 h-full product-card open:bg-blue-50 dark:open:bg-gray-700 open:z-20"
+                    id="product-{{ $product->id }}">
 
-                    <!-- Información básica -->
-                    <div class="mt-auto space-y-1.5 text-sm">
-
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:currency-dollar-20-solid"></span>
-                            <span>${{ number_format($product->product_price, 2) }}</span>
+                    <summary class="list-none p-4 cursor-pointer h-full">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <span
+                                    class="iconify h-5 w-5 {{ $product->product_status ? 'text-green-500' : 'text-red-500' }}"
+                                    data-icon="heroicons:cube-20-solid"></span>
+                                {{ $product->product_name }}
+                            </h3>
+                            <span class="iconify h-6 w-6 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                                data-icon="heroicons:chevron-down-20-solid" id="arrow-{{ $product->id }}"></span>
                         </div>
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
-                            <span class="iconify h-3.5 w-3.5" data-icon="heroicons:tag-20-solid"></span>
-                            <span>{{ ucfirst($product->product_type->value) }}</span>
+
+                        <div class="mt-auto space-y-1.5 text-sm">
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:currency-dollar-20-solid"></span>
+                                <span>${{ number_format($product->product_price, 2) }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-400">
+                                <span class="iconify h-3.5 w-3.5" data-icon="heroicons:tag-20-solid"></span>
+                                <span>{{ ucfirst($product->product_type->value) }}</span>
+                            </div>
                         </div>
-                    </div>
-                </summary>
+                    </summary>
 
-                <!-- Panel flotante con diseño integrado -->
-                <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
-                    <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
-                    <div class="py-3 px-4 space-y-3 text-gray-700 dark:text-gray-400">
-                        <!-- Botones de acción -->
-                        <div class="flex justify-center gap-3 p-1">
-                            <!-- Botón Editar -->
-                            <a href="{{ route('products.edit', $product->id) }}"
-                                class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                title="Editar">
-                                <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
-                            </a>
+                    <div class="bg-blue-50 dark:bg-gray-700 absolute left-0 right-0 z-10 mt-[-8px] rounded-b-lg shadow-xl">
+                        <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
+                        <div class="py-3 px-4">
+                            <div class="flex justify-center gap-3">
+                                <a href="{{ route('products.edit', $product->id) }}"
+                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                    title="Editar">
+                                    <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
+                                </a>
 
-                            <!-- Botón Desactivar/Activar -->
-                            <form id="deactivateForm-{{ $product->id }}"
-                                action="{{ route('products.soft_destroy', $product->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="button" onclick="confirmDeactivate('{{ $product->id }}')"
-                                    class="p-2 {{ $product->product_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                    title="{{ $product->product_status ? 'Desactivar' : 'Activar' }}">
-                                    <span class="iconify w-5 h-5"
-                                        data-icon="{{ $product->product_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
-                                </button>
-                            </form>
-
-                            @if (auth()->user()->isGerente())
-                                <!-- Botón Eliminar (solo gerente) -->
-                                <form id="deleteForm-{{ $product->id }}"
-                                    action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">
+                                <form id="deactivateForm-{{ $product->id }}"
+                                    action="{{ route('products.soft_destroy', $product->id) }}" method="POST"
+                                    class="inline">
                                     @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('{{ $product->id }}')"
-                                        class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                        title="Eliminar">
-                                        <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                    @method('PATCH')
+                                    <button type="button" onclick="confirmDeactivate('{{ $product->id }}')"
+                                        class="p-2 {{ $product->product_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                        title="{{ $product->product_status ? 'Desactivar' : 'Activar' }}">
+                                        <span class="iconify w-5 h-5"
+                                            data-icon="{{ $product->product_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
                                     </button>
                                 </form>
-                            @endif
+
+                                @if (auth()->user()->isGerente())
+                                    <form id="deleteForm-{{ $product->id }}"
+                                        action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete('{{ $product->id }}')"
+                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                            title="Eliminar">
+                                            <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
+                </details>
+            @endforeach
+        </div>
+    @else
+        <!-- Vista de estado vacío para productos -->
+        <div class="flex flex-col items-center justify-center py-16 px-4">
+            <div class="text-center max-w-md mx-auto">
+                <!-- Icono animado -->
+                <div
+                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500"
+                        data-icon="heroicons:cube-transparent"></span>
                 </div>
-            </details>
-        @endforeach
-    </div>
+
+                <!-- Mensaje principal -->
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                    @if (request('search'))
+                        No se encontraron productos
+                    @else
+                        No hay productos disponibles
+                    @endif
+                </h3>
+
+                <!-- Mensaje secundario -->
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    @if (request('search'))
+                        No hay productos que coincidan con "<strong>{{ request('search') }}</strong>".
+                        Intenta con otros términos de búsqueda.
+                    @else
+                        Aún no se han agregado productos al sistema.
+                        Comienza creando tu primer producto.
+                    @endif
+                </p>
+            </div>
+        </div>
+    @endif
+
     <div class="flex justify-center mt-4">
         {{ $data->appends(request()->query())->links() }}
     </div>
@@ -174,7 +203,6 @@
 
 @push('scripts')
     <script>
-        // Manejar las cards
         document.addEventListener('DOMContentLoaded', () => {
             const allDetails = document.querySelectorAll('details.product-card');
             allDetails.forEach(detail => {
@@ -200,15 +228,13 @@
             });
         });
 
-        // Funciones de confirmación
         function confirmDeactivate(productId) {
             const card = document.querySelector(`#product-${productId}`);
             const isActive = card.querySelector('.text-green-500') !== null;
 
             confirmAction({
                 title: isActive ? '¿Desactivar producto?' : '¿Activar producto?',
-                text: isActive ?
-                    "El producto no estará disponible para nuevas proformas" :
+                text: isActive ? "El producto no estará disponible para nuevas proformas" :
                     "El producto volverá a estar disponible para proformas",
                 icon: 'question',
                 footer: '<span class="text-sm text-gray-500 dark:text-gray-400">Puedes cambiar este estado en cualquier momento</span>',
@@ -220,27 +246,19 @@
         }
 
         function confirmDelete(productId) {
-            // Primera confirmación
             confirmAction({
                 title: '¿Estás seguro de eliminar este producto?',
                 html: "<div class='text-sm text-gray-600 dark:text-gray-400'>Esta acción es irreversible y eliminará:<br>- Todos los datos del producto<br>- Todas sus relaciones con proformas</div>",
                 icon: 'warning',
-                showCancelButton: true,
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#ef4444',
             }).then((firstResult) => {
                 if (firstResult.isConfirmed) {
-                    // Segunda confirmación con input
                     confirmAction({
                         title: 'Confirmación final',
-                        html: `
-                        <div class='text-sm text-red-600 dark:text-red-400 mb-3'>
-                        Para confirmar, escribe <strong>ELIMINAR</strong> en el cuadro:
-                        </div>
-                        <input id="confirm-delete-input" type="text" class="swal2-input dark:text-white" placeholder="Escribe ELIMINAR aqui" required>`,
+                        html: `<div class='text-sm text-red-600 dark:text-red-400 mb-3'>Para confirmar, escribe <strong>ELIMINAR</strong> en el cuadro:</div><input id="confirm-delete-input" type="text" class="swal2-input dark:text-white" placeholder="Escribe ELIMINAR aqui" required>`,
                         icon: 'warning',
-                        showCancelButton: true,
                         confirmButtonText: 'Confirmar eliminación',
                         cancelButtonText: 'Cancelar',
                         confirmButtonColor: '#dc2626',

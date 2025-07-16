@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class Paper extends Model
 {
@@ -15,7 +16,6 @@ class Paper extends Model
         'customer_id',
         'paper_total_price',
         'paper_days',
-        'paper_status',
         'company_id',
         'is_draft', // <-- permitir asignación masiva
         'paper_date', // <-- nueva columna editable por el usuario
@@ -23,8 +23,11 @@ class Paper extends Model
 
     protected $casts = [
         'paper_total_price' => 'decimal:2',
-        'paper_status' => 'boolean',
         'is_draft' => 'boolean' // <-- casteo booleano
+    ];
+
+    protected $dates = [
+        'paper_date'
     ];
 
     public function user()
@@ -44,33 +47,16 @@ class Paper extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Scope para filtrar papers por compañía
-     */
+    public function getIsActiveAttribute()
+    {
+        if (!$this->paper_date) {
+            return Carbon::now()->diffInDays($this->created_at->addDays($this->paper_days), false) >= 0;
+        }
+        return Carbon::now()->diffInDays(Carbon::parse($this->paper_date)->addDays($this->paper_days), false) >= 0;
+    }
+
     public function scopeForCompany(Builder $query, $companyId): Builder
     {
         return $query->where('company_id', $companyId);
-    }
-
-    public function isActive()
-    {
-        return $this->paper_status === true;
-    }
-
-    public function getFormattedTotalPriceAttribute()
-    {
-        return '$' . number_format($this->paper_total_price, 2);
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('paper_status', true);
-    }
-    // En tu modelo Paper
-    public function getIsActiveAttribute()
-    {
-        $date = $this->paper_date ? \Carbon\Carbon::parse($this->paper_date) : $this->created_at;
-        $expirationDate = $date->copy()->addDays($this->paper_days);
-        return now()->lte($expirationDate);
     }
 }

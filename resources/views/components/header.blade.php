@@ -1,13 +1,13 @@
 <header
     class="flex justify-between items-center mx-auto w-full p-4 md:px-20 py-4 lg:py-4 bg-[var(--primary-color)] text-[var(--primary-text-color)]">
     <!-- Logo y nombre de empresa -->
-    <div class="flex items-center space-x-3">
+    <a href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
         <img src="{{ $company->getLogoUrlAttribute() }}" alt="{{ $company->company_name }}"
             class="h-10 w-auto object-contain">
         <div class="text-xl font-bold">
             {{ strtoupper($company->company_name) }}
         </div>
-    </div>
+    </a>
 
     <!-- Contenedor usuario -->
     <details class="relative" id="userMenu">

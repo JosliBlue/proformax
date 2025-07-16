@@ -12,7 +12,7 @@
         </h1>
     </div>
 
-    <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data" id="settingsForm">
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -141,8 +141,8 @@
 
         <!-- Botones de Acción -->
         <div class="pt-4 md:pt-0 flex justify-end gap-3">
-            <button type="submit"
-                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+            <button type="submit" id="settingsBtn"
+                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
                 <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
                 Guardar Cambios
             </button>
@@ -174,14 +174,26 @@
                 if (fileInput.files.length > 0) {
                     placeholder.classList.add('hidden');
                     fileSelectedMsg.classList.remove('hidden');
-                    fileSelectedMsg.classList.add('flex'); // Añadimos flex cuando mostramos el elemento
+                    fileSelectedMsg.classList.add('flex');
                     fileNameElement.textContent = fileName;
                 } else {
                     placeholder.classList.remove('hidden');
-                    fileSelectedMsg.classList.remove('flex'); // Quitamos flex cuando ocultamos el elemento
+                    fileSelectedMsg.classList.remove('flex');
                     fileSelectedMsg.classList.add('hidden');
                     fileNameElement.textContent = '';
                 }
+            });
+
+            // Indicador de carga al guardar configuración
+            const form = document.getElementById('settingsForm');
+            const settingsBtn = document.getElementById('settingsBtn');
+
+            form.addEventListener('submit', function() {
+                settingsBtn.disabled = true;
+                settingsBtn.innerHTML = `
+                    <span class="iconify h-5 w-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                    Guardando...
+                `;
             });
         });
     </script>

@@ -65,17 +65,6 @@ class User extends Authenticatable
     {
         return $this->user_password;
     }
-
-    /**
-     * Obtiene el campo que se usa como nombre de usuario para autenticación.
-     *
-     * @return string
-     */
-    public function username()
-    {
-        return 'user_email';
-    }
-
     /**
      * Relación con los papers (documentos) creados por el usuario.
      *
@@ -123,10 +112,11 @@ class User extends Authenticatable
      */
     public function isActive()
     {
-        return $this->user_status === true;
+        return $this->user_status;
     }
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
+
 }

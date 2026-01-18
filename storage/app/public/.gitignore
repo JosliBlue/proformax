@@ -1,8 +1,0 @@
-*
-!.gitignore
-!companies/
-companies/*
-!companies/_01_proformax.webp
-!companies/arteparquet.webp
-!companies/vmmetalmecanica.webp
-!laravel_icon.png

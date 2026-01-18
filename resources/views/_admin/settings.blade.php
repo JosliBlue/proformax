@@ -12,7 +12,8 @@
         </h1>
     </div>
 
-    <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data" id="settingsForm">
+    <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data" id="settingsForm"
+        @if(isDemoUser()) onsubmit="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura. No puedes modificar la configuración.');" @endif>
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -77,7 +78,8 @@
                     </label>
                     <input type="text" name="company_name" id="company_name"
                         value="{{ old('company_name', $company->company_name) }}" required
-                        class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200">
+                        @if(isDemoUser()) disabled title="Usuario DEMO - Solo lectura" @endif
+                        class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration- 200 {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : '' }}">
                     @error('company_name')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -100,11 +102,13 @@
                     <div class="flex items-center gap-3">
                         <input type="color" id="company_primary_color" name="company_primary_color"
                             value="{{ old('company_primary_color', $company->company_primary_color) }}"
-                            class="h-12 w-12 rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-200">
+                            @if(isDemoUser()) disabled title="Usuario DEMO - Solo lectura" @endif
+                            class="h-12 w-12 rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-200 {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <div class="flex-1">
                             <input type="text" id="company_primary_color_text"
                                 value="{{ old('company_primary_color', $company->company_primary_color) }}"
-                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                                @if(isDemoUser()) disabled title="Usuario DEMO - Solo lectura" @endif
+                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : '' }}"
                                 oninput="document.getElementById('company_primary_color').value = this.value">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Ejemplo: #3B82F6</p>
                         </div>
@@ -123,11 +127,13 @@
                     <div class="flex items-center gap-3">
                         <input type="color" id="company_secondary_color" name="company_secondary_color"
                             value="{{ old('company_secondary_color', $company->company_secondary_color) }}"
-                            class="h-12 w-12 rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-200">
+                            @if(isDemoUser()) disabled title="Usuario DEMO - Solo lectura" @endif
+                            class="h-12 w-12 rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-200 {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <div class="flex-1">
                             <input type="text" id="company_secondary_color_text"
                                 value="{{ old('company_secondary_color', $company->company_secondary_color) }}"
-                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200"
+                                @if(isDemoUser()) disabled title="Usuario DEMO - Solo lectura" @endif
+                                class="w-full px-4 py-3 text-base border border-[var(--primary-color)] dark:border-[var(--secondary-color)] rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : '' }}"
                                 oninput="document.getElementById('company_secondary_color').value = this.value">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Ejemplo: #10B981</p>
                         </div>
@@ -142,7 +148,8 @@
         <!-- Botones de Acción -->
         <div class="pt-4 md:pt-0 flex justify-end gap-3">
             <button type="submit" id="settingsBtn"
-                class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
+                @if(isDemoUser()) disabled onclick="alert('👁️ Usuario DEMO: Solo lectura.');" @endif
+                class="{{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-125 hover:bg-opacity-90 hover:shadow-md transform hover:-translate-y-1' }} flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] px-6 py-3 rounded-lg transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none">
                 <span class="iconify h-5 w-5" data-icon="heroicons:check-20-solid"></span>
                 Guardar Cambios
             </button>

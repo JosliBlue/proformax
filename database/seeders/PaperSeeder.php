@@ -11,12 +11,11 @@ class PaperSeeder extends Seeder
 {
     public function run(): void
     {
-        // Cotizaciones TechNova Solutions (empresa 1)
         $papers = [
             [
-                'user_id' => 1,
+                'user_id' => 5,
                 'customer_id' => 1,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 1810.00,
                 'paper_days' => 7,
                 'created_at' => Carbon::now()->subDays(5),
@@ -27,9 +26,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 2,
+                'user_id' => 5,
                 'customer_id' => 2,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 275.00,
                 'paper_days' => 3,
                 'created_at' => Carbon::now()->subDays(2),
@@ -39,9 +38,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 3,
+                'user_id' => 5,
                 'customer_id' => 3,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 320.00,
                 'paper_days' => 5,
                 'created_at' => Carbon::now()->subDays(8),
@@ -50,9 +49,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 1,
+                'user_id' => 5,
                 'customer_id' => 4,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 180.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(10),
@@ -61,9 +60,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 2,
+                'user_id' => 5,
                 'customer_id' => 1,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 1550.00,
                 'paper_days' => 6,
                 'created_at' => Carbon::now()->subDays(12),
@@ -74,9 +73,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 3,
+                'user_id' => 5,
                 'customer_id' => 2,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 180.00,
                 'paper_days' => 4,
                 'created_at' => Carbon::now()->subDays(15),
@@ -85,9 +84,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 1,
+                'user_id' => 5,
                 'customer_id' => 3,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 155.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(18),
@@ -97,9 +96,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 2,
+                'user_id' => 5,
                 'customer_id' => 4,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 320.00,
                 'paper_days' => 7,
                 'created_at' => Carbon::now()->subDays(20),
@@ -108,9 +107,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 3,
+                'user_id' => 5,
                 'customer_id' => 1,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 120.00,
                 'paper_days' => 1,
                 'created_at' => Carbon::now()->subDays(22),
@@ -119,9 +118,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 1,
+                'user_id' => 5,
                 'customer_id' => 2,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 1450.00,
                 'paper_days' => 9,
                 'created_at' => Carbon::now()->subDays(25),
@@ -130,9 +129,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 2,
+                'user_id' => 5,
                 'customer_id' => 3,
-                'company_id' => 1,
+                'company_id' => 3,
                 'paper_total_price' => 155.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(28),
@@ -141,11 +140,10 @@ class PaperSeeder extends Seeder
                     ['product_id' => 4, 'quantity' => 1, 'unit_price' => 60.00, 'subtotal' => 60.00],
                 ]
             ],
-            // Cotizaciones ConstruRed S.A. (empresa 2)
             [
-                'user_id' => 4,
+                'user_id' => 5,
                 'customer_id' => 5,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 1250.00,
                 'paper_days' => 10,
                 'created_at' => Carbon::now()->subDays(4),
@@ -159,7 +157,7 @@ class PaperSeeder extends Seeder
             [
                 'user_id' => 5,
                 'customer_id' => 6,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 800.00,
                 'paper_days' => 5,
                 'created_at' => Carbon::now()->subDays(1),
@@ -168,9 +166,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 7,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 36.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(7),
@@ -179,9 +177,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 4,
+                'user_id' => 5,
                 'customer_id' => 8,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 250.00,
                 'paper_days' => 3,
                 'created_at' => Carbon::now()->subDays(9),
@@ -192,7 +190,7 @@ class PaperSeeder extends Seeder
             [
                 'user_id' => 5,
                 'customer_id' => 5,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 625.00,
                 'paper_days' => 6,
                 'created_at' => Carbon::now()->subDays(11),
@@ -201,9 +199,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 6,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 36.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(13),
@@ -212,9 +210,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 4,
+                'user_id' => 5,
                 'customer_id' => 7,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 90.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(15),
@@ -225,7 +223,7 @@ class PaperSeeder extends Seeder
             [
                 'user_id' => 5,
                 'customer_id' => 8,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 400.00,
                 'paper_days' => 8,
                 'created_at' => Carbon::now()->subDays(18),
@@ -234,9 +232,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 5,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 250.00,
                 'paper_days' => 4,
                 'created_at' => Carbon::now()->subDays(20),
@@ -245,9 +243,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 4,
+                'user_id' => 5,
                 'customer_id' => 6,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 625.00,
                 'paper_days' => 6,
                 'created_at' => Carbon::now()->subDays(22),
@@ -258,7 +256,7 @@ class PaperSeeder extends Seeder
             [
                 'user_id' => 5,
                 'customer_id' => 7,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 90.00,
                 'paper_days' => 2,
                 'created_at' => Carbon::now()->subDays(25),
@@ -267,9 +265,9 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 8,
-                'company_id' => 2,
+                'company_id' => 3,
                 'paper_total_price' => 400.00,
                 'paper_days' => 8,
                 'created_at' => Carbon::now()->subDays(28),

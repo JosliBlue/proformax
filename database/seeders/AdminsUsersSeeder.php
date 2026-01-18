@@ -14,54 +14,47 @@ class AdminsUsersSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            // Giga compañia (empresa 1)
+            // VM Metalmecanica  (empresa 1)
+            [
+                'user_name' => 'Victor Muyulema',
+                'user_email' => 'victor.muyulema@vm.com',
+                'user_password' => Hash::make('cambiar123'),
+                'user_rol' => 'gerente',
+                'company_id' => 1,
+                'user_status' => true
+            ],
             [
                 'user_name' => 'Jose Muyulema',
-                'user_email' => 'gerente@proformax.com',
-                'user_password' => Hash::make('admin123'),
-                'user_rol' => 'gerente',
-                'company_id' => 1,
-                'user_status' => true
-            ],
-            [
-                'user_name' => 'Lucas Méndez',
-                'user_email' => 'lucas.mendez@proformax.com',
-                'user_password' => Hash::make('lucas2025'),
+                'user_email' => 'jose.muyulema@vm.com',
+                'user_password' => Hash::make('cambiar123'),
                 'user_rol' => 'vendedor',
                 'company_id' => 1,
                 'user_status' => true
             ],
+            // Arte Parquet (empresa 2)
             [
-                'user_name' => 'Valentina Ruiz',
-                'user_email' => 'valentina.ruiz@proformax.com',
-                'user_password' => Hash::make('valen2025'),
-                'user_rol' => 'pasante',
-                'company_id' => 1,
+                'user_name' => 'Jose Guangasi',
+                'user_email' => 'jose.guangasi@arte.com',
+                'user_password' => Hash::make('cambiar123'),
+                'user_rol' => 'gerente',
+                'company_id' => 2,
                 'user_status' => true
             ],
-            // ArseAccesorios (empresa 2)
             [
                 'user_name' => 'Aracelly Guangasi',
-                'user_email' => 'aracelly@arse.com',
-                'user_password' => Hash::make('martin2025'),
-                'user_rol' => 'gerente',
-                'company_id' => 2,
-                'user_status' => true
-            ],
-            [
-                'user_name' => 'Camila Paredes',
-                'user_email' => 'camila.paredes@arse.com',
-                'user_password' => Hash::make('camila2025'),
+                'user_email' => 'aracelly.guangasi@arte.com',
+                'user_password' => Hash::make('cambiar123'),
                 'user_rol' => 'vendedor',
                 'company_id' => 2,
                 'user_status' => true
             ],
+            // EMPRESA DEMO (empresa 3) 
             [
-                'user_name' => 'Jorge Salinas',
-                'user_email' => 'jorge.salinas@arse.com',
-                'user_password' => Hash::make('jorge2025'),
-                'user_rol' => 'pasante',
-                'company_id' => 2,
+                'user_name' => 'Gerente DEMO',
+                'user_email' => 'gerente@demo.com',
+                'user_password' => Hash::make('demo123'),
+                'user_rol' => 'gerente',
+                'company_id' => 3,
                 'user_status' => true
             ]
         ];

@@ -22,8 +22,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                             <span class="iconify h-5 w-5 " data-icon="line-md:search-filled"></span>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Buscar vendedores..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar vendedores..."
                             class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
                     </div>
 
@@ -46,8 +45,10 @@
 
             <!-- Botones de acción -->
             <div class="w-full sm:w-auto">
-                <a href="{{ route('sellers.create') }}"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                <a href="{{ isDemoUser() ? '#' : route('sellers.create') }}"
+                    class="{{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-125 hover:bg-opacity-90 hover:shadow-md transform hover:-translate-y-1' }} flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm"
+                    @if(isDemoUser()) onclick="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura.');"
+                    title="Usuario DEMO - Solo lectura" @endif>
                     <span class="iconify h-5 w-5 " data-icon="fluent:add-32-filled"></span>
                     Nuevo trabajador
                 </a>
@@ -59,28 +60,28 @@
             <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
 
             @foreach ($columns as $column)
-                <a href="{{ route('sellers', [
+                    <a href="{{ route('sellers', [
                     'sort' => $column['field'],
                     'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
                     'search' => request('search'),
                 ]) }}"
-                    class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
-                {{ $sortField === $column['field']
+                        class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border transform hover:-translate-y-0.5
+                            {{ $sortField === $column['field']
                     ? 'border-transparent bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm hover:shadow-md'
                     : 'text-gray-900 dark:text-gray-300 border-[var(--primary-color)] hover:shadow-md bg-white dark:bg-gray-900' }}">
-                    {{ $column['name'] }}
-                    @if ($sortField === $column['field'])
-                        <span class="ml-1">
-                            @if ($sortDirection === 'asc')
-                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
-                                    data-icon="oui:arrow-up"></span>
-                            @else
-                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
-                                    data-icon="oui:arrow-down"></span>
-                            @endif
-                        </span>
-                    @endif
-                </a>
+                        {{ $column['name'] }}
+                        @if ($sortField === $column['field'])
+                            <span class="ml-1">
+                                @if ($sortDirection === 'asc')
+                                    <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                        data-icon="oui:arrow-up"></span>
+                                @else
+                                    <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                        data-icon="oui:arrow-down"></span>
+                                @endif
+                            </span>
+                        @endif
+                    </a>
             @endforeach
         </div>
     </div>
@@ -100,8 +101,7 @@
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <!-- Icono de usuario con color de estado -->
-                                <span
-                                    class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
+                                <span class="iconify h-5 w-5 {{ $seller->user_status ? 'text-green-500' : 'text-red-500' }}"
                                     data-icon="heroicons:user-20-solid"></span>
                                 {{ $seller->user_name }}
                             </h3>
@@ -130,12 +130,13 @@
                             <!-- Botones de acción -->
                             <div class="flex justify-center gap-3">
                                 @if (auth()->check() && auth()->user()->isGerente())
-                                    <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST"
-                                        class="role-form">
+                                    <form action="{{ route('sellers.switchRole', $seller->id) }}" method="POST" class="role-form">
                                         @csrf
                                         <button type="submit"
-                                            class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                            title="Cambiar rol">
+                                            class="p-2 bg-blue-600 text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700' }} transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                            @if(isDemoUser())
+                                                onclick="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura.'); return false;"
+                                            title="Usuario DEMO - Solo lectura" @else title="Cambiar rol" @endif>
                                             <span class="iconify w-5 h-5" data-icon="heroicons:arrow-path-20-solid"></span>
                                         </button>
                                     </form>
@@ -145,22 +146,24 @@
                                     action="{{ route('sellers.soft_destroy', $seller->id) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="button" onclick="confirmDeactivate('{{ $seller->id }}')"
-                                        class="p-2 {{ $seller->user_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 transition-all duration-200"
-                                        title="{{ $seller->user_status ? 'Desactivar' : 'Activar' }}">
+                                    <button type="button"
+                                        onclick="{{ isDemoUser() ? 'event.preventDefault(); alert(\"👁️ Usuario DEMO: Solo lectura.\");' : 'confirmDeactivate(\'' . $seller->id . '\')' }}"
+                                        class="p-2 {{ $seller->user_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110' }} transition-all duration-200"
+                                        title="{{ isDemoUser() ? 'Usuario DEMO - Solo lectura' : ($seller->user_status ? 'Desactivar' : 'Activar') }}">
                                         <span class="iconify w-5 h-5"
                                             data-icon="{{ $seller->user_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
                                     </button>
                                 </form>
 
                                 @if (auth()->check() && auth()->user()->isGerente())
-                                    <form id="deleteForm-{{ $seller->id }}"
-                                        action="{{ route('sellers.destroy', $seller->id) }}" method="POST">
+                                    <form id="deleteForm-{{ $seller->id }}" action="{{ route('sellers.destroy', $seller->id) }}"
+                                        method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" onclick="confirmDelete('{{ $seller->id }}')"
-                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200"
-                                            title="Eliminar">
+                                        <button type="button"
+                                            onclick="{{ isDemoUser() ? 'event.preventDefault(); alert(\"👁️ Usuario DEMO: Solo lectura.\");' : 'confirmDelete(\'' . $seller->id . '\')' }}"
+                                            class="p-2 bg-red-600 text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700' }} transition-all duration-200"
+                                            title="{{ isDemoUser() ? 'Usuario DEMO - Solo lectura' : 'Eliminar' }}">
                                             <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
                                         </button>
                                     </form>
@@ -176,8 +179,7 @@
         <div class="flex flex-col items-center justify-center py-16 px-4">
             <div class="text-center max-w-md mx-auto">
                 <!-- Icono animado -->
-                <div
-                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
                     <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500" data-icon="heroicons:users"></span>
                 </div>
 
@@ -236,12 +238,12 @@
 
             // Indicadores de carga para botones de cambiar rol
             document.querySelectorAll('.role-form').forEach(form => {
-                form.addEventListener('submit', function() {
+                form.addEventListener('submit', function () {
                     const btn = this.querySelector('button[type="submit"]');
                     btn.disabled = true;
                     btn.innerHTML = `
-                        <span class="iconify w-5 h-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
-                    `;
+                            <span class="iconify w-5 h-5 animate-spin" data-icon="heroicons:arrow-path-20-solid"></span>
+                        `;
                 });
             });
         });
@@ -276,7 +278,7 @@
                     confirmAction({
                         title: 'Confirmación final',
                         html: `<div class='text-sm text-red-600 dark:text-red-400 mb-3'>Para confirmar, escribe <strong>ELIMINAR</strong> en el cuadro:</div>
-                        <input id="confirm-delete-input" type="text" class="swal2-input dark:text-white" placeholder="Escribe ELIMINAR aqui" required>`,
+                            <input id="confirm-delete-input" type="text" class="swal2-input dark:text-white" placeholder="Escribe ELIMINAR aqui" required>`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Confirmar eliminación',

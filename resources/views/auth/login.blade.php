@@ -12,9 +12,40 @@
             <span class="sr-only">Cambiar tema</span>
         </div>
 
+        <!-- Demo credentials banner -->
+        <div
+            class="absolute bottom-4 left-4 bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-400 rounded-lg p-4 shadow-lg max-w-sm transition-colors duration-300">
+            <div class="flex items-start gap-3">
+                <span class="iconify text-blue-600 dark:text-blue-400 text-2xl flex-shrink-0"
+                    data-icon="heroicons:information-circle-20-solid"></span>
+                <div>
+                    <h3 class="font-bold text-blue-900 dark:text-blue-100 mb-2">Demo - Credenciales de prueba</h3>
+                    <div class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                        <div class="flex items-center gap-2">
+                            <p><span class="font-semibold">Usuario:</span> pasante@demo.com</p>
+                            <button type="button" onclick="navigator.clipboard.writeText('pasante@demo.com')"
+                                class="text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
+                                title="Copiar usuario">
+                                <span class="iconify h-5 w-5" data-icon="heroicons:document-duplicate-20-solid"></span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <p><span class="font-semibold">Contraseña:</span> demo123</p>
+                            <button type="button" onclick="navigator.clipboard.writeText('demo123')"
+                                class="text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
+                                title="Copiar contraseña">
+                                <span class="iconify h-5 w-5" data-icon="heroicons:document-duplicate-20-solid"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="mb-6 text-center">
             <img class="mx-auto h-20 w-auto" src="{{ $company->getLogoUrlAttribute() }}" alt="{{ $company->company_name }}">
-            <span class="block mt-2 text-2xl font-semibold text-gray-900 dark:text-white">{{ $company->company_name }}</span>
+            <span
+                class="block mt-2 text-2xl font-semibold text-gray-900 dark:text-white">{{ $company->company_name }}</span>
         </div>
         <div
             class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 transition-colors duration-300">
@@ -66,7 +97,7 @@
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('user_password');
 
-            togglePassword.addEventListener('click', function() {
+            togglePassword.addEventListener('click', function () {
                 const isPasswordVisible = passwordInput.type === 'text';
                 passwordInput.type = isPasswordVisible ? 'password' : 'text';
             });
@@ -75,12 +106,12 @@
             const form = document.getElementById('loginForm');
             const loginBtn = document.getElementById('loginBtn');
 
-            form.addEventListener('submit', function() {
+            form.addEventListener('submit', function () {
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = `
-                    <span class="iconify h-5 w-5 animate-spin mr-2" data-icon="heroicons:arrow-path-20-solid"></span>
-                    Ingresando...
-                `;
+                            <span class="iconify h-5 w-5 animate-spin mr-2" data-icon="heroicons:arrow-path-20-solid"></span>
+                            Ingresando...
+                        `;
             });
         });
     </script>

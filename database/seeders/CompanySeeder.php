@@ -12,16 +12,16 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        // Empresa 1: Giga compania
+        // Empresa 1: VM Metalmecanica
         Company::create([
-            'company_name' => 'Giga Compania',
+            'company_name' => 'VM Metalmecanica',
             'company_primary_color' => '#8a090c',
             'company_secondary_color' => '#53abc1',
             'company_logo_path' => 'companies/giga_compania.webp',
             'company_primary_text_color' => '#FFFFFF',
             'company_secondary_text_color' => '#212121'
         ]);
-        // Empresa 2: Cositas
+        // Empresa 2: Arse Accesorios
         Company::create([
             'company_name' => 'ArseAccesorios',
             'company_primary_color' => '#bf360c',
@@ -30,5 +30,15 @@ class CompanySeeder extends Seeder
             'company_primary_text_color' => '#FFFFFF',
             'company_secondary_text_color' => '#263238'
         ]);
+        // Empresa 3: Empresa DEMO
+        Company::create([
+            'company_name' => 'Empresa DEMO',
+            'company_primary_color' => '#549bf5',
+            'company_secondary_color' => '#bfdbfe',
+            'company_logo_path' => 'companies/_01_proformax.webp',
+            'company_primary_text_color' => '#FFFFFF',
+            'company_secondary_text_color' => '#000000'
+        ]);
+
     }
 }

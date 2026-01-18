@@ -17,16 +17,16 @@ class CompanySeeder extends Seeder
             'company_name' => 'VM Metalmecanica',
             'company_primary_color' => '#8a090c',
             'company_secondary_color' => '#53abc1',
-            'company_logo_path' => 'companies/giga_compania.webp',
+            'company_logo_path' => 'companies/vmmetalmecanica.webp',
             'company_primary_text_color' => '#FFFFFF',
             'company_secondary_text_color' => '#212121'
         ]);
-        // Empresa 2: Arse Accesorios
+        // Empresa 2: Arte Parquet
         Company::create([
-            'company_name' => 'ArseAccesorios',
+            'company_name' => 'Arte Parquet',
             'company_primary_color' => '#bf360c',
             'company_secondary_color' => '#ffd600',
-            'company_logo_path' => 'companies/construred_logo.webp',
+            'company_logo_path' => 'companies/arteparquet.webp',
             'company_primary_text_color' => '#FFFFFF',
             'company_secondary_text_color' => '#263238'
         ]);

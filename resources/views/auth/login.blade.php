@@ -22,8 +22,8 @@
                     <h3 class="font-bold text-blue-900 dark:text-blue-100 mb-2">Demo - Credenciales de prueba</h3>
                     <div class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                         <div class="flex items-center gap-2">
-                            <p><span class="font-semibold">Usuario:</span> pasante@demo.com</p>
-                            <button type="button" onclick="navigator.clipboard.writeText('pasante@demo.com')"
+                            <p><span class="font-semibold">Usuario:</span> gerente@demo.com</p>
+                            <button type="button" onclick="navigator.clipboard.writeText('gerente@demo.com')"
                                 class="text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
                                 title="Copiar usuario">
                                 <span class="iconify h-5 w-5" data-icon="heroicons:document-duplicate-20-solid"></span>

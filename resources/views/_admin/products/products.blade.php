@@ -22,8 +22,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                             <span class="iconify h-5 w-5" data-icon="line-md:search-filled"></span>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Buscar productos..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar productos..."
                             class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
                     </div>
 
@@ -46,8 +45,10 @@
 
             <!-- Botón Nuevo Producto -->
             <div class="w-full sm:w-auto">
-                <a href="{{ route('products.create') }}"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                <a href="{{ isDemoUser() ? '#' : route('products.create') }}"
+                    class="{{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-125 hover:bg-opacity-90 hover:shadow-md transform hover:-translate-y-1' }} flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm"
+                    @if(isDemoUser()) onclick="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura.');"
+                    title="Usuario DEMO - Solo lectura" @endif>
                     <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
                     Nuevo producto
                 </a>
@@ -59,28 +60,28 @@
             <span class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Ordenar por:</span>
 
             @foreach ($columns as $column)
-                <a href="{{ route('products', [
+                    <a href="{{ route('products', [
                     'sort' => $column['field'],
                     'direction' => $sortField === $column['field'] && $sortDirection === 'asc' ? 'desc' : 'asc',
                     'search' => request('search'),
                 ]) }}"
-                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
-                    {{ $sortField === $column['field']
-                        ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
-                        : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                    {{ $column['name'] }}
-                    @if ($sortField === $column['field'])
-                        <span class="ml-1">
-                            @if ($sortDirection === 'asc')
-                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
-                                    data-icon="oui:arrow-up"></span>
-                            @else
-                                <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
-                                    data-icon="oui:arrow-down"></span>
-                            @endif
-                        </span>
-                    @endif
-                </a>
+                        class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 whitespace-nowrap border
+                                {{ $sortField === $column['field']
+                    ? 'border-[var(--primary-color)] bg-[var(--primary-color)] text-[var(--primary-text-color)] shadow-sm'
+                    : 'text-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                        {{ $column['name'] }}
+                        @if ($sortField === $column['field'])
+                            <span class="ml-1">
+                                @if ($sortDirection === 'asc')
+                                    <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                        data-icon="oui:arrow-up"></span>
+                                @else
+                                    <span class="iconify h-3 w-3 text-[var(--primary-text-color)] font-extrabold"
+                                        data-icon="oui:arrow-down"></span>
+                                @endif
+                            </span>
+                        @endif
+                    </a>
             @endforeach
         </div>
     </div>
@@ -99,8 +100,7 @@
                     <summary class="list-none p-4 cursor-pointer h-full">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                <span
-                                    class="iconify h-5 w-5 {{ $product->product_status ? 'text-green-500' : 'text-red-500' }}"
+                                <span class="iconify h-5 w-5 {{ $product->product_status ? 'text-green-500' : 'text-red-500' }}"
                                     data-icon="heroicons:cube-20-solid"></span>
                                 {{ $product->product_name }}
                             </h3>
@@ -124,34 +124,35 @@
                         <div class="w-[90%] border-t border-gray-300 m-auto mt-1 dark:border-gray-600"></div>
                         <div class="py-3 px-4">
                             <div class="flex justify-center gap-3">
-                                <a href="{{ route('products.edit', $product->id) }}"
-                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Editar">
+                                <a href="{{ isDemoUser() ? '#' : route('products.edit', $product->id) }}"
+                                    class="p-2 bg-yellow-500 text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-yellow-600' }} focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                    @if(isDemoUser()) onclick="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura.');"
+                                    title="Usuario DEMO - Solo lectura" @else title="Editar" @endif>
                                     <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
                                 </a>
 
                                 <form id="deactivateForm-{{ $product->id }}"
-                                    action="{{ route('products.soft_destroy', $product->id) }}" method="POST"
-                                    class="inline">
+                                    action="{{ route('products.soft_destroy', $product->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="button" onclick="confirmDeactivate('{{ $product->id }}')"
-                                        class="p-2 {{ $product->product_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                        title="{{ $product->product_status ? 'Desactivar' : 'Activar' }}">
+                                    <button type="button"
+                                        onclick="{{ isDemoUser() ? 'event.preventDefault(); alert(\"👁️ Usuario DEMO: Solo lectura.\");' : 'confirmDeactivate(\'' . $product->id . '\')' }}"
+                                        class="p-2 {{ $product->product_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110' }} focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                        title="{{ isDemoUser() ? 'Usuario DEMO - Solo lectura' : ($product->product_status ? 'Desactivar' : 'Activar') }}">
                                         <span class="iconify w-5 h-5"
                                             data-icon="{{ $product->product_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
                                     </button>
                                 </form>
 
                                 @if (auth()->user()->isGerente())
-                                    <form id="deleteForm-{{ $product->id }}"
-                                        action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                        class="inline">
+                                    <form id="deleteForm-{{ $product->id }}" action="{{ route('products.destroy', $product->id) }}"
+                                        method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" onclick="confirmDelete('{{ $product->id }}')"
-                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                            title="Eliminar">
+                                        <button type="button"
+                                            onclick="{{ isDemoUser() ? 'event.preventDefault(); alert(\"👁️ Usuario DEMO: Solo lectura.\");' : 'confirmDelete(\'' . $product->id . '\')' }}"
+                                            class="p-2 bg-red-600 text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700' }} focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                            title="{{ isDemoUser() ? 'Usuario DEMO - Solo lectura' : 'Eliminar' }}">
                                             <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
                                         </button>
                                     </form>
@@ -167,8 +168,7 @@
         <div class="flex flex-col items-center justify-center py-16 px-4">
             <div class="text-center max-w-md mx-auto">
                 <!-- Icono animado -->
-                <div
-                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
                     <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500"
                         data-icon="heroicons:cube-transparent"></span>
                 </div>

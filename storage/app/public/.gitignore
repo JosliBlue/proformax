@@ -3,5 +3,6 @@
 !companies/
 companies/*
 !companies/_01_proformax.webp
-!companies/giga_compania.webp
+!companies/arteparquet.webp
+!companies/vmmetalmecanica.webp
 !laravel_icon.png

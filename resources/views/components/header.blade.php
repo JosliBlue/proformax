@@ -35,10 +35,12 @@
             </div>
 
             <!-- Opción de perfil -->
-            <a href="{{ route('profile') }}"
-                class="w-full text-center px-4 py-2  flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span>Mi perfil</span>
-            </a>
+            @unless(isDemoUser())
+                <a href="{{ route('profile') }}"
+                    class="w-full text-center px-4 py-2  flex justify-center items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <span>Mi perfil</span>
+                </a>
+            @endunless
 
             <!-- Opción de cerrar sesión -->
             <a href="{{ route('logout') }}"

@@ -56,24 +56,7 @@ class AdminsUsersSeeder extends Seeder
                 'user_rol' => 'gerente',
                 'company_id' => 3,
                 'user_status' => true
-            ],
-            [
-                'user_name' => 'Vendedor DEMO',
-                'user_email' => 'vendedor@demo.com',
-                'user_password' => Hash::make('demo123'),
-                'user_rol' => 'vendedor',
-                'company_id' => 3,
-                'user_status' => true
-            ],
-            [
-                'user_name' => 'Pasante DEMO',
-                'user_email' => 'pasante@demo.com',
-                'user_password' => Hash::make('demo123'),
-                'user_rol' => 'pasante',
-                'company_id' => 3,
-                'user_status' => true
-            ],
-
+            ]
         ];
 
         foreach ($users as $user) {

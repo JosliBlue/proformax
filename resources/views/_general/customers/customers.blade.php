@@ -20,8 +20,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                             <span class="iconify h-5 w-5" data-icon="line-md:search-filled"></span>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Buscar clientes..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar clientes..."
                             class="w-full pl-12 pr-4 py-3 text-base rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] dark:focus:ring-[var(--secondary-color)] transition-all duration-200 shadow-sm hover:shadow-md">
                     </div>
 
@@ -43,8 +42,11 @@
             </div>
 
             <div class="w-full sm:w-auto">
-                <a href="{{ route('customers.create') }}"
-                    class="hover:brightness-125 flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] hover:bg-opacity-90 px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+                <a href="{{ isDemoUser() ? '#' : route('customers.create') }}"
+                    class="{{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-125 hover:bg-opacity-90 hover:shadow-md transform hover:-translate-y-1' }} flex items-center justify-center gap-2 text-base bg-[var(--secondary-color)] text-[var(--secondary-text-color)] px-6 py-3 rounded-lg w-full sm:w-auto transition-all duration-200 shadow-sm"
+                    @if(isDemoUser())
+                        onclick="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura. No puedes crear clientes.');"
+                    title="Usuario DEMO - Solo lectura" @endif>
                     <span class="iconify h-5 w-5" data-icon="fluent:add-32-filled"></span>
                     Nuevo cliente
                 </a>
@@ -84,8 +86,7 @@
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <!-- Icono de usuario con color de estado -->
-                                <span
-                                    class="iconify h-5 w-5 {{ $customer->customer_status ? 'text-green-500' : 'text-red-500' }}"
+                                <span class="iconify h-5 w-5 {{ $customer->customer_status ? 'text-green-500' : 'text-red-500' }}"
                                     data-icon="heroicons:user-20-solid"></span>
                                 {{ $customer->getFullName() }}
                             </h3>
@@ -112,8 +113,7 @@
                             <div class="mt-auto space-y-1.5 text-sm">
                                 @if ($customer->customer_cedula)
                                     <div class="flex items-center gap-2">
-                                        <span class="iconify h-3.5 w-3.5"
-                                            data-icon="heroicons:identification-20-solid"></span>
+                                        <span class="iconify h-3.5 w-3.5" data-icon="heroicons:identification-20-solid"></span>
                                         <span>{{ $customer->customer_cedula }}</span>
                                     </div>
                                 @endif
@@ -130,34 +130,35 @@
                             </div>
                             <div class="border-t border-gray-300 dark:border-gray-600"></div>
                             <div class="flex justify-center gap-3 p-1">
-                                <a href="{{ route('customers.edit', $customer->id) }}"
-                                    class="p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
-                                    title="Editar">
+                                <a href="{{ isDemoUser() ? '#' : route('customers.edit', $customer->id) }}"
+                                    class="p-2 bg-yellow-500 text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-yellow-600' }} focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all duration-200 flex items-center justify-center"
+                                    @if(isDemoUser()) onclick="event.preventDefault(); alert('👁️ Usuario DEMO: Solo lectura.');"
+                                    title="Usuario DEMO - Solo lectura" @else title="Editar" @endif>
                                     <span class="iconify w-5 h-5" data-icon="heroicons:pencil-square-20-solid"></span>
                                 </a>
 
                                 <form id="deactivateForm-{{ $customer->id }}"
-                                    action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST"
-                                    class="inline">
+                                    action="{{ route('customers.soft_destroy', $customer->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="button" onclick="confirmDeactivate('{{ $customer->id }}')"
-                                        class="p-2 {{ $customer->customer_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                        title="{{ $customer->customer_status ? 'Desactivar' : 'Activar' }}">
+                                    <button type="button"
+                                        onclick="{{ isDemoUser() ? 'event.preventDefault(); alert(\"👁️ Usuario DEMO: Solo lectura.\");' : 'confirmDeactivate(\'' . $customer->id . '\')' }}"
+                                        class="p-2 {{ $customer->customer_status ? 'bg-red-600' : 'bg-green-600' }} text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110' }} focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                        title="{{ isDemoUser() ? 'Usuario DEMO - Solo lectura' : ($customer->customer_status ? 'Desactivar' : 'Activar') }}">
                                         <span class="iconify w-5 h-5"
                                             data-icon="{{ $customer->customer_status ? 'mdi:eye-off' : 'mdi:eye' }}"></span>
                                     </button>
                                 </form>
 
                                 @if (auth()->user()->isGerente())
-                                    <form id="deleteForm-{{ $customer->id }}"
-                                        action="{{ route('customers.destroy', $customer->id) }}" method="POST"
-                                        class="inline">
+                                    <form id="deleteForm-{{ $customer->id }}" action="{{ route('customers.destroy', $customer->id) }}"
+                                        method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" onclick="confirmDelete('{{ $customer->id }}')"
-                                            class="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
-                                            title="Eliminar">
+                                        <button type="button"
+                                            onclick="{{ isDemoUser() ? 'event.preventDefault(); alert(\"👁️ Usuario DEMO: Solo lectura.\");' : 'confirmDelete(\'' . $customer->id . '\')' }}"
+                                            class="p-2 bg-red-600 text-white rounded-lg {{ isDemoUser() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700' }} focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 flex items-center justify-center"
+                                            title="{{ isDemoUser() ? 'Usuario DEMO - Solo lectura' : 'Eliminar' }}">
                                             <span class="iconify w-5 h-5" data-icon="mdi:trash-can"></span>
                                         </button>
                                     </form>
@@ -173,10 +174,8 @@
         <div class="flex flex-col items-center justify-center py-16 px-4">
             <div class="text-center max-w-md mx-auto">
                 <!-- Icono animado -->
-                <div
-                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                    <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500"
-                        data-icon="heroicons:user-group"></span>
+                <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <span class="iconify h-12 w-12 text-gray-400 dark:text-gray-500" data-icon="heroicons:user-group"></span>
                 </div>
 
                 <!-- Mensaje principal -->

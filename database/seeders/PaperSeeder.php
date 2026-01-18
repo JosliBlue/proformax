@@ -11,7 +11,6 @@ class PaperSeeder extends Seeder
 {
     public function run(): void
     {
-        // Cotizaciones TechNova Solutions (empresa 1)
         $papers = [
             [
                 'user_id' => 5,
@@ -27,7 +26,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 2,
                 'company_id' => 3,
                 'paper_total_price' => 275.00,
@@ -39,7 +38,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 3,
                 'company_id' => 3,
                 'paper_total_price' => 320.00,
@@ -61,7 +60,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 1,
                 'company_id' => 3,
                 'paper_total_price' => 1550.00,
@@ -74,7 +73,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 2,
                 'company_id' => 3,
                 'paper_total_price' => 180.00,
@@ -97,7 +96,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 4,
                 'company_id' => 3,
                 'paper_total_price' => 320.00,
@@ -108,7 +107,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 1,
                 'company_id' => 3,
                 'paper_total_price' => 120.00,
@@ -130,7 +129,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 3,
                 'company_id' => 3,
                 'paper_total_price' => 155.00,
@@ -141,7 +140,6 @@ class PaperSeeder extends Seeder
                     ['product_id' => 4, 'quantity' => 1, 'unit_price' => 60.00, 'subtotal' => 60.00],
                 ]
             ],
-            // Cotizaciones ConstruRed S.A. (empresa 2)
             [
                 'user_id' => 5,
                 'customer_id' => 5,
@@ -157,7 +155,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 6,
                 'company_id' => 3,
                 'paper_total_price' => 800.00,
@@ -168,7 +166,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 7,
                 'company_id' => 3,
                 'paper_total_price' => 36.00,
@@ -190,7 +188,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 5,
                 'company_id' => 3,
                 'paper_total_price' => 625.00,
@@ -201,7 +199,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 6,
                 'company_id' => 3,
                 'paper_total_price' => 36.00,
@@ -223,7 +221,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 8,
                 'company_id' => 3,
                 'paper_total_price' => 400.00,
@@ -234,7 +232,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 5,
                 'company_id' => 3,
                 'paper_total_price' => 250.00,
@@ -256,7 +254,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 6,
+                'user_id' => 5,
                 'customer_id' => 7,
                 'company_id' => 3,
                 'paper_total_price' => 90.00,
@@ -267,7 +265,7 @@ class PaperSeeder extends Seeder
                 ]
             ],
             [
-                'user_id' => 7,
+                'user_id' => 5,
                 'customer_id' => 8,
                 'company_id' => 3,
                 'paper_total_price' => 400.00,

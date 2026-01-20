@@ -25,12 +25,12 @@ COPY . /app
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
 # Crear el Caddyfile
-RUN echo $'{\n\
+RUN echo '{\n\
     frankenphp\n\
     admin off\n\
 }\n\
 \n\
-:{$PORT:8080}\n\
+:8080\n\
 \n\
 root * /app/public\n\
 php_server\n\

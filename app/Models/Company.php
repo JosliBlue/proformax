@@ -48,4 +48,22 @@ class Company extends Model
 
         return '/companies/_01_proformax.webp';
     }
+
+    public function getLogoUrlAttributeJPG(): string
+    {
+        if ($this->company_logo_path) {
+            // Intentar con la versión JPG primero (compatible con Dompdf)
+            $jpgPath = preg_replace('/\.webp$/i', '.jpg', $this->company_logo_path);
+            if (file_exists(public_path($jpgPath))) {
+                return '/' . ltrim($jpgPath);
+            }
+            
+            // Si no hay JPG, intentar con el archivo original
+            if (file_exists(public_path($this->company_logo_path))) {
+                return '/' . ltrim($this->company_logo_path);
+            }
+        }
+
+        return '/companies/_01_proformax.jpg';
+    }
 }

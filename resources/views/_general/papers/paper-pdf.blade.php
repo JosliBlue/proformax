@@ -194,7 +194,7 @@
                         <div class="company-name">{{ $company->company_name }}</div>
                     </td>
                     <td class="company-logo-container">
-                        <img src="{{ $company->getLogoUrlAttribute() }}" alt="Logo" class="company-logo">
+                        <img src="{{ $company->getLogoUrlAttributeJPG() }}" alt="Logo" class="company-logo">
                     </td>
                 </tr>
             </table>

@@ -1,44 +1,35 @@
-FROM php:8.2-fpm
+FROM dunglas/frankenphp:php8.2-bookworm
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libwebp-dev
-
-# Limpiar caché
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Instalar extensiones PHP (incluyendo GD)
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# Obtener Composer
+# Copiar Composer desde la imagen oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Instalar extensiones PHP incluyendo GD
+RUN install-php-extensions ctype curl dom fileinfo filter hash mbstring openssl pcre pdo session tokenizer xml pdo_mysql gd
 
 # Configurar directorio de trabajo
 WORKDIR /app
 
 # Copiar archivos de la aplicación
-COPY . .
+COPY . /app
 
 # Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --optimize-autoloader --no-dev --no-interaction
 
-# Optimizar Laravel
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Crear el Caddyfile
+RUN echo $'{\n\
+    frankenphp\n\
+    admin off\n\
+}\n\
+\n\
+:{$PORT:8080}\n\
+\n\
+root * /app/public\n\
+php_server\n\
+encode gzip\n\
+file_server' > /etc/caddy/Caddyfile
 
 # Exponer puerto
 EXPOSE 8080
 
 # Comando de inicio
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

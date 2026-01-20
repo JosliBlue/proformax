@@ -3,8 +3,16 @@ FROM dunglas/frankenphp:php8.2-bookworm
 # Copiar Composer desde la imagen oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Instalar git, unzip y otras dependencias
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    zip \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 # Instalar extensiones PHP incluyendo GD
-RUN install-php-extensions ctype curl dom fileinfo filter hash mbstring openssl pcre pdo session tokenizer xml pdo_mysql gd
+RUN install-php-extensions ctype curl dom fileinfo filter hash mbstring openssl pcre pdo session tokenizer xml pdo_mysql gd zip
 
 # Configurar directorio de trabajo
 WORKDIR /app

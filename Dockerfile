@@ -1,5 +1,6 @@
 FROM dunglas/frankenphp:php8.2-bookworm
 
+# Build version: 2.0
 # Copiar Composer desde la imagen oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

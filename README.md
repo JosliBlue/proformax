@@ -1,7 +1,7 @@
 <table align="center" border="0" style="border:none;">
   <tr>
     <td align="center" valign="middle">
-      <img src="./storage/app/public/companies/_01_proformax.webp" width="100" alt="Proformax" />
+      <img src="./public/companies/_01_proformax.webp" width="100" alt="Proformax" />
     </td>
     <td align="center" valign="middle">
       <span style="font-size: 24px; font-weight: bold; color: #549bf5;">PROFORMAX</span>
@@ -13,7 +13,7 @@
       <span style="font-size: 24px; font-weight: bold; color: #FF2D20;">LARAVEL</span>
     </td>
     <td align="center" valign="middle">
-      <img src="./storage/app/public/laravel_icon.png" width="100" alt="Laravel" />
+      <img src="./public/laravel_icon.png" width="100" alt="Laravel" />
     </td>
   </tr>
 </table>
